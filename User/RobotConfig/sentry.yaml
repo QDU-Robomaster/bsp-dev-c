@@ -41,8 +41,7 @@ modules:
     accl_topic_name: bmi088_accl
     target_temperature: 45
     task_stack_depth: 2048
-    camera_sync_pin_name: CAMERA
-    camera_sync_div: 10
+    sync_freq: 200
 - id: ahrs
   name: MadgwickAHRS
   constructor_args:
@@ -52,23 +51,6 @@ modules:
     quaternion_topic_name: ahrs_quaternion
     euler_topic_name: ahrs_euler
     task_stack_depth: 2048
-- id: hostdata
-  name: HostData
-  constructor_args:
-    cmd: '@cmd'
-    host_euler_topic_name: target_eulr
-    host_chassis_data_topic_name: host_chassis_data
-    host_fire_topic_name: host_fire_notify
-- id: sharetopic
-  name: SharedTopic
-  constructor_args:
-    uart_name: usb_otg_hs_cdc
-    task_stack_depth: 2048
-    buffer_size: 256
-    topic_configs:
-    - target_euler
-    - chassis_data
-    - fire_notify
 - id: super_power
   name: SuperPower
   constructor_args:
@@ -78,7 +60,8 @@ modules:
   name: PowerControl
   constructor_args:
     superpower: '@&super_power'
-    is_helm: 'false'
+    is_helm: ture
+    chassis_static_power_loss: 0.5
 - id: motor_yaw
   name: RMMotor
   constructor_args:
@@ -135,18 +118,14 @@ modules:
     motor_pitch: '@&motor_pit'
     motor_yaw: '@&motor_yaw'
     limit:
-      max_pitch_angle_: 0.0
-      min_pitch_angle_: 0.0
+      max_pitch_angle_: 6.0
+      min_pitch_angle_: 5.2
       max_yaw_angle_: 0.0
       min_yaw_angle_: 0.0
       reverse_pitch_limit_: false
       reverse_yaw_limit_: false
-      J_pitch_: 0.0
+      J_pit_: 0.0
       J_yaw_: 0.0
-    zero_point: 0.0
-    gimbal_cmd_topic_name: gimbal_cmd
-    accl_topic_name: bmi088_accl
-    euler_topic_name: ahrs_euler
 - id: motor_wheel_0
   name: RMMotor
   constructor_args:
@@ -452,16 +431,6 @@ modules:
     cmd: '@&cmd'
   template_args:
     LauncherType: InfantryLauncher
-- id: client_topic
-  name: SharedTopicClient
-  constructor_args:
-    uart_name: usb_otg_hs_cdc
-    task_stack_depth: 2048
-    buffer_size: 256
-    topic_configs:
-    - ahrs_quaternion
-    - - topic2
-      - libxr_def_domain
 - id: event_binder
   name: EventBinder
   constructor_args:
@@ -517,3 +486,30 @@ modules:
         source_event: DR16::SwitchPos::DR16_SW_L_POS_BOT
         target_module: launcher
         target_event: LauncherEvent::SET_MODE_READY
+- id: hostdata
+  name: HostData
+  constructor_args:
+    cmd: '@cmd'
+    host_euler_topic_name: target_eulr
+    host_chassis_data_topic_name: host_chassis_data
+    host_fire_topic_name: host_fire_notify
+- id: sharetopic
+  name: SharedTopic
+  constructor_args:
+    uart_name: usb_otg_hs_cdc
+    task_stack_depth: 2048
+    buffer_size: 256
+    topic_configs:
+    - target_euler
+    - chassis_data
+    - fire_notify
+- id: client_topic
+  name: SharedTopicClient
+  constructor_args:
+    uart_name: usb_otg_hs_cdc
+    task_stack_depth: 2048
+    buffer_size: 256
+    topic_configs:
+    - ahrs_quaternion
+    - - topic2
+      - libxr_def_domain
