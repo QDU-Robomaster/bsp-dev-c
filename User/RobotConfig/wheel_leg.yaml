@@ -130,14 +130,14 @@ modules:
     task_stack_depth: 4096
     param_pid_yaw_speed:
       k: 1.0
-      p: 0.1
+      p: 0.8
       i: 0.0
       d: 0.0
       i_limit: 0.0
       out_limit: 0.0
       cycle: false
     param_pid_yaw_angle:
-      k: 5.0
+      k: 4.0
       p: 10.0
       i: 0.0
       d: 0.0
@@ -145,8 +145,8 @@ modules:
       out_limit: 0.0
       cycle: true
     param_pid_pitch_speed:
-      k: 0.11
-      p: 0.1
+      k: 1.0
+      p: 0.27
       i: 0.0
       d: 0.0
       i_limit: 0.0
@@ -155,9 +155,9 @@ modules:
     param_pid_pitch_angle:
       k: 5.0
       p: 10.0
-      i: 0.0
-      d: 0.0
-      i_limit: 0.0
+      i: 3.0
+      d: 0.2
+      i_limit: 10.0
       out_limit: 0.0
       cycle: false
     motor_yaw: '@&motor_pit'
@@ -242,6 +242,10 @@ modules:
         target_event: Launcher::FRICMODE::SAFE
       - source_module: dr16
         source_event: DR16::SwitchPos::DR16_SW_L_POS_MID
+        target_module: launcher
+        target_event: Launcher::FRICMODE::SAFE
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_L_POS_BOT
         target_module: launcher
         target_event: Launcher::FRICMODE::READY
     - bindings:
