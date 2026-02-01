@@ -4,26 +4,44 @@ modules:
 - id: blink_led
   name: BlinkLED
   constructor_args:
-    blink_cycle: 100
+    blink_cycle: 250
+- id: buzzer_alarm
+  name: BuzzerAlarm
+  constructor_args:
+    alarm_freq: 1500
+    alarm_duration: 300
+    alarm_delay: 300
+- id: cmd
+  name: CMD
+  constructor_args:
+    mode: CMD::Mode::CMD_OP_CTRL
+    chassis_cmd_topic_name: chassis_cmd
+    gimbal_cmd_topic_name: gimbal_cmd
+    launcher_cmd_topic_name: launcher_cmd
+- id: dr16
+  name: DR16
+  constructor_args:
+    CMD: '@cmd'
+    task_stack_depth_uart: 2048
 - id: bmi088
   name: BMI088
   constructor_args:
-    gyro_freq: BMI088::GyroFreq::GYRO_1000HZ_BW116HZ
-    accl_freq: BMI088::AcclFreq::ACCL_800HZ
+    gyro_freq: BMI088::GyroFreq::GYRO_2000HZ_BW532HZ
+    accl_freq: BMI088::AcclFreq::ACCL_1600HZ
     gyro_range: BMI088::GyroRange::DEG_2000DPS
     accl_range: BMI088::AcclRange::ACCL_24G
     rotation:
-      w: 1.0
+      w: 0.0
       x: 0.0
       y: 0.0
-      z: 0.0
+      z: 1.0
     pid_param:
-      k: 0.15
-      p: 1.0
-      i: 0.1
+      k: 1.0
+      p: 0.0
+      i: 0.0
       d: 0.0
-      i_limit: 0.3
-      out_limit: 1.0
+      i_limit: 0.0
+      out_limit: 0.0
       cycle: false
     gyro_topic_name: bmi088_gyro
     accl_topic_name: bmi088_accl
@@ -34,45 +52,19 @@ modules:
 - id: ahrs
   name: MadgwickAHRS
   constructor_args:
-    beta: 0.033
+    beta: 0.05
     gyro_topic_name: bmi088_gyro
     accl_topic_name: bmi088_accl
     quaternion_topic_name: ahrs_quaternion
     euler_topic_name: ahrs_euler
     task_stack_depth: 2048
-- id: buzzer_alarm
-  name: BuzzerAlarm
-  constructor_args:
-    alarm_freq: 5000
-    alarm_duty: 300
-    alarm_cycle: 300
-- id: cmd
-  name: CMD
-  constructor_args:
-    mode: CMD::Mode::CMD_OP_CTRL
-    chassis_cmd_topic_name: chassis_cmd
-    gimbal_cmd_topic_name: gimbal_cmd
-    launcher_cmd_topic_name: launcher_cmd
-- id: host_cmd
-  name: HostData
-  constructor_args:
-    cmd: '@cmd'
-    host_euler_topic_name: target_eulr
-    host_chassis_data_topic_name: chassis_data
-    host_fire_topic_name: fire_notify
-- id: dr16
-  name: DR16
-  constructor_args:
-    CMD: '@cmd'
-    task_stack_depth_uart: 2048
-    cmd_data_tp_name: cmd_raw_data_
 - id: motor_wheel_0
   name: RMMotor
   constructor_args:
     param:
       model: RMMotor::Model::MOTOR_M3508
       reverse: false
-      feedback_id: 0x201
+      feedback_id: 513
       can_bus_name: can1
 - id: motor_wheel_1
   name: RMMotor
@@ -80,7 +72,7 @@ modules:
     param:
       model: RMMotor::Model::MOTOR_M3508
       reverse: false
-      feedback_id: 0x202
+      feedback_id: 516
       can_bus_name: can1
 - id: motor_wheel_2
   name: RMMotor
@@ -88,7 +80,7 @@ modules:
     param:
       model: RMMotor::Model::MOTOR_M3508
       reverse: false
-      feedback_id: 0x203
+      feedback_id: 515
       can_bus_name: can1
 - id: motor_wheel_3
   name: RMMotor
@@ -96,18 +88,60 @@ modules:
     param:
       model: RMMotor::Model::MOTOR_M3508
       reverse: false
-      feedback_id: 0x204
+      feedback_id: 514
       can_bus_name: can1
+- id: motor_pit
+  name: RMMotor
+  constructor_args:
+    param:
+      model: RMMotor::Model::MOTOR_GM6020
+      reverse: false
+      feedback_id: 517
+      can_bus_name: can2
+- id: motor_yaw
+  name: DMMotor
+  constructor_args:
+    param:
+      model: DMMotor::Model::MOTOR_DM4310
+      reverse: false
+      feedback_id: 5
+      can_bus_name: can2
+- id: motor_trig
+  name: RMMotor
+  constructor_args:
+    param:
+      model: RMMotor::Model::MOTOR_M3508
+      reverse: true
+      feedback_id: 513
+      can_bus_name: can2
+- id: motor_fric_0
+  name: RMMotor
+  constructor_args:
+    param:
+      model: RMMotor::Model::MOTOR_M3508
+      reverse: false
+      feedback_id: 514
+      can_bus_name: can2
+- id: motor_fric_1
+  name: RMMotor
+  constructor_args:
+    param:
+      model: RMMotor::Model::MOTOR_M3508
+      reverse: false
+      feedback_id: 515
+      can_bus_name: can2
 - id: super_power
   name: SuperPower
   constructor_args:
-    can_bus_name: can2
-    task_stack_depth: 1024
+    can_bus_name: can1
+    task_stack_depth: 2048
 - id: power_control
   name: PowerControl
   constructor_args:
     superpower: '@&super_power'
-- id: omni_chassis
+    is_helm: false
+    chassis_static_power_loss: 3.5
+- id: chassis
   name: Chassis
   constructor_args:
     motor_wheel_0: '@&motor_wheel_0'
@@ -121,127 +155,104 @@ modules:
     cmd: '@&cmd'
     power_control: '@&power_control'
     task_stack_depth: 4096
-    chassis_param:
+    ChassisParam:
       wheel_radius: 0.065
-      wheel_to_center: 0.25
+      wheel_to_center: 0.26
       gravity_height: 0.0
       reductionratio: 15.7647
       wheel_resistance: 0.0
       error_compensation: 0.0
-    pid_velocity_x_:
-      k: 0.015
-      p: 18.0
-      i: 1.0
+      gravity: 83.692
+    pid_follow_:
+      k: 1.0
+      p: 20.0
+      i: 0.0
       d: 0.0
       i_limit: 0.0
-      out_limit: 10.0
+      out_limit: 30.0
+      cycle: true
+    pid_velocity_x_:
+      k: 1.0
+      p: 20.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 30.0
       cycle: false
     pid_velocity_y_:
-      k: 0.015
-      p: 18.0
-      i: 1.0
+      k: 1.0
+      p: 20.0
+      i: 0.0
       d: 0.0
       i_limit: 0.0
-      out_limit: 10.0
+      out_limit: 30.0
       cycle: false
     pid_omega_:
-      k: 0.015
-      p: 14.0
-      i: 1.0
-      d: 0.0
-      i_limit: 0.0
-      out_limit: 10.0
-      cycle: true
-    pid_wheel_angle_0_:
-      k: 0.01
-      p: 8.5
+      k: 1.0
+      p: 20.0
       i: 0.0
       d: 0.0
       i_limit: 0.0
-      out_limit: 6.0
+      out_limit: 30.0
       cycle: false
-    pid_wheel_angle_1_:
-      k: 0.01
-      p: 12.0
+    pid_wheel_speed_0_:
+      k: 1.0
+      p: 0.3
       i: 0.0
       d: 0.0
       i_limit: 0.0
-      out_limit: 6.0
+      out_limit: 5.0
       cycle: false
-    pid_wheel_angle_2_:
-      k: 0.01
-      p: 8.0
+    pid_wheel_speed_1_:
+      k: 1.0
+      p: 0.3
       i: 0.0
       d: 0.0
       i_limit: 0.0
-      out_limit: 6.0
+      out_limit: 5.0
       cycle: false
-    pid_wheel_angle_3_:
-      k: 0.01
-      p: 8.0
+    pid_wheel_speed_2_:
+      k: 1.0
+      p: 0.3
       i: 0.0
       d: 0.0
       i_limit: 0.0
-      out_limit: 6.0
+      out_limit: 5.0
+      cycle: false
+    pid_wheel_speed_3_:
+      k: 1.0
+      p: 0.3
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 5.0
       cycle: false
     pid_steer_angle_0_:
-      k: 6.0
-      p: 3.0
+      k: 1.0
+      p: 0.0
       i: 0.0
       d: 0.0
       i_limit: 0.0
       out_limit: 0.0
-      cycle: true
+      cycle: false
     pid_steer_angle_1_:
-      k: 6.0
+      k: 1.0
       p: 0.0
       i: 0.0
       d: 0.0
       i_limit: 0.0
       out_limit: 0.0
-      cycle: true
+      cycle: false
     pid_steer_angle_2_:
-      k: 6.0
+      k: 1.0
       p: 0.0
       i: 0.0
       d: 0.0
       i_limit: 0.0
       out_limit: 0.0
-      cycle: true
+      cycle: false
     pid_steer_angle_3_:
-      k: 6.0
-      p: 0.0
-      i: 0.0
-      d: 0.0
-      i_limit: 0.0
-      out_limit: 0.0
-      cycle: true
-    pid_steer_speed_0_:
-      k: 0.002
-      p: 0.0
-      i: 0.0
-      d: 0.0
-      i_limit: 0.0
-      out_limit: 0.0
-      cycle: false
-    pid_steer_speed_1_:
-      k: 0.002
-      p: 0.0
-      i: 0.0
-      d: 0.0
-      i_limit: 0.0
-      out_limit: 0.0
-      cycle: false
-    pid_steer_speed_2_:
-      k: 0.002
-      p: 0.0
-      i: 0.0
-      d: 0.0
-      i_limit: 0.0
-      out_limit: 0.0
-      cycle: false
-    pid_steer_speed_3_:
-      k: 0.002
+      k: 1.0
       p: 0.0
       i: 0.0
       d: 0.0
@@ -250,7 +261,100 @@ modules:
       cycle: false
   template_args:
     ChassisType: Omni
-- id: event_bind
+- id: gimbal
+  name: Gimbal
+  constructor_args:
+    cmd: '@cmd'
+    task_stack_depth: 4096
+    pid_yaw_angle_param:
+      k: 1.0
+      p: 10.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 50.0
+      cycle: true
+    pid_pitch_angle_param:
+      k: 1.0
+      p: 10.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 50.0
+      cycle: true
+    pid_yaw_omega_param:
+      k: 1.0
+      p: 0.5
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 3.0
+      cycle: false
+    pid_pitch_omega_param:
+      k: 1.0
+      p: 1.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 3.0
+      cycle: false
+    motor_pitch: '@&motor_pit'
+    motor_yaw: '@&motor_yaw'
+    limit:
+      max_pitch_angle_: 0.0
+      min_pitch_angle_: 0.0
+      max_yaw_angle_: 0.0
+      min_yaw_angle_: 0.0
+      reverse_pitch_limit_: false
+      reverse_yaw_limit_: false
+      J_pit_: 0.0
+      J_yaw_: 0.0
+- id: launcher
+  name: Launcher
+  constructor_args:
+    task_stack_depth: 2048
+    cmd: '@&cmd'
+    pid_param_trig_angle:
+      k: 1.0
+      p: 35.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 10.0
+      cycle: false
+    pid_param_trig_speed:
+      k: 1.0
+      p: 0.65
+      i: 0.8
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      cycle: false
+    pid_param_fric_0:
+      k: 1.0
+      p: 0.003
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      cycle: false
+    pid_param_fric_1:
+      k: 1.0
+      p: 0.003
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      cycle: false
+    motor_fric_0: '@&motor_fric_0'
+    motor_fric_1: '@&motor_fric_1'
+    motor_trig: '@&motor_trig'
+    launcher_param:
+      fric_rpm: 5000
+      trig_gear_ratio: 36.0
+      num_trig_tooth: 10
+      expect_trig_freq_: 10.0
+- id: event_binder
   name: EventBinder
   constructor_args:
     modules:
@@ -259,7 +363,11 @@ modules:
     - name: cmd
       module_ref: '@cmd'
     - name: chassis
-      module_ref: '@omni_chassis'
+      module_ref: '@chassis'
+    - name: gimbal
+      module_ref: '@gimbal'
+    - name: launcher
+      module_ref: '@launcher'
     event_binding_groups:
     - bindings:
       - source_module: dr16
@@ -272,12 +380,36 @@ modules:
         target_event: CMD::Mode::CMD_AUTO_CTRL
     - bindings:
       - source_module: dr16
-        source_event: DR16::SwitchPos::DR16_SW_R_POS_TOP
+        source_event: DR16::SwitchPos::DR16_SW_L_POS_TOP
         target_module: chassis
-        target_event: ChassisEvent::SET_MODE_RELAX
+        target_event: Omni::Chassismode::RELAX
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_L_POS_MID
+        target_module: chassis
+        target_event: Omni::Chassismode::INDEPENDENT
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_L_POS_BOT
+        target_module: chassis
+        target_event: Omni::Chassismode::ROTOR
+    - bindings:
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_L_POS_TOP
+        target_module: gimbal
+        target_event: Gimbal<RMMotor,DMMotor>::GimbalEvent::SET_MODE_RELAX
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_L_POS_MID
+        target_module: gimbal
+        target_event: Gimbal<RMMotor,DMMotor>::GimbalEvent::SET_MODE_INDEPENDENT
+    - bindings:
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_TOP
+        target_module: launcher
+        target_event: Launcher::FRICMODE::RELAX
       - source_module: dr16
         source_event: DR16::SwitchPos::DR16_SW_R_POS_MID
-        target_module: chassis
-        target_event: ChassisEvent::SET_MODE_INDEPENDENT
-  template_args:
-    ChassisType: Omni
+        target_module: launcher
+        target_event: Launcher::FRICMODE::SAFE
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_MID
+        target_module: launcher
+        target_event: Launcher::FRICMODE::READY
