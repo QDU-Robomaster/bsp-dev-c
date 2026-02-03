@@ -21,3 +21,4 @@ modules:
   - qdu-future/Matrix
   - qdu-future/PowerControl
   - qdu-future/SuperPower
+  - qdu-future/Motor
