@@ -167,8 +167,9 @@ modules:
       k: 1.0
       p: 9.0
       i: 0.0
-      d: 0.0
+      d: 0.1
       i_limit: 0.0
+      out_limit: 0.0
       out_limit: 0.0
       cycle: true
     pid_velocity_x_:
@@ -178,6 +179,7 @@ modules:
       d: 0.0
       i_limit: 0.0
       out_limit: 0.0
+      out_limit: 0.0
       cycle: false
     pid_velocity_y_:
       k: 1.0
@@ -185,6 +187,7 @@ modules:
       i: 0.0
       d: 0.0
       i_limit: 0.0
+      out_limit: 0.0
       out_limit: 0.0
       cycle: false
     pid_omega_:
@@ -320,7 +323,7 @@ modules:
     task_stack_depth: 2048
     pid_param_trig_angle:
       k: 1.0
-      p: 35.0
+      p: 30.0
       i: 0.0
       d: 0.0
       i_limit: 0.0
@@ -332,7 +335,7 @@ modules:
       i: 0.4
       d: 0.0
       i_limit: 0.0
-      out_limit: 0.0
+      out_limit: 0.5
       cycle: false
     pid_param_fric_front_left_speed:
       k: 1.0
