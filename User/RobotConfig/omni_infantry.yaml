@@ -31,10 +31,10 @@ modules:
     gyro_range: BMI088::GyroRange::DEG_2000DPS
     accl_range: BMI088::AcclRange::ACCL_24G
     rotation:
-      w: 0.0
+      w: 1.0
       x: 0.0
       y: 0.0
-      z: 1.0
+      z: 0.0
     pid_param:
       k: 1.0
       p: 0.0
@@ -47,8 +47,6 @@ modules:
     accl_topic_name: bmi088_accl
     target_temperature: 45
     task_stack_depth: 2048
-    camera_sync_pin_name: CAMERA
-    camera_sync_div: 10
 - id: ahrs
   name: MadgwickAHRS
   constructor_args:
@@ -269,7 +267,7 @@ modules:
   constructor_args:
     cmd: '@cmd'
     task_stack_depth: 2048
-    pid_yaw_angle_param:
+    pid_yaw_angle:
       k: 1.0
       p: 16
       i: 0.0
@@ -277,15 +275,7 @@ modules:
       i_limit: 0.0
       out_limit: 80.0
       cycle: true
-    pid_pitch_angle_param:
-      k: 1.0
-      p: 15.0
-      i: 0.0
-      d: 0.0
-      i_limit: 0.0
-      out_limit: 0.0
-      cycle: true
-    pid_yaw_omega_param:
+    pid_yaw_omega:
       k: 1.0
       p: 3.0
       i: 0.0
@@ -293,7 +283,15 @@ modules:
       i_limit: 0
       out_limit: 0
       cycle: false
-    pid_pitch_omega_param:
+    pid_pit_angle:
+      k: 1.0
+      p: 15.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      cycle: true
+    pid_pit_omega:
       k: 1.0
       p: 1.7
       i: 0.0
@@ -303,15 +301,13 @@ modules:
       cycle: false
     motor_pitch: '@&motor_pit'
     motor_yaw: '@&motor_yaw'
-    limit:
-      max_pitch_angle_: 2.2
-      min_pitch_angle_: 0.9
-      max_yaw_angle_: 0.0
-      min_yaw_angle_: 0.0
-      reverse_pitch_limit_: false
-      reverse_yaw_limit_: false
-      J_pit_: 0.0
-      J_yaw_: 0.0
+    pit_max_angle: 1.67
+    pit_min_angle: 1.05
+    j_pit: 0.01
+    j_yaw: 0.1
+    pit_zero: 1.0
+    yaw_zero: 0.0
+    pit_reverse_flag: true
 - id: launcher
   name: Launcher
   constructor_args:
@@ -377,7 +373,7 @@ modules:
       trig_freq_: 20
     cmd: '@&cmd'
   template_args:
-    ChassisType: InfantryLauncher
+    LauncherType: InfantryLauncher
 - id: event_binder
   name: EventBinder
   constructor_args:
@@ -410,21 +406,25 @@ modules:
       - source_module: dr16
         source_event: DR16::SwitchPos::DR16_SW_L_POS_MID
         target_module: chassis
-        target_event: Omni::ChassisMode::INDEPENDENT
+        target_event: Omni::ChassisMode::FOLLOW
       - source_module: dr16
         source_event: DR16::SwitchPos::DR16_SW_L_POS_BOT
         target_module: chassis
-        target_event: Omni::ChassisMode::FOLLOW
+        target_event: Omni::ChassisMode::ROTOR
     - bindings:
       - source_module: dr16
-        source_event: DR16::SwitchPos::DR16_SW_R_POS_TOP
+        source_event: DR16::SwitchPos::DR16_SW_L_POS_TOP
         target_module: gimbal
-        target_event: GimbalMode::RELAX
+        target_event: GimbalEvent::SET_MODE_RELAX
       - source_module: dr16
-        source_event: DR16::SwitchPos::DR16_SW_R_POS_MID
+        source_event: DR16::SwitchPos::DR16_SW_L_POS_MID
         target_module: gimbal
-        target_event: GimbalMode::INDEPENDENT
+        target_event: GimbalEvent::SET_MODE_COMMON
     - bindings:
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_L_POS_TOP
+        target_module: launcher
+        target_event: InfantryLauncher::LauncherEvent::SET_FRICMODE_RELAX
       - source_module: dr16
         source_event: DR16::SwitchPos::DR16_SW_R_POS_TOP
         target_module: launcher
