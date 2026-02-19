@@ -11,16 +11,23 @@
 - Initialize dependencies: `git submodule update --init --recursive`
 - Install tooling: `pip install libxr xrobot`
 - Generate xrobot sources: `xr_cubemx_cfg -d ./ --xrobot && xrobot_setup`
-- Configure/build (preset): `cmake --preset debug && cmake --build --preset debug`
-- Configure/build (explicit): `cmake . -Bbuild -G Ninja -DCMAKE_TOOLCHAIN_FILE=cmake/starm-clang.cmake && cmake --build build`
-- Build a specific robot config: `xrobot_gen_main --config User/RobotConfig/omni_infantry.yaml && cmake --build build`
+- One-command pipeline (format + generate + build): `tools/format_gen_build.sh -c User/xrobot.yaml -b /home/leo/Documents/bsp-dev-c/build/debug`
+- Compile-only validation (recommended for quick checks): `tools/format_gen_build.sh --skip-format -c User/xrobot.yaml -b /home/leo/Documents/bsp-dev-c/build/debug`
+- Script help: `tools/format_gen_build.sh -h`
 - Format check/apply: `tools/format_code.sh --check` / `tools/format_code.sh`
+- The build script requires `xrobot_gen_main` and `cube-cmake` in `PATH`.
 
 ## Coding Style & Naming Conventions
 - C/C++ formatting follows `.clang-format` (`BasedOnStyle: Google`, `IncludeBlocks: Regroup`).
 - Use `clang-format` `21.1.8` (enforced by `tools/format_code.sh`).
 - Prefer 4-space indentation and include ordering produced by formatter; do not hand-tune formatting after running it.
 - Module/class file names are PascalCase (for example `Modules/Chassis/Chassis.hpp`); robot YAML names are snake_case (for example `helm_infantry.yaml`).
+- Naming rules follow `.clangd` (`readability-identifier-naming`):
+- Variables/global variables: `lower_case`.
+- Class/private/protected members: `lower_case` with trailing `_` (for example `target_speed_`).
+- Classes/structs/enums: `CamelCase`.
+- Class methods: `CamelCase`; free functions: `lower_case`.
+- Constants, enum constants, and macros: `UPPER_CASE` (for example `MOTOR_TX_TIMEOUT_MS`).
 
 ## Testing Guidelines
 - There is no standalone unit-test target in this repo; validation is build-based.
