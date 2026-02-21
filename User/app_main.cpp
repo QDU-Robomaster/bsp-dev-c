@@ -74,7 +74,7 @@ extern "C" void app_main(void) {
   // clang-format on
   // NOLINTEND
   /* User Code Begin 2 */
-  
+
   /* User Code End 2 */
   // clang-format off
   // NOLINTBEGIN
@@ -151,8 +151,8 @@ extern "C" void app_main(void) {
       {{&usb_otg_fs_cdc}},
       {reinterpret_cast<void *>(UID_BASE), 12}
   );
-  usb_fs.Init();
-  usb_fs.Start();
+  usb_fs.Init(false);
+  usb_fs.Start(false);
 
   static constexpr auto USB_OTG_HS_LANG_PACK = LibXR::USB::DescriptorStrings::MakeLanguagePack(LibXR::USB::DescriptorStrings::Language::EN_US, "QDU-Future", "MainCtrl", "QDU-Future-MainCtrl-89ABCDEF0123456701234567");
   LibXR::USB::CDCUart usb_otg_hs_cdc(128, 128, 3);
@@ -168,8 +168,8 @@ extern "C" void app_main(void) {
       {{&usb_otg_hs_cdc}},
       {reinterpret_cast<void *>(UID_BASE), 12}
   );
-  usb_hs.Init();
-  usb_hs.Start();
+  usb_hs.Init(false);
+  usb_hs.Start(false);
 
   /* Terminal Configuration */
   STDIO::read_ = usb_otg_fs_cdc.read_port_;
