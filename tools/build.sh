@@ -8,7 +8,7 @@ cd "${REPO_ROOT}"
 usage() {
   cat <<'EOF'
 Usage:
-  tools/format_gen_build.sh [options]
+  tools/build.sh [options]
 
 Description:
   1) Run clang-format for C/C++ files under Modules/
@@ -17,22 +17,25 @@ Description:
 
 Options:
   -c, --config <path>     YAML config path (default: xrobot.yaml)
-  -b, --build-dir <dir>   Build dir for cube-cmake (default: build/debug)
+  -p, --preset <name>     CMake preset name (default: $CMAKE_BUILD_PRESET or debug)
+  -b, --build-dir <dir>   Build dir for cube-cmake (overrides --preset)
       --skip-format       Skip clang-format step
   -h, --help              Show this help message
 
 Examples:
-  tools/format_gen_build.sh
-  tools/format_gen_build.sh -c User/RobotConfig/omni_infantry.yaml
-  tools/format_gen_build.sh -c User/RobotConfig/radar.yaml
-  tools/format_gen_build.sh -c User/RobotConfig/hero.yaml -b /home/leo/Documents/bsp-dev-c/build/debug
+  tools/build.sh
+  tools/build.sh -p release
+  tools/build.sh -c User/RobotConfig/omni_infantry.yaml -p relWithDebInfo
+  tools/build.sh -c User/RobotConfig/hero.yaml -b /home/leo/Documents/bsp-dev-c/build/custom
 EOF
 }
 
 CONFIG_PATH=""
 DEFAULT_CONFIG_PRIMARY="xrobot.yaml"
 DEFAULT_CONFIG_FALLBACK="User/xrobot.yaml"
-BUILD_DIR="build/debug"
+DEFAULT_PRESET="debug"
+PRESET="${CMAKE_BUILD_PRESET:-${CMAKE_PRESET:-}}"
+BUILD_DIR=""
 SKIP_FORMAT=0
 
 while [[ $# -gt 0 ]]; do
@@ -44,6 +47,15 @@ while [[ $# -gt 0 ]]; do
         exit 2
       fi
       CONFIG_PATH="${2:-}"
+      shift 2
+      ;;
+    -p|--preset)
+      if [[ $# -lt 2 || -z "${2}" || "${2}" == -* ]]; then
+        echo "Error: $1 requires a preset name." >&2
+        usage >&2
+        exit 2
+      fi
+      PRESET="${2:-}"
       shift 2
       ;;
     -b|--build-dir)
@@ -71,10 +83,19 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ "${BUILD_DIR}" = /* ]]; then
-  BUILD_PATH="${BUILD_DIR}"
+if [[ -n "${BUILD_DIR}" ]]; then
+  if [[ "${BUILD_DIR}" = /* ]]; then
+    BUILD_PATH="${BUILD_DIR}"
+  else
+    BUILD_PATH="${REPO_ROOT}/${BUILD_DIR}"
+  fi
+  BUILD_TARGET_DESC="directory: ${BUILD_PATH}"
 else
-  BUILD_PATH="${REPO_ROOT}/${BUILD_DIR}"
+  if [[ -z "${PRESET}" ]]; then
+    PRESET="${DEFAULT_PRESET}"
+  fi
+  BUILD_PATH="${REPO_ROOT}/build/${PRESET}"
+  BUILD_TARGET_DESC="preset: ${PRESET} (dir: ${BUILD_PATH})"
 fi
 
 if [[ -z "${CONFIG_PATH}" ]]; then
@@ -112,7 +133,7 @@ fi
 echo "[2/3] Generating xrobot header from ${CONFIG_PATH}..."
 xrobot_gen_main --config "${CONFIG_PATH}"
 
-echo "[3/3] Building with cube-cmake..."
+echo "[3/3] Building with cube-cmake (${BUILD_TARGET_DESC})..."
 cube-cmake --build "${BUILD_PATH}"
 
 echo "Done."
