@@ -7,7 +7,7 @@ modules:
   - xrobot-org/SharedTopic
   - xrobot-org/SharedTopicClient
   - qdu-future/BMI088@master
-  - qdu-future/CMD@master
+  - qdu-future/CMD@dev
   - qdu-future/DR16@dev
   - qdu-future/RMMotor@dev
   - qdu-future/DMMotor@dev
@@ -18,7 +18,7 @@ modules:
   - qdu-future/HostData@dev
   # - qdu-future/AtomImuCan
   # - qdu-future/LegVmc
-  - qdu-future/Matrix@dev
+  - qdu-future/Matrix@master
   - qdu-future/PowerControl@dev
   - qdu-future/SuperPower@dev
   - qdu-future/Motor@dev
