@@ -11,9 +11,9 @@
 - Initialize dependencies: `git submodule update --init --recursive`
 - Install tooling: `pip install libxr xrobot`
 - Generate xrobot sources: `xr_cubemx_cfg -d ./ --xrobot && xrobot_setup`
-- One-command pipeline (format + generate + build): `tools/format_gen_build.sh -c User/xrobot.yaml -b /home/leo/Documents/bsp-dev-c/build/debug`
-- Compile-only validation (recommended for quick checks): `tools/format_gen_build.sh --skip-format -c User/xrobot.yaml -b /home/leo/Documents/bsp-dev-c/build/debug`
-- Script help: `tools/format_gen_build.sh -h`
+- One-command pipeline (format + generate + build): `tools/build.sh -c User/xrobot.yaml -b /home/leo/Documents/bsp-dev-c/build/debug`
+- Compile-only validation (recommended for quick checks): `tools/build.sh --skip-format -c User/xrobot.yaml -b /home/leo/Documents/bsp-dev-c/build/debug`
+- Script help: `tools/build.sh -h`
 - Format check/apply: `tools/format_code.sh --check` / `tools/format_code.sh`
 - The build script requires `xrobot_gen_main` and `cube-cmake` in `PATH`.
 
@@ -28,6 +28,11 @@
 - Classes/structs/enums: `CamelCase`.
 - Class methods: `CamelCase`; free functions: `lower_case`.
 - Constants, enum constants, and macros: `UPPER_CASE` (for example `MOTOR_TX_TIMEOUT_MS`).
+- Hard constraint: all `const` and `constexpr` constants must use `UPPER_CASE` at any scope (local, class static, namespace, and file scope).
+
+## Agent Naming Enforcement
+- For naming audits, identifier refactors, and style-conformance fixes in C/C++ or YAML, invoke `$bsp-dev-c-naming` by default.
+- Treat this as mandatory unless the user explicitly requests a compatibility-preserving exception.
 
 ## Testing Guidelines
 - There is no standalone unit-test target in this repo; validation is build-based.
