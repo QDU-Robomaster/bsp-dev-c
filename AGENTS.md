@@ -1,45 +1,132 @@
-# Repository Guidelines
+# PROJECT KNOWLEDGE BASE
 
-## Project Structure & Module Organization
-- `Core/` contains STM32CubeMX-generated startup and HAL integration code (`Inc/`, `Src/`).
-- `Drivers/` and `Middlewares/` hold vendor code (STM32 HAL, CMSIS, FreeRTOS, LibXR dependencies); treat as external unless intentionally upgrading.
-- `Modules/` contains functional robot modules (for example `Chassis`, `Gimbal`, `DR16`), mostly as submodule-backed components.
-- `User/` is the application layer: `app_main.cpp`, `xrobot.yaml`, and robot presets in `User/RobotConfig/*.yaml`.
-- `cmake/` stores toolchain and project CMake includes; `tools/` stores developer scripts. Build artifacts belong in `build/` and must stay uncommitted.
+**Generated:** 2026-03-05
+**Commit:** f8aa31b
+**Branch:** dev
 
-## Build, Test, and Development Commands
-- Initialize dependencies: `git submodule update --init --recursive`
-- Install tooling: `pip install libxr xrobot`
-- Generate xrobot sources: `xr_cubemx_cfg -d ./ --xrobot && xrobot_setup`
-- One-command pipeline (format + generate + build): `tools/build.sh -c User/xrobot.yaml -b /home/leo/Documents/bsp-dev-c/build/debug`
-- Compile-only validation (recommended for quick checks): `tools/build.sh --skip-format -c User/xrobot.yaml -b /home/leo/Documents/bsp-dev-c/build/debug`
-- Script help: `tools/build.sh -h`
-- Format check/apply: `tools/format_code.sh --check` / `tools/format_code.sh`
-- The build script requires `xrobot_gen_main` and `cube-cmake` in `PATH`.
+## OVERVIEW
 
-## Coding Style & Naming Conventions
-- C/C++ formatting follows `.clang-format` (`BasedOnStyle: Google`, `IncludeBlocks: Regroup`).
-- Use `clang-format` `21.1.8` (enforced by `tools/format_code.sh`).
-- Prefer 4-space indentation and include ordering produced by formatter; do not hand-tune formatting after running it.
-- Module/class file names are PascalCase (for example `Modules/Chassis/Chassis.hpp`); robot YAML names are snake_case (for example `helm_infantry.yaml`).
-- Naming rules follow `.clangd` (`readability-identifier-naming`):
-- Variables/global variables: `lower_case`.
-- Class/private/protected members: `lower_case` with trailing `_` (for example `target_speed_`).
-- Classes/structs/enums: `CamelCase`.
-- Class methods: `CamelCase`; free functions: `lower_case`.
-- Constants, enum constants, and macros: `UPPER_CASE` (for example `MOTOR_TX_TIMEOUT_MS`).
-- Hard constraint: all `const` and `constexpr` constants must use `UPPER_CASE` at any scope (local, class static, namespace, and file scope).
+STM32F407-based RoboMaster robot BSP using LibXR framework and xrobot YAML-driven module system.
+Targets: sentry, hero, infantry (omni/helm), aerial, dart, radar, wheel-leg platforms.
 
-## Agent Naming Enforcement
+## STRUCTURE
+
+```
+bsp-dev-c/
+├── Core/           # CubeMX-generated HAL init (DO NOT edit outside USER CODE regions)
+├── Drivers/        # Vendor: STM32 HAL + CMSIS (read-only)
+├── Middlewares/     # Vendor: FreeRTOS, LibXR submodule (read-only, has own AGENTS.md)
+├── Modules/        # Robot modules: Chassis, Gimbal, Motor, etc. (see Modules/AGENTS.md)
+├── User/           # Application layer: hardware mapping + robot configs (see User/AGENTS.md)
+├── cmake/          # Toolchain (starm-clang, gcc-arm) + CubeMX CMake integration
+├── tools/          # build.sh, format_code.sh, ozone launcher
+├── DevC.ioc        # CubeMX project (STM32F407IGHx)
+└── STM32F407XX_FLASH.ld  # Linker script
+```
+
+## WHERE TO LOOK
+
+| Task | Location | Notes |
+|------|----------|-------|
+| Add/modify robot behavior | `User/RobotConfig/*.yaml` | YAML-driven module composition |
+| Map new hardware peripheral | `User/app_main.cpp` | Register into `HardwareContainer` |
+| Add new robot module | `Modules/<Name>/` | Must follow xrobot module pattern |
+| Modify boot/peripheral init | `Core/Src/main.c` | Only inside `USER CODE BEGIN/END` blocks |
+| Change build pipeline | `tools/build.sh` | format -> generate -> compile |
+| Adjust cross-compilation | `cmake/starm-clang.cmake` | Toolchain flags |
+| LibXR framework integration | `cmake/LibXR.CMake` | Sets C++17, FreeRTOS, `st` driver |
+| Flash memory layout | `User/flash_map.hpp` | Auto-generated sector table |
+
+## CONVENTIONS
+
+### Naming (enforced by `.clangd` + Clang-Tidy)
+- Variables / globals: `lower_case`
+- Class/private/protected members: `lower_case_` (trailing underscore)
+- Classes / structs / enums: `CamelCase`
+- Class methods: `CamelCase`; free functions: `lower_case`
+- **All `const`/`constexpr` constants: `UPPER_CASE`** (hard constraint, any scope)
+- Enum constants / macros: `UPPER_CASE`
+- File names: `PascalCase.hpp` for modules; `snake_case.yaml` for robot configs
+
+### Formatting
+- `.clang-format`: Google style, `IncludeBlocks: Regroup`
+- **clang-format 21.1.8** required (enforced by `tools/format_code.sh`)
+- Formatting scope: `Modules/` only (not Core/, Drivers/, Middlewares/)
+- Install: `python3 -m venv .venv-clang-format && .venv-clang-format/bin/pip install "clang-format==21.1.8"`
+
+### Build
+- C11 + C++17, `-Werror` globally
+- Debug: app code `-Og`, libraries `-O2`
+- Target: Cortex-M4 FPv4-SP, `-fno-rtti -fno-exceptions`
+- Linker enables `_printf_float`
+
+### Agent Naming Enforcement
 - For naming audits, identifier refactors, and style-conformance fixes in C/C++ or YAML, invoke `$bsp-dev-c-naming` by default.
-- Treat this as mandatory unless the user explicitly requests a compatibility-preserving exception.
+- Mandatory unless user explicitly requests a compatibility-preserving exception.
 
-## Testing Guidelines
-- There is no standalone unit-test target in this repo; validation is build-based.
-- Minimum check before PR: one clean debug build plus affected robot config builds via `xrobot_gen_main`.
-- CI (`.github/workflows/xrobot_stm32.yml`) compiles multiple robot configs; local results should match CI steps.
+## ANTI-PATTERNS (THIS PROJECT)
 
-## Commit & Pull Request Guidelines
-- Follow existing history style: short, imperative commit subjects (Chinese or English), optionally with issue refs (for example `Fixes #14`).
-- Keep commits focused to one logical change; avoid mixing generated files with functional edits.
-- PRs should include scope, touched modules/configs, commands executed, and linked issues. Add logs/screenshots when behavior changes depend on hardware validation.
+- **DO NOT** edit `Core/Src/*.c` outside `/* USER CODE BEGIN */` / `/* USER CODE END */` blocks
+- **DO NOT** modify anything in `Drivers/` or `Middlewares/` (treat as read-only vendor code)
+- **DO NOT** use Legacy HAL APIs from `Drivers/STM32F4xx_HAL_Driver/Inc/Legacy/`
+- **DO NOT** override weak HAL callbacks in vendor files; implement overrides in `User/` or `Core/Src/stm32f4xx_hal_msp.c`
+- **DO NOT** hand-tune include ordering after running clang-format
+- **DO NOT** add `#pragma` diagnostic suppression in application code
+- **DO NOT** commit `build/` artifacts
+- **NEVER** mix generated-file edits with functional changes in a single commit
+
+## COMMANDS
+
+```bash
+# Setup
+git submodule update --init --recursive
+pip install libxr xrobot
+
+# Full pipeline (format + generate + build)
+tools/build.sh -c User/xrobot.yaml -b build/debug
+
+# Compile-only (skip formatting, faster)
+tools/build.sh --skip-format -c User/xrobot.yaml -b build/debug
+
+# Build specific robot config
+tools/build.sh -c User/RobotConfig/sentry.yaml -b build/debug
+
+# Format check (CI mode)
+tools/format_code.sh --check
+
+# Format apply
+tools/format_code.sh
+
+# Generate xrobot code only
+xr_cubemx_cfg -d ./ --xrobot && xrobot_setup
+```
+
+## CI
+
+- Workflow: `.github/workflows/xrobot_stm32.yml`
+- Triggers: push/PR to `main`/`master`
+- Container: `ghcr.io/xrobot-org/docker-image-stm32:main`
+- Builds 6 robot configs: aerial, dart, helm_infantry, omni_infantry, radar, wheel_leg
+- Gate: all configs must compile clean with `-Werror`
+
+## EXECUTION FLOW
+
+```
+startup_stm32f407xx.s (Reset_Handler)
+  -> Core/Src/main.c: HAL_Init() -> SystemClock_Config() -> MX_*_Init()
+    -> osKernelStart() -> StartDefaultTask()
+      -> User/app_main.cpp: app_main()
+        -> Platform init, hardware objects, HardwareContainer
+          -> User/xrobot_main.hpp: XRobotMain(peripherals)
+            -> Module instantiation from YAML config
+            -> appmgr.MonitorAll() loop
+```
+
+## NOTES
+
+- `xrobot_gen_main` and `cube-cmake` must be in `PATH` for build
+- `GCC_TOOLCHAIN_ROOT` and `CLANG_GCC_CMSIS_COMPILER` env vars needed for local builds
+- LibXR memory model: allocate at init, never free (intentional)
+- Only one git submodule: `Middlewares/Third_Party/LibXR`
+- Modules are fetched via `xrobot_init_mod` from remote registries (see `Modules/sources.yaml`)
+- Commit style: short imperative subjects (Chinese or English OK), one logical change per commit
