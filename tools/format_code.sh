@@ -43,8 +43,14 @@ CLANG_FORMAT_BIN="${CLANG_FORMAT_BIN:-}"
 if [[ -z "${CLANG_FORMAT_BIN}" ]]; then
   if [[ -x "${REPO_ROOT}/.venv-clang-format/bin/clang-format" ]]; then
     CLANG_FORMAT_BIN="${REPO_ROOT}/.venv-clang-format/bin/clang-format"
+  elif [[ -x "${REPO_ROOT}/.venv-clang-format/Scripts/clang-format.exe" ]]; then
+    CLANG_FORMAT_BIN="${REPO_ROOT}/.venv-clang-format/Scripts/clang-format.exe"
   elif [[ -x "${REPO_ROOT}/../.venv-clang-format/bin/clang-format" ]]; then
     CLANG_FORMAT_BIN="${REPO_ROOT}/../.venv-clang-format/bin/clang-format"
+  elif [[ -x "${REPO_ROOT}/../.venv-clang-format/Scripts/clang-format.exe" ]]; then
+    CLANG_FORMAT_BIN="${REPO_ROOT}/../.venv-clang-format/Scripts/clang-format.exe"
+  elif command -v clang-format.exe >/dev/null 2>&1; then
+    CLANG_FORMAT_BIN="$(command -v clang-format.exe)"
   elif command -v clang-format >/dev/null 2>&1; then
     CLANG_FORMAT_BIN="$(command -v clang-format)"
   else
@@ -71,6 +77,11 @@ Install the required version into a local venv:
   python3 -m venv .venv-clang-format
   .venv-clang-format/bin/python -m pip install --upgrade pip
   .venv-clang-format/bin/python -m pip install "clang-format==${REQUIRED_VERSION}"
+
+Windows PowerShell / Git Bash can use:
+  py -m venv .venv-clang-format
+  .venv-clang-format/Scripts/python -m pip install --upgrade pip
+  .venv-clang-format/Scripts/python -m pip install "clang-format==${REQUIRED_VERSION}"
 EOF
   exit 1
 fi

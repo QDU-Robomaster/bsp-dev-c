@@ -5,6 +5,12 @@ modules:
   name: BlinkLED
   constructor_args:
     blink_cycle: 250
+- id: buzzer
+  name: BuzzerAlarm
+  constructor_args:
+    alarm_freq: 1500
+    alarm_duration: 300
+    alarm_delay: 300
 - id: cmd
   name: CMD
   constructor_args:
@@ -16,12 +22,12 @@ modules:
   name: DR16
   constructor_args:
     CMD: '@cmd'
-    task_stack_depth_uart: 2048
-- id: bmi088
+    task_stack_depth_uart: 1024
+- id: BMI088_0
   name: BMI088
   constructor_args:
-    gyro_freq: BMI088::GyroFreq::GYRO_2000HZ_BW532HZ
-    accl_freq: BMI088::AcclFreq::ACCL_1600HZ
+    gyro_freq: BMI088::GyroFreq::GYRO_1000HZ_BW116HZ
+    accl_freq: BMI088::AcclFreq::ACCL_400HZ
     gyro_range: BMI088::GyroRange::DEG_2000DPS
     accl_range: BMI088::AcclRange::ACCL_24G
     rotation:
@@ -41,44 +47,26 @@ modules:
     accl_topic_name: bmi088_accl
     target_temperature: 45
     task_stack_depth: 2048
-    camera_sync_pin_name: CAMERA
-    camera_sync_div: 10
 - id: ahrs
   name: MadgwickAHRS
   constructor_args:
     beta: 0.05
-    gyro_topic_name: imu_gyro
-    accl_topic_name: imu_accl
+    gyro_topic_name: bmi088_gyro
+    accl_topic_name: bmi088_accl
     quaternion_topic_name: ahrs_quaternion
     euler_topic_name: ahrs_euler
     task_stack_depth: 2048
-- id: hostdata
-  name: HostData
-  constructor_args:
-    cmd: '@cmd'
-    host_euler_topic_name: target_eulr
-    host_chassis_data_topic_name: host_chassis_data
-    host_fire_topic_name: host_fire_notify
-- id: sharetopic
-  name: SharedTopic
-  constructor_args:
-    uart_name: usb_otg_hs_cdc
-    task_stack_depth: 2048
-    buffer_size: 256
-    topic_configs:
-    - target_euler
-    - chassis_data
-    - fire_notify
 - id: super_power
   name: SuperPower
   constructor_args:
     can_bus_name: can2
-    task_stack_depth: 2048
+    task_stack_depth: 1024
 - id: power_control
   name: PowerControl
   constructor_args:
     superpower: '@&super_power'
-    is_helm: 'false'
+    is_helm: ture
+    chassis_static_power_loss: 0.5
 - id: motor_yaw
   name: RMMotor
   constructor_args:
@@ -86,7 +74,7 @@ modules:
       model: RMMotor::Model::MOTOR_GM6020
       reverse: true
       feedback_id: 522
-      can_bus_name: can1
+      can_bus_name: can2
 - id: motor_pit
   name: RMMotor
   constructor_args:
@@ -94,123 +82,117 @@ modules:
       model: RMMotor::Model::MOTOR_GM6020
       reverse: false
       feedback_id: 521
-      can_bus_name: can2
+      can_bus_name: can1
 - id: gimbal
   name: Gimbal
   constructor_args:
     cmd: '@cmd'
-    task_stack_depth: 4096
-    pid_yaw_angle_param:
+    task_stack_depth: 2048
+    pid_yaw_angle:
       k: 1.0
-      p: 0.5
+      p: 14.0
       i: 0.0
       d: 0.0
       i_limit: 0.0
       out_limit: 50.0
       cycle: true
-    pid_pitch_angle_param:
+    pid_yaw_omega:
       k: 1.0
-      p: 0.5
+      p: 2.4
       i: 0.0
       d: 0.0
       i_limit: 0.0
-      out_limit: 50.0
-      cycle: true
-    pid_yaw_omega_param:
-      k: 1.0
-      p: 0.5
-      i: 0.0
-      d: 0.0
-      i_limit: 0.0
-      out_limit: 3.0
+      out_limit: 0.0
       cycle: false
-    pid_pitch_omega_param:
+    pid_pit_angle:
+      k: 1.0
+      p: 15.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0
+      cycle: true
+    pid_pit_omega:
       k: 1.0
       p: 0.5
       i: 0.0
       d: 0.0
       i_limit: 0.0
-      out_limit: 3.0
+      out_limit: 0
       cycle: false
     motor_pitch: '@&motor_pit'
     motor_yaw: '@&motor_yaw'
-    limit:
-      max_pitch_angle_: 0.0
-      min_pitch_angle_: 0.0
-      max_yaw_angle_: 0.0
-      min_yaw_angle_: 0.0
-      reverse_pitch_limit_: false
-      reverse_yaw_limit_: false
-      J_pitch_: 0.0
-      J_yaw_: 0.0
-    zero_point: 0.0
-    gimbal_cmd_topic_name: gimbal_cmd
-    accl_topic_name: bmi088_accl
-    euler_topic_name: ahrs_euler
+    pit_max_angle: 4.50
+    pit_min_angle: 3.75
+    j_pit: 0.001
+    j_yaw: 0.02
+    pit_zero: 4.16
+    yaw_zero: 1.21261156
+    pit_reverse_flag: true
 - id: motor_wheel_0
   name: RMMotor
   constructor_args:
     param:
       model: RMMotor::Model::MOTOR_M3508
       reverse: false
-      feedback_id: 513
-      can_bus_name: can2
+      feedback_id: 0x204
+      can_bus_name: can1
 - id: motor_wheel_1
   name: RMMotor
   constructor_args:
     param:
       model: RMMotor::Model::MOTOR_M3508
       reverse: false
-      feedback_id: 514
-      can_bus_name: can2
+      feedback_id: 0x203
+      can_bus_name: can1
 - id: motor_wheel_2
   name: RMMotor
   constructor_args:
     param:
       model: RMMotor::Model::MOTOR_M3508
       reverse: false
-      feedback_id: 515
-      can_bus_name: can2
+      feedback_id: 0x202
+      can_bus_name: can1
 - id: motor_wheel_3
   name: RMMotor
   constructor_args:
     param:
       model: RMMotor::Model::MOTOR_M3508
       reverse: false
-      feedback_id: 516
-      can_bus_name: can2
+      feedback_id: 0x201
+      can_bus_name: can1
 - id: motor_steer_0
   name: RMMotor
   constructor_args:
     param:
       model: RMMotor::Model::MOTOR_GM6020
       reverse: false
-      feedback_id: 517
-      can_bus_name: can1
+      feedback_id: 0x208
+      can_bus_name: can2
 - id: motor_steer_1
   name: RMMotor
   constructor_args:
     param:
       model: RMMotor::Model::MOTOR_GM6020
       reverse: false
-      feedback_id: 518
-      can_bus_name: can1
+      feedback_id: 0x207
+      can_bus_name: can2
 - id: motor_steer_2
   name: RMMotor
   constructor_args:
     param:
       model: RMMotor::Model::MOTOR_GM6020
       reverse: false
-      feedback_id: 519
-      can_bus_name: can1
+      feedback_id: 0x206
+      can_bus_name: can2
 - id: motor_steer_3
   name: RMMotor
   constructor_args:
     param:
       model: RMMotor::Model::MOTOR_GM6020
       reverse: false
-      feedback_id: 520
-      can_bus_name: can1
+      feedback_id: 0x205
+      can_bus_name: can2
 - id: helm_chassis
   name: Chassis
   constructor_args:
@@ -298,7 +280,7 @@ modules:
       cycle: false
     pid_steer_angle_0_:
       k: 1.0
-      p: 50.0
+      p: 10.0
       i: 1.5
       d: 0.0
       i_limit: 0.0
@@ -306,7 +288,7 @@ modules:
       cycle: true
     pid_steer_angle_1_:
       k: 1.0
-      p: 50.0
+      p: 10.0
       i: 1.5
       d: 0.0
       i_limit: 0.0
@@ -314,7 +296,7 @@ modules:
       cycle: true
     pid_steer_angle_2_:
       k: 1.0
-      p: 50.0
+      p: 10.0
       i: 1.5
       d: 0.0
       i_limit: 0.0
@@ -322,7 +304,7 @@ modules:
       cycle: true
     pid_steer_angle_3_:
       k: 1.0
-      p: 50.0
+      p: 10.0
       i: 1.5
       d: 0.0
       i_limit: 0.0
@@ -330,7 +312,7 @@ modules:
       cycle: true
     pid_steer_speed_0_:
       k: 1.0
-      p: 0.03
+      p: 0.08
       i: 0.03
       d: 0.0
       i_limit: 0.0
@@ -338,24 +320,24 @@ modules:
       cycle: false
     pid_steer_speed_1_:
       k: 1.0
-      p: 0.025
-      i: 0.04
+      p: 0.08
+      i: 0.03
       d: 0.0
       i_limit: 0.0
       out_limit: 0.0
       cycle: false
     pid_steer_speed_2_:
       k: 1.0
-      p: 0.025
-      i: 0.04
+      p: 0.08
+      i: 0.03
       d: 0.0
       i_limit: 0.0
       out_limit: 0.0
       cycle: false
     pid_steer_speed_3_:
       k: 1.0
-      p: 0.025
-      i: 0.04
+      p: 0.08
+      i: 0.03
       d: 0.0
       i_limit: 0.0
       out_limit: 0.0
@@ -368,7 +350,7 @@ modules:
     param:
       model: RMMotor::Model::MOTOR_M2006
       reverse: false
-      feedback_id: 513
+      feedback_id: 0x205
       can_bus_name: can1
 - id: motor_fric_0
   name: RMMotor
@@ -376,7 +358,7 @@ modules:
     param:
       model: RMMotor::Model::MOTOR_M3508
       reverse: true
-      feedback_id: 520
+      feedback_id: 0x201
       can_bus_name: can2
 - id: motor_fric_1
   name: RMMotor
@@ -384,7 +366,7 @@ modules:
     param:
       model: RMMotor::Model::MOTOR_M3508
       reverse: false
-      feedback_id: 519
+      feedback_id: 0x203
       can_bus_name: can2
 - id: launcher
   name: Launcher
@@ -444,24 +426,14 @@ modules:
       out_limit: 1.0
       cycle: false
     launcher_param:
-      fric1_setpoint_speed: 4950.0
-      fric2_setpoint_speed: 3820.0
-      trig_gear_ratio: 19.2032
-      num_trig_tooth: 6
-      trig_freq_: 0.0
+      fric1_setpoint_speed: 5000.0
+      fric2_setpoint_speed: 0.0
+      trig_gear_ratio: 36.0
+      num_trig_tooth: 10
+      trig_freq_: 30.0
     cmd: '@&cmd'
   template_args:
     LauncherType: InfantryLauncher
-- id: client_topic
-  name: SharedTopicClient
-  constructor_args:
-    uart_name: usb_otg_hs_cdc
-    task_stack_depth: 2048
-    buffer_size: 256
-    topic_configs:
-    - ahrs_quaternion
-    - - topic2
-      - libxr_def_domain
 - id: event_binder
   name: EventBinder
   constructor_args:
@@ -479,41 +451,83 @@ modules:
     event_binding_groups:
     - bindings:
       - source_module: dr16
-        source_event: DR16::SwitchPos::DR16_SW_R_POS_MID
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_TOP
         target_module: cmd
         target_event: CMD::Mode::CMD_OP_CTRL
       - source_module: dr16
         source_event: DR16::SwitchPos::DR16_SW_R_POS_BOT
         target_module: cmd
-        target_event: CMD::Mode::CMD_AUTO_CTRL
-    - bindings:
+        target_event: CMD::Mode::CMD_OP_CTRL
       - source_module: dr16
         source_event: DR16::SwitchPos::DR16_SW_L_POS_TOP
-        target_module: chassis
-        target_event: ChassisEvent::SET_MODE_RELAX
-      - source_module: dr16
-        source_event: DR16::SwitchPos::DR16_SW_L_POS_MID
-        target_module: chassis
-        target_event: ChassisEvent::SET_MODE_FOLLOW
-    - bindings:
-      - source_module: dr16
-        source_event: DR16::SwitchPos::DR16_SW_L_POS_TOP
-        target_module: gimbal
-        target_event: Gimbal<RMMotor, RMMotor>::GimbalEvent::SET_MODE_RELAX
-      - source_module: dr16
-        source_event: DR16::SwitchPos::DR16_SW_L_POS_MID
-        target_module: gimbal
-        target_event: Gimbal<RMMotor, RMMotor>::GimbalEvent::SET_MODE_INDEPENDENT
-    - bindings:
-      - source_module: dr16
-        source_event: DR16::SwitchPos::DR16_SW_L_POS_TOP
-        target_module: launcher
-        target_event: LauncherEvent::SET_MODE_RELAX
-      - source_module: dr16
-        source_event: DR16::SwitchPos::DR16_SW_L_POS_MID
-        target_module: launcher
-        target_event: LauncherEvent::SET_MODE_SAFE
+        target_module: cmd
+        target_event: CMD::Mode::CMD_OP_CTRL
       - source_module: dr16
         source_event: DR16::SwitchPos::DR16_SW_L_POS_BOT
+        target_module: cmd
+        target_event: CMD::Mode::CMD_OP_CTRL
+    - bindings:
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_TOP
+        target_module: chassis
+        target_event: Helm::ChassisMode::RELAX
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_MID
+        target_module: chassis
+        target_event: Helm::ChassisMode::RELAX
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_BOT
+        target_module: chassis
+        target_event: Helm::ChassisMode::FOLLOW
+    - bindings:
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_TOP
+        target_module: gimbal
+        target_event: GimbalEvent::SET_MODE_RELAX
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_MID
+        target_module: gimbal
+        target_event: GimbalEvent::SET_MODE_COMMON
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_BOT
+        target_module: gimbal
+        target_event: GimbalEvent::SET_MODE_COMMON
+    - bindings:
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_TOP
         target_module: launcher
-        target_event: LauncherEvent::SET_MODE_READY
+        target_event: InfantryLauncher::LauncherEvent::SET_FRICMODE_RELAX
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_MID
+        target_module: launcher
+        target_event: InfantryLauncher::LauncherEvent::SET_FRICMODE_RELAX
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_BOT
+        target_module: launcher
+        target_event: InfantryLauncher::LauncherEvent::SET_FRICMODE_RELAX
+- id: hostdata
+  name: HostData
+  constructor_args:
+    cmd: '@cmd'
+    host_euler_topic_name: target_euler
+    host_chassis_data_topic_name: chassis_data
+    host_fire_topic_name: fire_notify
+- id: sharetopic
+  name: SharedTopic
+  constructor_args:
+    uart_name: usb_otg_hs_cdc
+    task_stack_depth: 2048
+    buffer_size: 256
+    topic_configs:
+    - target_euler
+    - chassis_data
+    - fire_notify
+- id: client_topic
+  name: SharedTopicClient
+  constructor_args:
+    uart_name: usb_otg_hs_cdc
+    task_stack_depth: 2048
+    buffer_size: 256
+    topic_configs:
+    - ahrs_quaternion
+    - yawmotor_angle
