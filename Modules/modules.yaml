@@ -23,3 +23,4 @@ modules:
   - qdu-future/SuperPower@dev
   - qdu-future/Motor@dev
   - qdu-future/DebugCore@master
+  - qdu-future/Referee@master
