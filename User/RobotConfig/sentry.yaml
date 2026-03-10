@@ -23,6 +23,15 @@ modules:
   constructor_args:
     CMD: '@cmd'
     task_stack_depth_uart: 1024
+- id: ref
+  name: Referee
+  constructor_args:
+    task_stack_depth_uart: 2048
+    uart: uart_referee
+    baudrate: 115200
+    referee_chassis_tp_name: chassis_ref
+    referee_launcher_tp_name: launcher_ref
+    referee_sentry_tp_name: sentry_ref
 - id: BMI088_0
   name: BMI088
   constructor_args:
@@ -122,7 +131,7 @@ modules:
       cycle: false
     motor_pitch: '@&motor_pit'
     motor_yaw: '@&motor_yaw'
-    pit_max_angle: 4.50
+    pit_max_angle: 4.5
     pit_min_angle: 3.85
     j_pit: 0.001
     j_yaw: 0.03
@@ -135,7 +144,7 @@ modules:
     param:
       model: RMMotor::Model::MOTOR_M3508
       reverse: false
-      feedback_id: 0x204
+      feedback_id: 516
       can_bus_name: can1
 - id: motor_wheel_1
   name: RMMotor
@@ -143,7 +152,7 @@ modules:
     param:
       model: RMMotor::Model::MOTOR_M3508
       reverse: false
-      feedback_id: 0x203
+      feedback_id: 515
       can_bus_name: can1
 - id: motor_wheel_2
   name: RMMotor
@@ -151,7 +160,7 @@ modules:
     param:
       model: RMMotor::Model::MOTOR_M3508
       reverse: false
-      feedback_id: 0x202
+      feedback_id: 514
       can_bus_name: can1
 - id: motor_wheel_3
   name: RMMotor
@@ -159,7 +168,7 @@ modules:
     param:
       model: RMMotor::Model::MOTOR_M3508
       reverse: false
-      feedback_id: 0x201
+      feedback_id: 513
       can_bus_name: can1
 - id: motor_steer_0
   name: RMMotor
@@ -167,7 +176,7 @@ modules:
     param:
       model: RMMotor::Model::MOTOR_GM6020
       reverse: false
-      feedback_id: 0x208
+      feedback_id: 520
       can_bus_name: can2
 - id: motor_steer_1
   name: RMMotor
@@ -175,7 +184,7 @@ modules:
     param:
       model: RMMotor::Model::MOTOR_GM6020
       reverse: false
-      feedback_id: 0x207
+      feedback_id: 519
       can_bus_name: can2
 - id: motor_steer_2
   name: RMMotor
@@ -183,7 +192,7 @@ modules:
     param:
       model: RMMotor::Model::MOTOR_GM6020
       reverse: false
-      feedback_id: 0x206
+      feedback_id: 518
       can_bus_name: can2
 - id: motor_steer_3
   name: RMMotor
@@ -191,7 +200,7 @@ modules:
     param:
       model: RMMotor::Model::MOTOR_GM6020
       reverse: false
-      feedback_id: 0x205
+      feedback_id: 517
       can_bus_name: can2
 - id: helm_chassis
   name: Chassis
@@ -350,7 +359,7 @@ modules:
     param:
       model: RMMotor::Model::MOTOR_M2006
       reverse: false
-      feedback_id: 0x205
+      feedback_id: 517
       can_bus_name: can1
 - id: motor_fric_0
   name: RMMotor
@@ -358,7 +367,7 @@ modules:
     param:
       model: RMMotor::Model::MOTOR_M3508
       reverse: true
-      feedback_id: 0x201
+      feedback_id: 513
       can_bus_name: can2
 - id: motor_fric_1
   name: RMMotor
@@ -366,7 +375,7 @@ modules:
     param:
       model: RMMotor::Model::MOTOR_M3508
       reverse: false
-      feedback_id: 0x203
+      feedback_id: 515
       can_bus_name: can2
 - id: launcher
   name: Launcher
@@ -535,3 +544,4 @@ modules:
     topic_configs:
     - ahrs_quaternion
     - yawmotor_angle
+    - sentry_ref

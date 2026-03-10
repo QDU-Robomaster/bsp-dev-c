@@ -74,7 +74,9 @@ extern "C" void app_main(void) {
   // clang-format on
   // NOLINTEND
   /* User Code Begin 2 */
-
+  auto topic_bootstrap = LibXR::Topic::CreateTopic<uint8_t>(
+      "__libxr_bootstrap", nullptr, false, false, true);
+  UNUSED(topic_bootstrap);
   /* User Code End 2 */
   // clang-format off
   // NOLINTBEGIN
@@ -179,7 +181,7 @@ extern "C" void app_main(void) {
   Terminal<32, 32, 5, 5> terminal(ramfs);
   LibXR::Thread term_thread;
   term_thread.Create(&terminal, terminal.ThreadFun, "terminal", 2048,
-                     static_cast<LibXR::Thread::Priority>(3));
+                     LibXR::Thread::Priority::MEDIUM);
 
 
   LibXR::HardwareContainer peripherals{
