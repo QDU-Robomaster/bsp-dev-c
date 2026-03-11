@@ -11,32 +11,11 @@ modules:
     alarm_freq: 1500
     alarm_duration: 300
     alarm_delay: 300
-- id: cmd
-  name: CMD
-  constructor_args:
-    mode: CMD::Mode::CMD_OP_CTRL
-    chassis_cmd_topic_name: chassis_cmd
-    gimbal_cmd_topic_name: gimbal_cmd
-    launcher_cmd_topic_name: launcher_cmd
-- id: dr16
-  name: DR16
-  constructor_args:
-    CMD: '@cmd'
-    task_stack_depth_uart: 1024
-- id: ref
-  name: Referee
-  constructor_args:
-    task_stack_depth_uart: 2048
-    uart: uart_referee
-    baudrate: 115200
-    referee_chassis_tp_name: chassis_ref
-    referee_launcher_tp_name: launcher_ref
-    referee_sentry_tp_name: sentry_ref
 - id: BMI088_0
   name: BMI088
   constructor_args:
-    gyro_freq: BMI088::GyroFreq::GYRO_1000HZ_BW116HZ
-    accl_freq: BMI088::AcclFreq::ACCL_400HZ
+    gyro_freq: BMI088::GyroFreq::GYRO_400HZ_BW46HZ
+    accl_freq: BMI088::AcclFreq::ACCL_200HZ
     gyro_range: BMI088::GyroRange::DEG_2000DPS
     accl_range: BMI088::AcclRange::ACCL_24G
     rotation:
@@ -65,16 +44,40 @@ modules:
     quaternion_topic_name: ahrs_quaternion
     euler_topic_name: ahrs_euler
     task_stack_depth: 2048
+- id: ref
+  name: Referee
+  constructor_args:
+    task_stack_depth_uart: 1536
+    uart: uart_referee
+    baudrate: 115200
+    referee_chassis_tp_name: chassis_ref
+    referee_launcher_tp_name: launcher_ref
+    referee_sentry_tp_name: sentry_ref
+    thread_priority_uart: LibXR::Thread::Priority::LOW
+- id: cmd
+  name: CMD
+  constructor_args:
+    mode: CMD::Mode::CMD_OP_CTRL
+    chassis_cmd_topic_name: chassis_cmd
+    gimbal_cmd_topic_name: gimbal_cmd
+    launcher_cmd_topic_name: launcher_cmd
+- id: dr16
+  name: DR16
+  constructor_args:
+    CMD: '@cmd'
+    task_stack_depth_uart: 1024
+    thread_priority_uart: LibXR::Thread::Priority::HIGH
 - id: super_power
   name: SuperPower
   constructor_args:
     can_bus_name: can2
     task_stack_depth: 1024
+    thread_priority: LibXR::Thread::Priority::HIGH
 - id: power_control
   name: PowerControl
   constructor_args:
     superpower: '@&super_power'
-    is_helm: ture
+    is_helm: true
     chassis_static_power_loss: 0.5
 - id: motor_yaw
   name: RMMotor
@@ -138,6 +141,7 @@ modules:
     pit_zero: 4.16
     yaw_zero: 1.21261156
     pit_reverse_flag: true
+    thread_priority: LibXR::Thread::Priority::HIGH
 - id: motor_wheel_0
   name: RMMotor
   constructor_args:
@@ -351,6 +355,7 @@ modules:
       i_limit: 0.0
       out_limit: 0.0
       cycle: false
+    thread_priority: LibXR::Thread::Priority::HIGH
   template_args:
     ChassisType: Helm
 - id: motor_trig
@@ -441,6 +446,7 @@ modules:
       num_trig_tooth: 10
       trig_freq_: 2.0
     cmd: '@&cmd'
+    thread_priority: LibXR::Thread::Priority::HIGH
   template_args:
     LauncherType: InfantryLauncher
 - id: event_binder
@@ -529,19 +535,21 @@ modules:
   name: SharedTopic
   constructor_args:
     uart_name: usb_otg_hs_cdc
-    task_stack_depth: 2048
+    task_stack_depth: 1024
     buffer_size: 256
     topic_configs:
     - target_euler
     - chassis_data
     - fire_notify
+    thread_priority: LibXR::Thread::Priority::HIGH
 - id: client_topic
   name: SharedTopicClient
   constructor_args:
     uart_name: usb_otg_hs_cdc
-    task_stack_depth: 2048
+    task_stack_depth: 1024
     buffer_size: 256
     topic_configs:
     - ahrs_quaternion
     - yawmotor_angle
     - sentry_ref
+    thread_priority: LibXR::Thread::Priority::HIGH
