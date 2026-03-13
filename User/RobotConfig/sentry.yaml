@@ -541,7 +541,6 @@ modules:
     - target_euler
     - chassis_data
     - fire_notify
-    thread_priority: LibXR::Thread::Priority::HIGH
 - id: client_topic
   name: SharedTopicClient
   constructor_args:
@@ -552,4 +551,3 @@ modules:
     - ahrs_quaternion
     - yawmotor_angle
     - sentry_ref
-    thread_priority: LibXR::Thread::Priority::HIGH
