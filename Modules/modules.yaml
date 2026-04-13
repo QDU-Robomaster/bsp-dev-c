@@ -3,7 +3,6 @@ modules:
   - xrobot-org/BlinkLED
   - xrobot-org/MadgwickAHRS
   - xrobot-org/BuzzerAlarm
-  # - xrobot-org/IST8310
   - xrobot-org/SharedTopic
   - xrobot-org/SharedTopicClient
   - qdu-future/BMI088
