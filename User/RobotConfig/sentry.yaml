@@ -82,12 +82,12 @@ modules:
     motor_count_3508: 4
     motor_count_6020: 4
 - id: motor_yaw
-  name: RMMotor
+  name: DMMotor
   constructor_args:
     param:
-      model: RMMotor::Model::MOTOR_GM6020
-      reverse: true
-      feedback_id: 522
+      model: DMMotor::Model::MOTOR_DM4310
+      reverse: false
+      can_id: 1
       can_bus_name: can2
 - id: motor_pit
   name: RMMotor
@@ -112,7 +112,7 @@ modules:
       cycle: true
     pid_yaw_omega:
       k: 1.0
-      p: 2.0
+      p: 1.50
       i: 0.0
       d: 0.0
       i_limit: 0.0
@@ -141,7 +141,7 @@ modules:
     j_pit: 0.001
     j_yaw: 0.03
     pit_zero: 0.0
-    yaw_zero: 2.55100989
+    yaw_zero: 2.80775189
     patrol_range: 5.0
     patrol_omega: 0.01
     pit_reverse_flag: true
@@ -223,7 +223,6 @@ modules:
     motor_steer_3: '@&motor_steer_3'
     cmd: '@&cmd'
     power_control: '@&power_control'
-    ref: '@&ref'
     task_stack_depth: 2048
     ChassisParam:
       wheel_radius: 0.063
@@ -232,8 +231,6 @@ modules:
       reductionratio: 15.7647
       wheel_resistance: 0.0
       error_compensation: 0.0
-      wheel_friction: 0.0
-      rotor_speed_scale: 0.0
     pid_follow:
       k: 1
       p: 1.5
@@ -429,7 +426,7 @@ modules:
       out_limit: 1.0
       cycle: false
     launcher_param:
-      fric1_setpoint_speed: 3000.0
+      fric1_setpoint_speed: 6000.0
       trig_gear_ratio: 36
       num_trig_tooth: 10
     cmd: '@&cmd'
@@ -457,11 +454,11 @@ modules:
       - source_module: dr16
         source_event: DR16::SwitchPos::DR16_SW_R_POS_MID
         target_module: cmd
-        target_event: CMD::Mode::CMD_OP_CTRL
+        target_event: CMD::Mode::CMD_AUTO_CTRL
       - source_module: dr16
         source_event: DR16::SwitchPos::DR16_SW_R_POS_BOT
         target_module: cmd
-        target_event: CMD::Mode::CMD_OP_CTRL
+        target_event: CMD::Mode::CMD_AUTO_CTRL
     - bindings:
       - source_module: dr16
         source_event: DR16::SwitchPos::DR16_SW_L_POS_TOP
@@ -470,11 +467,11 @@ modules:
       - source_module: dr16
         source_event: DR16::SwitchPos::DR16_SW_L_POS_MID
         target_module: chassis
-        target_event: Helm::ChassisMode::RELAX
+        target_event: Helm::ChassisMode::FOLLOW
       - source_module: dr16
         source_event: DR16::SwitchPos::DR16_SW_L_POS_BOT
         target_module: chassis
-        target_event: Helm::ChassisMode::RELAX
+        target_event: Helm::ChassisMode::ROTOR
     - bindings:
       - source_module: dr16
         source_event: DR16::SwitchPos::DR16_SW_R_POS_TOP
@@ -504,7 +501,7 @@ modules:
       - source_module: dr16
         source_event: DR16::SwitchPos::DR16_SW_R_POS_BOT
         target_module: launcher
-        target_event: InfantryLauncher::LauncherEvent::SET_FRICMODE_READY
+        target_event: InfantryLauncher::LauncherEvent::SET_FRICMODE_RELAX
 - id: hostdata
   name: HostData
   constructor_args:
