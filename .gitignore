@@ -10,3 +10,6 @@ build/**
 DevC.jdebug.user
 .config.json
 User/xrobot_main.hpp
+
+# Module source directories are maintained separately and should not be tracked
+Modules/*/
