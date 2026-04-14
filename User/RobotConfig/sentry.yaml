@@ -395,14 +395,14 @@ modules:
     motor_fric_front_left: '@&motor_fric_0'
     motor_fric_front_right: '@&motor_fric_1'
     motor_trig: '@&motor_trig'
-    task_stack_depth: 4096
+    task_stack_depth: 2048
     pid_trig_angle:
       k: 1.0
       p: 40.0
       i: 0.1
       d: 0.0
       i_limit: 0.0
-      out_limit: 4000.0
+      out_limit: 0.0
       cycle: false
     pid_trig_speed:
       k: 1.0
