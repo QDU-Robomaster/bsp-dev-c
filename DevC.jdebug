@@ -23,7 +23,7 @@ void OnProjectLoad (void) {
   // Dialog-generated settings
   //
   Project.SetDevice ("STM32F407IG");
-  Project.SetHostIF ("GDB_Server", "localhost:3333");
+  Project.SetHostIF ("USB", "");
   Project.SetTargetIF ("SWD");
   Project.SetTIFSpeed ("4 MHz");
   Project.AddPathSubstitute ("D:/Documents/XRobot/bsp-dev-c", "$(ProjectDir)");
