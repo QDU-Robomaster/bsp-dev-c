@@ -3,7 +3,6 @@ modules:
   - xrobot-org/BlinkLED
   - xrobot-org/MadgwickAHRS
   - xrobot-org/BuzzerAlarm
-  # - xrobot-org/IST8310
   - xrobot-org/SharedTopic
   - xrobot-org/SharedTopicClient
   - qdu-future/BMI088
@@ -13,14 +12,14 @@ modules:
   - qdu-future/DMMotor
   - qdu-future/Chassis
   - qdu-future/Gimbal
-  - qdu-future/Launcher
+  - qdu-future/InfantryLauncher
   - qdu-future/EventBinder
   - qdu-future/HostData
-  # - qdu-future/AtomImuCan
-  # - qdu-future/LegVmc
+  - qdu-future/LegVmc
   - qdu-future/Matrix
   - qdu-future/PowerControl
   - qdu-future/SuperPower
   - qdu-future/Motor
   - qdu-future/DebugCore
   - qdu-future/Referee
+  - qdu-future/VT13

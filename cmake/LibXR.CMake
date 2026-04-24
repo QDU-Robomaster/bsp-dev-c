@@ -1,4 +1,4 @@
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # LibXR
@@ -6,6 +6,9 @@ set(LIBXR_SYSTEM FreeRTOS)
 set(LIBXR_DRIVER st)
 set(XROBOT_MODULES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Modules)
 add_subdirectory(Middlewares/Third_Party/LibXR)
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_compile_options(xr PRIVATE -Wno-deprecated-volatile)
+endif()
 target_link_libraries(xr
     PUBLIC stm32cubemx
 )
