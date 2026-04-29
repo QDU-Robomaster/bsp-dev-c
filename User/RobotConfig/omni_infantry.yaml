@@ -376,6 +376,8 @@ modules:
   constructor_args:
     motor_fric_front_left: '@&motor_fric_front_left'
     motor_fric_front_right: '@&motor_fric_front_right'
+    motor_fric_back_left: '@nullptr'
+    motor_fric_back_right: '@nullptr'
     motor_trig: '@&motor_trig'
     task_stack_depth: 1536
     pid_trig_angle:
@@ -411,9 +413,10 @@ modules:
       out_limit: 0.6
       cycle: false
     launcher_param:
-      fric1_setpoint_speed: 6200.0
+      fric_setpoint_speed: 6200.0
       trig_gear_ratio: 36.0
       num_trig_tooth: 10
+      expect_trig_freq_: 18.0
     cmd: '@&cmd'
 - id: event_binder
   name: EventBinder
@@ -495,6 +498,18 @@ modules:
         source_event: DR16::SwitchPos::DR16_SW_R_POS_BOT
         target_module: launcher
         target_event: InfantryLauncher::LauncherEvent::SET_FRICMODE_READY
+      - source_module: dr16
+        source_event: DR16::Key::KEY_Z
+        target_module: launcher
+        target_event: InfantryLauncher::FireModeEvent::SET_FIREMODE_SINGLE
+      - source_module: dr16
+        source_event: DR16::Key::KEY_X
+        target_module: launcher
+        target_event: InfantryLauncher::FireModeEvent::SET_FIREMODE_CONTINUE
+      - source_module: dr16
+        source_event: DR16::Key::KEY_C
+        target_module: launcher
+        target_event: InfantryLauncher::FireModeEvent::SET_FIREMODE_BOOST
 
       - source_module: vt13
         source_event: VT13::SwitchPos::VT13_KEY_CUSTOM_R_TOGGLE_ON
@@ -549,9 +564,17 @@ modules:
         target_module: launcher
         target_event: InfantryLauncher::LauncherEvent::SET_FRICMODE_SAFE
       - source_module: vt13
+        source_event: VT13::SwitchPos::VT13_KEY_CUSTOM_L_TOGGLE_OFF
+        target_module: launcher
+        target_event: InfantryLauncher::FireModeEvent::SET_FIREMODE_CONTINUE
+      - source_module: vt13
         source_event: VT13::SwitchPos::VT13_KEY_CUSTOM_L_TOGGLE_ON
         target_module: launcher
         target_event: InfantryLauncher::LauncherEvent::SET_FRICMODE_READY
+      - source_module: vt13
+        source_event: VT13::SwitchPos::VT13_KEY_CUSTOM_L_TOGGLE_ON
+        target_module: launcher
+        target_event: InfantryLauncher::FireModeEvent::SET_FIREMODE_CONTINUE
 
 - id: hostdata
   name: HostData

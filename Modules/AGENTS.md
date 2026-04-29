@@ -30,7 +30,6 @@ Modules/
 ├── BlinkLED/           # Status LED blinker
 ├── BuzzerAlarm/        # Buzzer notification
 ├── Matrix/             # Matrix math utilities
-└── DebugCore/          # Debug utilities
 ```
 
 ## WHERE TO LOOK

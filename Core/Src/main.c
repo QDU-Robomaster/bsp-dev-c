@@ -23,6 +23,10 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "app_main.h"
+extern void libxr_fatal_error(const char *file, uint32_t line, int in_isr);
+void freertos_assert_fail(const char *file, uint32_t line) {
+  libxr_fatal_error(file, line, 0);
+}
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -1250,9 +1254,10 @@ void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
+  (void)xTask;
+  (void)pcTaskName;
   taskDISABLE_INTERRUPTS();
-  for (;;) {
-  }
+  libxr_fatal_error(__FILE__, __LINE__, 0);
 }
 
 /* USER CODE END 4 */

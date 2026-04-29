@@ -20,6 +20,5 @@ modules:
   - qdu-future/PowerControl
   - qdu-future/SuperPower
   - qdu-future/Motor
-  - qdu-future/DebugCore
   - qdu-future/Referee
   - qdu-future/VT13
