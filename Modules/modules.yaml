@@ -5,7 +5,7 @@ modules:
   - xrobot-org/BuzzerAlarm
   - xrobot-org/SharedTopic
   - xrobot-org/SharedTopicClient
-  - qdu-future/BMI088
+  - xrobot-org/BMI088
   - qdu-future/CMD
   - qdu-future/DR16
   - qdu-future/RMMotor
