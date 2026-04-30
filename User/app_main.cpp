@@ -1,6 +1,7 @@
 #include "app_main.h"
 
 #include "cdc_uart.hpp"
+#include "dfu_runtime.hpp"
 #include "libxr.hpp"
 #include "main.h"
 #include "stm32_adc.hpp"
@@ -24,6 +25,21 @@
 using namespace LibXR;
 
 /* User Code Begin 1 */
+static void request_bootloader(void *) {
+  __disable_irq();
+  __DSB();
+  __ISB();
+  NVIC_SystemReset();
+  while (true) {
+  }
+}
+
+static void dfu_runtime_process(LibXR::USB::DfuRuntimeClass *dfu_runtime) {
+  while (true) {
+    dfu_runtime->Process();
+    LibXR::Thread::Sleep(5);
+  }
+}
 /* User Code End 1 */
 // NOLINTBEGIN
 // clang-format off
@@ -158,6 +174,7 @@ extern "C" void app_main(void) {
 
   static constexpr auto USB_OTG_FS_LANG_PACK = LibXR::USB::DescriptorStrings::MakeLanguagePack(LibXR::USB::DescriptorStrings::Language::EN_US, "QDU-Future", "MainCtrl", "QDU-Future-MainCtrl-89ABCDEF0123456701234567");
   LibXR::USB::CDCUart usb_otg_fs_cdc(128, 128, 3);
+  LibXR::USB::DfuRuntimeClass usb_otg_fs_dfu(request_bootloader);
 
   STM32USBDeviceOtgFS usb_fs(
       &hpcd_USB_OTG_FS,
@@ -167,11 +184,15 @@ extern "C" void app_main(void) {
       USB::DeviceDescriptor::PacketSize0::SIZE_8,
       0x16D0, 0x1492, 0xF407,
       {&USB_OTG_FS_LANG_PACK},
-      {{&usb_otg_fs_cdc}},
+      {{&usb_otg_fs_cdc, &usb_otg_fs_dfu}},
       {reinterpret_cast<void *>(UID_BASE), 12}
   );
   usb_fs.Init(false);
   usb_fs.Start(false);
+
+  LibXR::Thread dfu_thread;
+  dfu_thread.Create(&usb_otg_fs_dfu, dfu_runtime_process, "dfu_rt", 512,
+                    LibXR::Thread::Priority::LOW);
 
   /* Terminal Configuration */
   STDIO::read_ = usb_otg_fs_cdc.read_port_;

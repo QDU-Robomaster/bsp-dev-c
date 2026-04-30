@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "app_main.h"
+#include "portable.h"
 extern void libxr_fatal_error(const char *file, uint32_t line, int in_isr);
 void freertos_assert_fail(const char *file, uint32_t line) {
   libxr_fatal_error(file, line, 0);
@@ -99,6 +100,26 @@ void StartDefaultTask(void const * argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+extern uint8_t ucHeap[];
+extern uint8_t _end;
+extern uint8_t _estack;
+
+static void DevCConfigureFreeRTOSHeap(void) {
+  const uintptr_t stack_reserved = 4096;
+  uintptr_t ram_heap_start = ((uintptr_t)&_end + 7U) & ~((uintptr_t)7U);
+  uintptr_t ram_heap_end = ((uintptr_t)&_estack - stack_reserved) & ~((uintptr_t)7U);
+  static HeapRegion_t heap_regions[3];
+
+  heap_regions[0].pucStartAddress = ucHeap;
+  heap_regions[0].xSizeInBytes = configTOTAL_HEAP_SIZE;
+  heap_regions[1].pucStartAddress = (uint8_t *)ram_heap_start;
+  heap_regions[1].xSizeInBytes =
+      (ram_heap_end > ram_heap_start) ? (ram_heap_end - ram_heap_start) : 0;
+  heap_regions[2].pucStartAddress = NULL;
+  heap_regions[2].xSizeInBytes = 0;
+
+  vPortDefineHeapRegions(heap_regions);
+}
 
 /* USER CODE END 0 */
 
@@ -152,6 +173,7 @@ int main(void)
   MX_USB_OTG_FS_PCD_Init();
   MX_USB_OTG_HS_PCD_Init();
   /* USER CODE BEGIN 2 */
+  DevCConfigureFreeRTOSHeap();
 
   /* USER CODE END 2 */
 

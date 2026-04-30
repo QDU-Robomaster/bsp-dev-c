@@ -2,12 +2,20 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # LibXR
-set(LIBXR_SYSTEM FreeRTOS)
+if(DEV_C_IMAGE STREQUAL "bootloader")
+    set(LIBXR_SYSTEM none)
+    set(LIBXR_NO_EIGEN ON)
+else()
+    set(LIBXR_SYSTEM FreeRTOS)
+    set(XROBOT_MODULES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Modules)
+endif()
 set(LIBXR_DRIVER st)
-set(XROBOT_MODULES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Modules)
 add_subdirectory(Middlewares/Third_Party/LibXR)
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(xr PRIVATE -Wno-deprecated-volatile)
+endif()
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    target_compile_options(xr PRIVATE -Wno-tautological-compare)
 endif()
 target_link_libraries(xr
     PUBLIC stm32cubemx
@@ -37,6 +45,11 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 file(
     GLOB LIBXR_USER_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/User/*.cpp")
 
+if(DEV_C_IMAGE STREQUAL "bootloader")
+    list(FILTER LIBXR_USER_SOURCES EXCLUDE REGEX ".*/User/app_main\\.cpp$")
+else()
+    list(FILTER LIBXR_USER_SOURCES EXCLUDE REGEX ".*/User/bootloader_main\\.cpp$")
+endif()
 
 target_sources(${CMAKE_PROJECT_NAME}
     PRIVATE ${LIBXR_USER_SOURCES}

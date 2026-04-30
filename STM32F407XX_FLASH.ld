@@ -57,7 +57,7 @@ MEMORY
 {
 RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 128K
 CCMRAM (xrw)      : ORIGIN = 0x10000000, LENGTH = 64K
-FLASH (rx)      : ORIGIN = 0x8000000, LENGTH = 1024K
+FLASH (rx)      : ORIGIN = DEFINED(__FLASH_ORIGIN) ? __FLASH_ORIGIN : 0x8000000, LENGTH = DEFINED(__FLASH_LENGTH) ? __FLASH_LENGTH : 1024K
 }
 
 /* Highest address of the user mode stack */
@@ -148,15 +148,13 @@ SECTIONS
     . = ALIGN(4);
   } >FLASH
 
-  _siccmram = LOADADDR(.ccmram);
-
   /* CCM-RAM section
   *
   * IMPORTANT NOTE!
   * If initialized variables will be placed in this section,
   * the startup code needs to be modified to copy the init-values.
   */
-  .ccmram :
+  .ccmram (NOLOAD) :
   {
     . = ALIGN(4);
     _sccmram = .;       /* create a global symbol at ccmram start */
@@ -165,7 +163,7 @@ SECTIONS
 
     . = ALIGN(4);
     _eccmram = .;       /* create a global symbol at ccmram end */
-  } >CCMRAM AT> FLASH
+  } >CCMRAM
 
   /* used by the startup to initialize data */
   _sidata = LOADADDR(.data);

@@ -58,7 +58,7 @@ bsp-dev-c/
 - C11 + C++17, `-Werror` globally
 - Debug: app code `-Og`, libraries `-O2`
 - Target: Cortex-M4 FPv4-SP, `-fno-rtti -fno-exceptions`
-- Linker enables `_printf_float`
+- Do not force-link newlib `_printf_float`; LibXR formatting does not require it
 
 ### Agent Naming Enforcement
 - For naming audits, identifier refactors, and style-conformance fixes in C/C++ or YAML, invoke `$bsp-dev-c-naming` by default.

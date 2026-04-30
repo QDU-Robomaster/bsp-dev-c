@@ -16,6 +16,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
+set(DEV_C_IMAGE "default" CACHE STRING "DevC image kind: default, bootloader, or app")
+set_property(CACHE DEV_C_IMAGE PROPERTY STRINGS default bootloader app)
 
 # Define the build type
 if(NOT CMAKE_BUILD_TYPE)
@@ -35,6 +37,7 @@ enable_language(C ASM)
 # Core project settings
 project(${CMAKE_PROJECT_NAME})
 message("Build type: " ${CMAKE_BUILD_TYPE})
+message("DevC image: " ${DEV_C_IMAGE})
 
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME})
@@ -45,7 +48,27 @@ add_compile_options(-Werror)
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
 
-target_link_options(stm32cubemx INTERFACE -Wl,-u,_printf_float)
+if(DEV_C_IMAGE STREQUAL "bootloader")
+    get_target_property(DEV_C_GENERATED_SOURCES ${CMAKE_PROJECT_NAME} SOURCES)
+    list(FILTER DEV_C_GENERATED_SOURCES EXCLUDE REGEX ".*/Core/Src/main\\.c$")
+    list(FILTER DEV_C_GENERATED_SOURCES EXCLUDE REGEX ".*/Core/Src/freertos\\.c$")
+    list(FILTER DEV_C_GENERATED_SOURCES EXCLUDE REGEX ".*/Core/Src/stm32f4xx_it\\.c$")
+    list(FILTER DEV_C_GENERATED_SOURCES EXCLUDE REGEX ".*/Core/Src/stm32f4xx_hal_timebase_tim\\.c$")
+    set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES SOURCES "${DEV_C_GENERATED_SOURCES}")
+
+    target_sources(${CMAKE_PROJECT_NAME} PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/User/boot_main.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/User/boot_it.c
+    )
+
+    get_target_property(DEV_C_LINK_LIBRARIES ${CMAKE_PROJECT_NAME} LINK_LIBRARIES)
+    list(FILTER DEV_C_LINK_LIBRARIES EXCLUDE REGEX "^FreeRTOS$")
+    set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_LIBRARIES "${DEV_C_LINK_LIBRARIES}")
+
+    if(TARGET FreeRTOS)
+        set_target_properties(FreeRTOS PROPERTIES EXCLUDE_FROM_ALL TRUE)
+    endif()
+endif()
 
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
@@ -66,6 +89,22 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined symbols
 )
+
+string(TOUPPER "${DEV_C_IMAGE}" DEV_C_IMAGE_UPPER)
+target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE DEV_C_IMAGE_${DEV_C_IMAGE_UPPER})
+
+foreach(target_name IN ITEMS stm32cubemx STM32_Drivers FreeRTOS)
+    if(TARGET ${target_name})
+        target_compile_definitions(${target_name} INTERFACE DEV_C_IMAGE_${DEV_C_IMAGE_UPPER})
+    endif()
+endforeach()
+
+if(DEV_C_IMAGE STREQUAL "app")
+    target_compile_definitions(stm32cubemx INTERFACE
+        USER_VECT_TAB_ADDRESS
+        VECT_TAB_OFFSET=0x00020000
+    )
+endif()
 
 # Remove wrong libob.a library dependency when using cpp files
 list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)
