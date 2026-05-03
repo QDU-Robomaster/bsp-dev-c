@@ -586,17 +586,15 @@ modules:
 - id: sharedtopic
   name: SharedTopic
   constructor_args:
-    interface_name: usb_otg_hs_cdc
-    task_stack_depth: 1536
-    tx_buffer_size: 256
-    topic_names:
+    uart_name: usb_otg_hs_cdc
+    buffer_size: 256
+    topic_configs:
     - target_euler
     - fire_notify
 - id: sharedtopicclient
   name: SharedTopicClient
   constructor_args:
-    interface_name: usb_otg_hs_cdc
-    task_stack_depth: 1536
-    rx_buffer_size: 256
-    topic_names:
+    uart_name: usb_otg_hs_cdc
+    slot_count: 16
+    topic_configs:
     - ahrs_quaternion
