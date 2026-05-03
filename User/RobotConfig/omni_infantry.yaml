@@ -73,6 +73,14 @@ modules:
     quaternion_topic_name: ahrs_quaternion
     euler_topic_name: ahrs_euler
     task_stack_depth: 2048
+- id: camera_sync
+  name: CameraSync
+  constructor_args:
+    camera_pin_name: CAMERA
+    camera_sync_topic_name: camera_sync_result
+    imu_topic_name: bmi088_gyro
+    trigger_div: 10
+    camera_sync_command_topic_name: sensor_sync_cmd
 - id: motor_wheel_0
   name: RMMotor
   constructor_args:
@@ -586,17 +594,19 @@ modules:
 - id: sharedtopic
   name: SharedTopic
   constructor_args:
-    interface_name: usb_otg_hs_cdc
-    task_stack_depth: 1536
-    tx_buffer_size: 256
-    topic_names:
+    uart_name: usb_otg_hs_cdc
+    buffer_size: 256
+    topic_configs:
     - target_euler
     - fire_notify
+    - sensor_sync_cmd
 - id: sharedtopicclient
   name: SharedTopicClient
   constructor_args:
-    interface_name: usb_otg_hs_cdc
-    task_stack_depth: 1536
-    rx_buffer_size: 256
-    topic_names:
+    uart_name: usb_otg_hs_cdc
+    slot_count: 16
+    topic_configs:
+    - bmi088_gyro
+    - bmi088_accl
     - ahrs_quaternion
+    - camera_sync_result
