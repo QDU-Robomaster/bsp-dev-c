@@ -16,7 +16,6 @@ modules:
   - qdu-future/EventBinder
   - qdu-future/HostData
   - qdu-future/LegVmc
-  - qdu-future/Matrix
   - qdu-future/PowerControl
   - qdu-future/SuperPower
   - qdu-future/Motor
