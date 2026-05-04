@@ -6,6 +6,7 @@ modules:
   - xrobot-org/SharedTopic
   - xrobot-org/SharedTopicClient
   - xrobot-org/BMI088
+  - qdu-future/CameraSync
   - qdu-future/CMD
   - qdu-future/DR16
   - qdu-future/RMMotor

@@ -60,19 +60,27 @@ modules:
       i_limit: 0.0
       out_limit: 0.0
       cycle: false
-    gyro_topic_name: bmi088_gyro
-    accl_topic_name: bmi088_accl
+    gyro_topic_name: gimbal_gyro
+    accl_topic_name: gimbal_accl
     target_temperature: 45
     task_stack_depth: 2048
 - id: ahrs
   name: MadgwickAHRS
   constructor_args:
     beta: 0.05
-    gyro_topic_name: bmi088_gyro
-    accl_topic_name: bmi088_accl
-    quaternion_topic_name: ahrs_quaternion
-    euler_topic_name: ahrs_euler
+    gyro_topic_name: gimbal_gyro
+    accl_topic_name: gimbal_accl
+    quaternion_topic_name: gimbal_quat
+    euler_topic_name: gimbal_euler
     task_stack_depth: 2048
+- id: camera_sync
+  name: CameraSync
+  constructor_args:
+    camera_pin_name: CAMERA
+    camera_sync_topic_name: camera_sync_result
+    imu_topic_name: gimbal_gyro
+    trigger_div: 10
+    camera_sync_command_topic_name: camera_sync_command
 - id: motor_wheel_0
   name: RMMotor
   constructor_args:
@@ -591,10 +599,14 @@ modules:
     topic_configs:
     - target_euler
     - fire_notify
+    - camera_sync_command
 - id: sharedtopicclient
   name: SharedTopicClient
   constructor_args:
     uart_name: usb_otg_hs_cdc
     slot_count: 16
     topic_configs:
-    - ahrs_quaternion
+    - gimbal_gyro
+    - gimbal_accl
+    - gimbal_quat
+    - camera_sync_result
