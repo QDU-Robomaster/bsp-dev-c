@@ -595,7 +595,7 @@ modules:
   name: SharedTopic
   constructor_args:
     uart_name: usb_otg_hs_cdc
-    buffer_size: 256
+    buffer_size: 512
     topic_configs:
     - target_euler
     - fire_notify
