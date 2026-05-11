@@ -38,7 +38,7 @@ modules:
     baudrate: 115200
     referee_chassis_tp_name: chassis_ref
     referee_launcher_tp_name: launcher_ref
-    referee_sentry_tp_name: sentry_ref
+    referee_robot_game_tp_name: robot_game_ref
     thread_priority_uart: LibXR::Thread::Priority::LOW
 - id: bmi088
   name: BMI088
@@ -595,7 +595,7 @@ modules:
   name: SharedTopic
   constructor_args:
     uart_name: usb_otg_hs_cdc
-    buffer_size: 256
+    buffer_size: 512
     topic_configs:
     - target_euler
     - fire_notify
@@ -610,3 +610,4 @@ modules:
     - gimbal_accl
     - gimbal_quat
     - camera_sync_result
+    - robot_game_ref
