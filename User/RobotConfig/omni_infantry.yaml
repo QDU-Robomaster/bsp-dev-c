@@ -87,7 +87,7 @@ modules:
     param:
       model: RMMotor::Model::MOTOR_M3508
       reverse: false
-      feedback_id: 513
+      feedback_id: 515
       can_bus_name: can1
 - id: motor_wheel_1
   name: RMMotor
@@ -95,7 +95,7 @@ modules:
     param:
       model: RMMotor::Model::MOTOR_M3508
       reverse: false
-      feedback_id: 514
+      feedback_id: 516
       can_bus_name: can1
 - id: motor_wheel_2
   name: RMMotor
@@ -103,7 +103,7 @@ modules:
     param:
       model: RMMotor::Model::MOTOR_M3508
       reverse: false
-      feedback_id: 515
+      feedback_id: 513
       can_bus_name: can1
 - id: motor_wheel_3
   name: RMMotor
@@ -111,7 +111,7 @@ modules:
     param:
       model: RMMotor::Model::MOTOR_M3508
       reverse: false
-      feedback_id: 516
+      feedback_id: 514
       can_bus_name: can1
 - id: motor_roll
   name: RMMotor
@@ -157,9 +157,6 @@ modules:
   name: SuperPower
   constructor_args:
     can_bus_name: can1
-    task_stack_depth: 800
-    thread_priority: LibXR::Thread::Priority::HIGH
-    referee: '@&ref'
 - id: power_control
   name: PowerControl
   constructor_args:
@@ -186,11 +183,13 @@ modules:
     ChassisParam:
       wheel_radius: 0.065
       wheel_to_center: 0.26
-      gravity_height: 0.0
+      gravity_height: 0.20
       reductionratio: 15.7647
       wheel_resistance: 0.0
       error_compensation: 0.0
-      gravity: 83.692
+      gravity: 230
+      length: 0.3
+      width: 0.3
       rotor_speed_scale: 1.0
       rotor_omega_min_scale: 0.55
       rotor_buffer_low_j: 35.0
@@ -369,18 +368,18 @@ modules:
       cycle: false
     motor_roll: '@&motor_roll'
     motor_yaw: '@&motor_yaw'
-    roll_max_angle: 0.0
-    roll_min_angle: 5.75
-    roll_lc: 0.0
-    roll_theta: 0.0
+    pit_max_angle: 0.16
+    pit_min_angle: 5.75
+    pit_lc: 0.00
+    pit_theta: 0.0
     yaw_k: 0.0
-    j_roll: 0.01
+    j_pit: 0.0
     j_yaw: 0.0
-    roll_zero: 5.829
-    yaw_zero: 6.0265288
+    pit_zero: 5.75
+    yaw_zero: 2.840731
     patrol_range: 0.0
     patrol_omega: 0.0
-    roll_reverse_flag: true
+    reverse_flag: true
     thread_priority: LibXR::Thread::Priority::HIGH
 - id: launcher
   name: InfantryLauncher
@@ -422,10 +421,17 @@ modules:
       out_limit: 0.6
       cycle: false
     launch_param:
-      fric_setpoint_speed: 6200.0
+      fric_setpoint_speed: 5800.0
       trig_gear_ratio: 36.0
       num_trig_tooth: 10
-      expect_trig_freq_: 18.0
+      max_trig_freq: 20
+      fric_slowdown_threshold: 0.0230769231
+      cali_step: 0.04
+      cali_speed: 4.0
+      target_bullet_speed: 21.0
+      bullet_speed_tolerance: 1.0
+      jam_k: 0.3
+      single_heat: 10
     cmd: '@&cmd'
     referee: '@&ref'
 - id: event_binder
