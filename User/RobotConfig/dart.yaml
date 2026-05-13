@@ -74,6 +74,12 @@ modules:
     chassis_cmd_topic_name: chassis_cmd
     gimbal_cmd_topic_name: gimbal_cmd
     launcher_cmd_topic_name: launcher_cmd
+- id: dr16
+  name: DR16
+  constructor_args:
+    CMD: '@cmd'
+    task_stack_depth_uart: 1536
+    thread_priority_uart: LibXR::Thread::Priority::HIGH
 - id: hostdata
   name: HostData
   constructor_args:
@@ -81,26 +87,16 @@ modules:
     host_euler_topic_name: target_euler
     host_chassis_data_topic_name: chassis_data
     host_fire_topic_name: fire_notify
-- id: referee
+- id: ref
   name: Referee
   constructor_args:
-    task_stack_depth_uart: 2048
+    task_stack_depth_uart: 756
     uart: uart_referee
     baudrate: 115200
     referee_chassis_tp_name: chassis_ref
     referee_launcher_tp_name: launcher_ref
-    referee_sentry_tp_name: sentry_ref
+    referee_robot_game_tp_name: robot_game_ref
     thread_priority_uart: LibXR::Thread::Priority::LOW
-- id: shared_topic
-  name: SharedTopic
-  constructor_args:
-    hardware_name: usb_otg_hs_cdc
-    buffer_size: 256
-    topic_names:
-    - target_euler
-    - chassis_data
-    - fire_notify
-    - dart_gimbal_cmd
 - id: Dart_0
   name: Dart
   constructor_args:
@@ -111,7 +107,7 @@ modules:
       i: 0.0
       d: 0.0
       i_limit: 0.0
-      out_limit: 1.0
+      out_limit: 1000.0
       cycle: false
     -pid_yaw_speed:
       k: 1.0
@@ -133,7 +129,7 @@ modules:
     -fric2_setpoint_speed: 4400.0
     -fric_speed_pid_0:
       k: 1.0
-      p: 0.0001
+      p: 0.001
       i: 0.0
       d: 0.0
       i_limit: 0.0
@@ -141,7 +137,7 @@ modules:
       cycle: false
     -fric_speed_pid_1:
       k: 1.0
-      p: 0.0001
+      p: 0.001
       i: 0.0
       d: 0.0
       i_limit: 0.0
@@ -179,6 +175,17 @@ modules:
       i_limit: 0.0
       out_limit: 2000.0
       cycle: false
+    -cmd: '@&cmd'
+- id: shared_topic
+  name: SharedTopic
+  constructor_args:
+    hardware_name: usb_otg_hs_cdc
+    buffer_size: 256
+    topic_names:
+    - target_euler
+    - chassis_data
+    - fire_notify
+    - host_dart_gimbal_cmd
 - id: shared_topic_client
   name: SharedTopicClient
   constructor_args:
