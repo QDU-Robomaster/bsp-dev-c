@@ -113,7 +113,7 @@ modules:
       reverse: false
       feedback_id: 516
       can_bus_name: can1
-- id: motor_pit
+- id: motor_roll
   name: RMMotor
   constructor_args:
     param:
@@ -351,7 +351,7 @@ modules:
       i_limit: 0
       out_limit: 0
       cycle: false
-    pid_pit_angle:
+    pid_roll_angle:
       k: 1.0
       p: 13.5
       i: 0.0
@@ -359,7 +359,7 @@ modules:
       i_limit: 0.0
       out_limit: 0.0
       cycle: true
-    pid_pit_omega:
+    pid_roll_omega:
       k: 1.0
       p: 0.9
       i: 0.0
@@ -367,20 +367,20 @@ modules:
       i_limit: 0.0
       out_limit: 0.0
       cycle: false
-    motor_pitch: '@&motor_pit'
+    motor_roll: '@&motor_roll'
     motor_yaw: '@&motor_yaw'
-    pit_max_angle: 0.0
-    pit_min_angle: 5.75
-    pit_lc: 0.0
-    pit_theta: 0.0
+    roll_max_angle: 0.0
+    roll_min_angle: 5.75
+    roll_lc: 0.0
+    roll_theta: 0.0
     yaw_k: 0.0
-    j_pit: 0.01
+    j_roll: 0.01
     j_yaw: 0.0
-    pit_zero: 5.829
+    roll_zero: 5.829
     yaw_zero: 6.0265288
     patrol_range: 0.0
     patrol_omega: 0.0
-    pit_reverse_flag: true
+    roll_reverse_flag: true
     thread_priority: LibXR::Thread::Priority::HIGH
 - id: launcher
   name: InfantryLauncher
