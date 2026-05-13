@@ -48,10 +48,10 @@ modules:
     gyro_range: BMI088::GyroRange::DEG_2000DPS
     accl_range: BMI088::AcclRange::ACCL_24G
     rotation:
-      w: 1.0
+      w: 0.70710678
       x: 0.0
       y: 0.0
-      z: 0.0
+      z: 0.70710678
     pid_param:
       k: 1.0
       p: 0.0
@@ -371,6 +371,9 @@ modules:
     motor_yaw: '@&motor_yaw'
     pit_max_angle: 0.0
     pit_min_angle: 5.75
+    pit_lc: 0.0
+    pit_theta: 0.0
+    yaw_k: 0.0
     j_pit: 0.01
     j_yaw: 0.0
     pit_zero: 5.829
@@ -384,8 +387,6 @@ modules:
   constructor_args:
     motor_fric_front_left: '@&motor_fric_front_left'
     motor_fric_front_right: '@&motor_fric_front_right'
-    motor_fric_back_left: '@nullptr'
-    motor_fric_back_right: '@nullptr'
     motor_trig: '@&motor_trig'
     task_stack_depth: 1536
     pid_trig_angle:
@@ -404,7 +405,7 @@ modules:
       i_limit: 0.0
       out_limit: 0.0
       cycle: false
-    pid_fric_speed_0:
+    pid_fric_0:
       k: 0.8
       p: 0.0003
       i: 0.0
@@ -412,7 +413,7 @@ modules:
       i_limit: 0.0
       out_limit: 0.6
       cycle: false
-    pid_fric_speed_1:
+    pid_fric_1:
       k: 0.8
       p: 0.0003
       i: 0.0
@@ -420,12 +421,13 @@ modules:
       i_limit: 0.0
       out_limit: 0.6
       cycle: false
-    launcher_param:
+    launch_param:
       fric_setpoint_speed: 6200.0
       trig_gear_ratio: 36.0
       num_trig_tooth: 10
       expect_trig_freq_: 18.0
     cmd: '@&cmd'
+    referee: '@&ref'
 - id: event_binder
   name: EventBinder
   constructor_args:
