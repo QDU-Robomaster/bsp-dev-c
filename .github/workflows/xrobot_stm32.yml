@@ -1,6 +1,9 @@
 name: xrobot stm32 build test
 
 on:
+  schedule:
+    # 18:00 Asia/Shanghai (UTC+8)
+    - cron: "0 10 * * *"
   push:
     branches: [ "main", "master" ]
     tags: [ "v*" ]
