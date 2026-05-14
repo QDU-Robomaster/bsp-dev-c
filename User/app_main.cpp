@@ -77,6 +77,8 @@ extern "C" void app_main(void) {
   auto topic_bootstrap = LibXR::Topic::CreateTopic<uint8_t>(
       "__libxr_bootstrap", nullptr, false, false, true);
   UNUSED(topic_bootstrap);
+  HAL_PCD_DevDisconnect(&hpcd_USB_OTG_HS);
+  HAL_Delay(300);
   /* User Code End 2 */
   // clang-format off
   // NOLINTBEGIN
