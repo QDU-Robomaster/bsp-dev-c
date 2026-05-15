@@ -24,12 +24,6 @@ modules:
     CMD: '@cmd'
     task_stack_depth_uart: 1536
     thread_priority_uart: LibXR::Thread::Priority::HIGH
-- id: vt13
-  name: VT13
-  constructor_args:
-    CMD: '@cmd'
-    task_stack_depth_uart: 1536
-    thread_priority_uart: LibXR::Thread::Priority::HIGH
 - id: ref
   name: Referee
   constructor_args:
@@ -61,7 +55,7 @@ modules:
       out_limit: 0.0
       cycle: false
     gyro_topic_name: gimbal_gyro
-    accl_topic_name: bmi088_accl
+    accl_topic_name: gimbal_accl
     target_temperature: 45
     task_stack_depth: 2048
 - id: ahrs
@@ -69,11 +63,11 @@ modules:
   constructor_args:
     beta: 0.05
     gyro_topic_name: gimbal_gyro
-    accl_topic_name: bmi088_accl
-    quaternion_topic_name: ahrs_quaternion
+    accl_topic_name: gimbal_accl
+    quaternion_topic_name: gimbal_quat
     euler_topic_name: gimbal_euler
     task_stack_depth: 2048
-- id: motor_pit
+- id: motor_roll
   name: RMMotor
   constructor_args:
     param:
@@ -97,7 +91,7 @@ modules:
       reverse: false
       feedback_id: 514
       can_bus_name: can1
-- id: motor_fric_0
+- id: motor_fric_front_left
   name: RMMotor
   constructor_args:
     param:
@@ -105,7 +99,7 @@ modules:
       reverse: true
       feedback_id: 513
       can_bus_name: can1
-- id: motor_fric_1
+- id: motor_fric_front_right
   name: RMMotor
   constructor_args:
     param:
@@ -120,7 +114,7 @@ modules:
     task_stack_depth: 1536
     pid_yaw_angle:
       k: 1.0
-      p: 20.0
+      p: 30.0
       i: 0.0
       d: 0.0
       i_limit: 0.0
@@ -128,7 +122,7 @@ modules:
       cycle: true
     pid_yaw_omega:
       k: 1.0
-      p: 2.5
+      p: 1.0
       i: 0.0
       d: 0.0
       i_limit: 0
@@ -150,7 +144,7 @@ modules:
       i_limit: 0.0
       out_limit: 0.0
       cycle: false
-    motor_pitch: '@&motor_pit'
+    motor_pitch: '@&motor_roll'
     motor_yaw: '@&motor_yaw'
     referee: '@ref'
     pit_max_angle: 1.82
@@ -173,8 +167,6 @@ modules:
   constructor_args:
     motor_fric_front_left: '@&motor_fric_0'
     motor_fric_front_right: '@&motor_fric_1'
-    motor_fric_back_left: '@nullptr'
-    motor_fric_back_right: '@nullptr'
     motor_trig: '@&motor_trig'
     task_stack_depth: 1536
     pid_trig_angle:
@@ -210,14 +202,14 @@ modules:
       out_limit: 1.0
       cycle: false
     launcher_param:
-      fric1_setpoint_speed: 6500.0
-      fric2_setpoint_speed: 0.0
+      fric_setpoint_speed: 6500.0
       trig_gear_ratio: 36.0
       num_trig_tooth: 10
       expect_trig_freq_: 15.0
       target_bullet_speed: 25.0
       bullet_speed_tolerance: 1.5
     cmd: '@&cmd'
+    referee: '@&ref'
 - id: event_binder
   name: EventBinder
   constructor_args:
@@ -232,6 +224,10 @@ modules:
       module_ref: '@launcher'
     event_binding_groups:
     - bindings:
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_L_POS_TOP
+        target_module: cmd
+        target_event: CMD::Mode::CMD_OP_CTRL
       - source_module: dr16
         source_event: DR16::SwitchPos::DR16_SW_L_POS_MID
         target_module: cmd
@@ -286,12 +282,12 @@ modules:
     uart_name: usb_otg_hs_cdc
     buffer_size: 512
     topic_configs:
-    - fire_notify
     - target_euler
+    - fire_notify
 - id: sharedtopicclient
   name: SharedTopicClient
   constructor_args:
     uart_name: usb_otg_hs_cdc
     slot_count: 8
     topic_configs:
-    - ahrs_quaternion
+    - gimbal_quat
