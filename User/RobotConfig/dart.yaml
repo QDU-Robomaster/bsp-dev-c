@@ -5,3 +5,215 @@ modules:
   name: BlinkLED
   constructor_args:
     blink_cycle: 250
+- id: buzzer_alarm
+  name: BuzzerAlarm
+  constructor_args:
+    alarm_freq: 1500
+    alarm_duration: 300
+    alarm_delay: 300
+- id: motor_fric_front_left
+  name: RMMotor
+  constructor_args:
+    param:
+      model: RMMotor::Model::MOTOR_M3508
+      reverse: true
+      feedback_id: 516
+      can_bus_name: can1
+- id: motor_fric_front_right
+  name: RMMotor
+  constructor_args:
+    param:
+      model: RMMotor::Model::MOTOR_M3508
+      reverse: false
+      feedback_id: 514
+      can_bus_name: can1
+- id: motor_fric_back_left
+  name: RMMotor
+  constructor_args:
+    param:
+      model: RMMotor::Model::MOTOR_M3508
+      reverse: true
+      feedback_id: 515
+      can_bus_name: can1
+- id: motor_fric_back_right
+  name: RMMotor
+  constructor_args:
+    param:
+      model: RMMotor::Model::MOTOR_M3508
+      reverse: false
+      feedback_id: 513
+      can_bus_name: can1
+- id: push_motor
+  name: RMMotor
+  constructor_args:
+    param:
+      model: RMMotor::Model::MOTOR_M2006
+      reverse: false
+      feedback_id: 519
+      can_bus_name: can1
+- id: motor_pitch
+  name: RMMotor
+  constructor_args:
+    param:
+      model: RMMotor::Model::MOTOR_M3508
+      reverse: false
+      feedback_id: 518
+      can_bus_name: can1
+- id: motor_yaw
+  name: RMMotor
+  constructor_args:
+    param:
+      model: RMMotor::Model::MOTOR_M3508
+      reverse: false
+      feedback_id: 517
+      can_bus_name: can1
+- id: cmd
+  name: CMD
+  constructor_args:
+    mode: CMD::Mode::CMD_OP_CTRL
+    chassis_cmd_topic_name: chassis_cmd
+    gimbal_cmd_topic_name: gimbal_cmd
+    launcher_cmd_topic_name: launcher_cmd
+- id: dr16
+  name: DR16
+  constructor_args:
+    CMD: '@cmd'
+    task_stack_depth_uart: 1536
+    thread_priority_uart: LibXR::Thread::Priority::HIGH
+- id: hostdata
+  name: HostData
+  constructor_args:
+    cmd: '@cmd'
+    host_euler_topic_name: target_euler
+    host_chassis_data_topic_name: chassis_data
+    host_fire_topic_name: fire_notify
+- id: ref
+  name: Referee
+  constructor_args:
+    task_stack_depth_uart: 756
+    uart: uart_referee
+    baudrate: 115200
+    referee_chassis_tp_name: chassis_ref
+    referee_launcher_tp_name: launcher_ref
+    referee_robot_game_tp_name: robot_game_ref
+    thread_priority_uart: LibXR::Thread::Priority::LOW
+- id: Dart_0
+  name: Dart
+  constructor_args:
+    -task_stack_depth: 4096
+    -pid_yaw_angle:
+      k: 1.0
+      p: 900.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 1000.0
+      cycle: false
+    -pid_yaw_speed:
+      k: 1.0
+      p: 0.001
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 1.0
+      cycle: false
+    -motor_yaw: '@&motor_yaw'
+    -motor_pit: '@&motor_pitch'
+    -motor_fric_front_left: '@&motor_fric_front_left'
+    -motor_fric_front_right: '@&motor_fric_front_right'
+    -motor_fric_back_left: '@&motor_fric_back_left'
+    -motor_fric_back_right: '@&motor_fric_back_right'
+    -push_motor: '@&push_motor'
+    -push_motor_gear_ratio: 36.0
+    -fric1_setpoint_speed: 4500.0
+    -fric2_setpoint_speed: 4400.0
+    -fric_speed_pid_0:
+      k: 1.0
+      p: 0.001
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 1.0
+      cycle: false
+    -fric_speed_pid_1:
+      k: 1.0
+      p: 0.001
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 1.0
+      cycle: false
+    -fric_speed_pid_2:
+      k: 1.0
+      p: 0.001
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 1.0
+      cycle: false
+    -fric_speed_pid_3:
+      k: 1.0
+      p: 0.001
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 1.0
+      cycle: false
+    -push_motor_speed_pid:
+      k: 1.0
+      p: 0.0008
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 1.0
+      cycle: false
+    -push_motor_angle_pid:
+      k: 1.0
+      p: 1000.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 2000.0
+      cycle: false
+    -cmd: '@&cmd'
+- id: shared_topic
+  name: SharedTopic
+  constructor_args:
+    hardware_name: usb_otg_hs_cdc
+    buffer_size: 256
+    topic_names:
+    - target_euler
+    - chassis_data
+    - fire_notify
+    - host_dart_gimbal_cmd
+- id: shared_topic_client
+  name: SharedTopicClient
+  constructor_args:
+    uart_name: usb_otg_hs_cdc
+    slot_count: 16
+    topic_configs:
+    - launch_flag
+- id: EventBinder_0
+  name: EventBinder
+  constructor_args:
+    modules:
+    - name: dr16
+      module_ref: '@dr16'
+    - name: cmd
+      module_ref: '@cmd'
+    - name: dart
+      module_ref: '@Dart_0'
+    event_binding_groups:
+    - bindings:
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_TOP
+        target_module: dart
+        target_event: Dart::DartMode::YAW_COMMON
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_MID
+        target_module: dart
+        target_event: Dart::DartMode::RELAX
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_BOT
+        target_module: dart
+        target_event: Dart::DartMode::GAME
