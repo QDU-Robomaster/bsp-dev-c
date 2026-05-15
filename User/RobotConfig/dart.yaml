@@ -193,3 +193,27 @@ modules:
     slot_count: 16
     topic_configs:
     - launch_flag
+- id: EventBinder_0
+  name: EventBinder
+  constructor_args:
+    modules:
+    - name: dr16
+      module_ref: '@dr16'
+    - name: cmd
+      module_ref: '@cmd'
+    - name: dart
+      module_ref: '@Dart_0'
+    event_binding_groups:
+    - bindings:
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_TOP
+        target_module: dart
+        target_event: Dart::DartMode::YAW_COMMON
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_MID
+        target_module: dart
+        target_event: Dart::DartMode::RELAX
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_BOT
+        target_module: dart
+        target_event: Dart::DartMode::GAME
