@@ -1,49 +1,118 @@
 name: xrobot stm32 build test
 
 on:
+  schedule:
+    # 18:00 Asia/Shanghai (UTC+8)
+    - cron: "0 10 * * *"
   push:
     branches: [ "main", "master" ]
+    tags: [ "v*" ]
   pull_request:
     branches: [ "main", "master" ]
+  release:
+    types: [published]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        robot_config:
+          - aerial
+          - dart
+          - helm_infantry
+          - hero
+          - omni_infantry
+          - radar
+          - sentry
+          - wheel_leg
+
     container:
       image: ghcr.io/xrobot-org/docker-image-stm32:main
       options: --user 0
 
     steps:
-    - uses: actions/checkout@v4
-    - name: init submodule
-      run: git config --global --add safe.directory "$GITHUB_WORKSPACE" && git submodule update --init --recursive
-    - name: install pip packages
-      run: pip install libxr xrobot
-    - name: config libxr
-      run: xr_cubemx_cfg -d ./ --xrobot
+      - uses: actions/checkout@v4
 
-    - name: xrobot generate code
-      run: xrobot_setup
-    - name: config cmake
-      run: export GCC_TOOLCHAIN_ROOT=/opt/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi/bin && export CLANG_GCC_CMSIS_COMPILER=/opt/st-arm-clang && cmake . -DCMAKE_TOOLCHAIN_FILE:STRING=cmake/starm-clang.cmake -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -Bbuild -G Ninja
-    - name: build
-      run: cmake --build build
+      - name: init submodule
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE" && git submodule update --init --recursive
 
-    - name: build aerial
-      run: xrobot_gen_main --config User/RobotConfig/aerial.yaml && cmake --build build
+      - name: install pip packages
+        run: pip install libxr xrobot
 
-    - name: build dart
-      run: xrobot_gen_main --config User/RobotConfig/dart.yaml && cmake --build build
+      - name: config libxr
+        run: xr_cubemx_cfg -d ./ --xrobot
 
-    - name: build helm_infantry
-      run: xrobot_gen_main --config User/RobotConfig/helm_infantry.yaml && cmake --build build
+      - name: xrobot generate code
+        run: xrobot_setup
 
-    - name: build omni_infantry
-      run: xrobot_gen_main --config User/RobotConfig/omni_infantry.yaml && cmake --build build
+      - name: config cmake
+        run: |
+          export GCC_TOOLCHAIN_ROOT=/opt/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi/bin
+          export CLANG_GCC_CMSIS_COMPILER=/opt/st-arm-clang
+          cmake . -DCMAKE_TOOLCHAIN_FILE:STRING=cmake/starm-clang.cmake -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -Bbuild -G Ninja
 
-    - name: build radar
-      run: xrobot_gen_main --config User/RobotConfig/radar.yaml && cmake --build build
+      - name: build ${{ matrix.robot_config }}
+        run: |
+          xrobot_gen_main --config User/RobotConfig/${{ matrix.robot_config }}.yaml
+          cmake --build build
 
-    - name: build wheel_leg
-      run: xrobot_gen_main --config User/RobotConfig/wheel_leg.yaml && cmake --build build
+      - name: package firmware
+        run: |
+          mkdir -p dist/${{ matrix.robot_config }}
+          cp build/DevC.elf dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.elf
+          cp build/DevC.hex dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.hex
+          cp build/DevC.bin dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.bin
+          cp User/RobotConfig/${{ matrix.robot_config }}.yaml dist/${{ matrix.robot_config }}/
+          tar -C dist -czf dist/${{ matrix.robot_config }}-firmware.tar.gz ${{ matrix.robot_config }}
+
+      - name: upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.robot_config }}-firmware
+          path: |
+            dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.elf
+            dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.hex
+            dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.bin
+            dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.yaml
+            dist/${{ matrix.robot_config }}-firmware.tar.gz
+          if-no-files-found: error
+
+  release:
+    if: github.event_name == 'release' || startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        robot_config:
+          - aerial
+          - dart
+          - helm_infantry
+          - hero
+          - omni_infantry
+          - radar
+          - sentry
+          - wheel_leg
+
+    steps:
+      - name: download firmware artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.robot_config }}-firmware
+          path: release-artifacts/${{ matrix.robot_config }}
+
+      - name: upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release-artifacts/${{ matrix.robot_config }}/${{ matrix.robot_config }}.elf
+            release-artifacts/${{ matrix.robot_config }}/${{ matrix.robot_config }}.hex
+            release-artifacts/${{ matrix.robot_config }}/${{ matrix.robot_config }}.bin
+            release-artifacts/${{ matrix.robot_config }}/${{ matrix.robot_config }}.yaml
+            release-artifacts/${{ matrix.robot_config }}/${{ matrix.robot_config }}-firmware.tar.gz
+          fail_on_unmatched_files: true

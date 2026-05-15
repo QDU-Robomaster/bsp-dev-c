@@ -5,6 +5,24 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "stlinkgdbtarget",
+            "request": "launch",
+            "name": "STM32Cube: STM32 Launch ST-Link GDB Server",
+            "origin": "snippet",
+            "cwd": "${workspaceFolder}",
+            "preBuild": "${command:st-stm32-ide-debug-launch.build}",
+            "runEntry": "main",
+            "imagesAndSymbols": [
+                {
+                    "imageFileName": "${command:st-stm32-ide-debug-launch.get-projects-binary-from-context1}"
+                }
+            ],
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": "4"
+            }
+        },
+        {
             "type": "jlinkgdbtarget",
             "request": "launch",
             "name": "STM32Cube: STM32 Launch JLink GDB Server",
@@ -12,10 +30,6 @@
             "cwd": "${workspaceFolder}",
             "preBuild": "${command:st-stm32-ide-debug-launch.build}",
             "runEntry": "main",
-            "liveWatch": {
-                    "enabled": true,
-                    "samplesPerSecond": "4"
-            },
             "imagesAndSymbols": [
                 {
                     "imageFileName": "${command:st-stm32-ide-debug-launch.get-projects-binary-from-context1}"

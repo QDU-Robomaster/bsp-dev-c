@@ -5,3 +5,617 @@ modules:
   name: BlinkLED
   constructor_args:
     blink_cycle: 250
+- id: buzzer_alarm
+  name: BuzzerAlarm
+  constructor_args:
+    alarm_freq: 1500
+    alarm_duration: 300
+    alarm_delay: 300
+- id: cmd
+  name: CMD
+  constructor_args:
+    mode: CMD::Mode::CMD_OP_CTRL
+    chassis_cmd_topic_name: chassis_cmd
+    gimbal_cmd_topic_name: gimbal_cmd
+    launcher_cmd_topic_name: launcher_cmd
+- id: dr16
+  name: DR16
+  constructor_args:
+    CMD: '@cmd'
+    task_stack_depth_uart: 1536
+    thread_priority_uart: LibXR::Thread::Priority::HIGH
+- id: vt13
+  name: VT13
+  constructor_args:
+    CMD: '@cmd'
+    task_stack_depth_uart: 1536
+    thread_priority_uart: LibXR::Thread::Priority::HIGH
+- id: ref
+  name: Referee
+  constructor_args:
+    task_stack_depth_uart: 1536
+    uart: uart_referee
+    baudrate: 115200
+    referee_chassis_tp_name: chassis_ref
+    referee_launcher_tp_name: launcher_ref
+    referee_robot_game_tp_name: robot_game_ref
+    thread_priority_uart: LibXR::Thread::Priority::LOW
+- id: bmi088
+  name: BMI088
+  constructor_args:
+    gyro_freq: BMI088::GyroFreq::GYRO_1000HZ_BW116HZ
+    accl_freq: BMI088::AcclFreq::ACCL_50HZ
+    gyro_range: BMI088::GyroRange::DEG_2000DPS
+    accl_range: BMI088::AcclRange::ACCL_24G
+    rotation:
+      w: 0.70710678
+      x: 0.0
+      y: 0.0
+      z: 0.70710678
+    pid_param:
+      k: 1.0
+      p: 0.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      cycle: false
+    gyro_topic_name: gimbal_gyro
+    accl_topic_name: gimbal_accl
+    target_temperature: 45
+    task_stack_depth: 2048
+- id: ahrs
+  name: MadgwickAHRS
+  constructor_args:
+    beta: 0.05
+    gyro_topic_name: gimbal_gyro
+    accl_topic_name: gimbal_accl
+    quaternion_topic_name: gimbal_quat
+    euler_topic_name: gimbal_euler
+    task_stack_depth: 2048
+- id: camera_sync
+  name: CameraSync
+  constructor_args:
+    camera_pin_name: CAMERA
+    camera_sync_topic_name: camera_sync_result
+    imu_topic_name: gimbal_gyro
+    trigger_div: 10
+    camera_sync_command_topic_name: camera_sync_command
+- id: motor_wheel_0
+  name: RMMotor
+  constructor_args:
+    param:
+      model: RMMotor::Model::MOTOR_M3508
+      reverse: false
+      feedback_id: 515
+      can_bus_name: can1
+- id: motor_wheel_1
+  name: RMMotor
+  constructor_args:
+    param:
+      model: RMMotor::Model::MOTOR_M3508
+      reverse: false
+      feedback_id: 516
+      can_bus_name: can1
+- id: motor_wheel_2
+  name: RMMotor
+  constructor_args:
+    param:
+      model: RMMotor::Model::MOTOR_M3508
+      reverse: false
+      feedback_id: 513
+      can_bus_name: can1
+- id: motor_wheel_3
+  name: RMMotor
+  constructor_args:
+    param:
+      model: RMMotor::Model::MOTOR_M3508
+      reverse: false
+      feedback_id: 514
+      can_bus_name: can1
+- id: motor_roll
+  name: RMMotor
+  constructor_args:
+    param:
+      model: RMMotor::Model::MOTOR_GM6020
+      reverse: true
+      feedback_id: 517
+      can_bus_name: can2
+- id: motor_yaw
+  name: DMMotor
+  constructor_args:
+    param:
+      model: DMMotor::Model::MOTOR_DM4310
+      reverse: false
+      feedback_id: 5
+      can_bus_name: can2
+- id: motor_trig
+  name: RMMotor
+  constructor_args:
+    param:
+      model: RMMotor::Model::MOTOR_M2006
+      reverse: false
+      feedback_id: 0x201
+      can_bus_name: can2
+- id: motor_fric_front_left
+  name: RMMotor
+  constructor_args:
+    param:
+      model: RMMotor::Model::MOTOR_M3508
+      reverse: true
+      feedback_id: 0x202
+      can_bus_name: can2
+- id: motor_fric_front_right
+  name: RMMotor
+  constructor_args:
+    param:
+      model: RMMotor::Model::MOTOR_M3508
+      reverse: false
+      feedback_id: 0x203
+      can_bus_name: can2
+- id: superpower
+  name: SuperPower
+  constructor_args:
+    can_bus_name: can1
+- id: power_control
+  name: PowerControl
+  constructor_args:
+    superpower: '@&superpower'
+    is_helm: false
+    chassis_static_power_loss: 4.5
+    motor_count_3508: 4
+    motor_count_6020: 0
+- id: chassis
+  name: Chassis
+  constructor_args:
+    motor_wheel_0: '@&motor_wheel_0'
+    motor_wheel_1: '@&motor_wheel_1'
+    motor_wheel_2: '@&motor_wheel_2'
+    motor_wheel_3: '@&motor_wheel_3'
+    motor_steer_0: '@nullptr'
+    motor_steer_1: '@nullptr'
+    motor_steer_2: '@nullptr'
+    motor_steer_3: '@nullptr'
+    cmd: '@&cmd'
+    power_control: '@&power_control'
+    referee: '@&ref'
+    task_stack_depth: 1536
+    ChassisParam:
+      wheel_radius: 0.065
+      wheel_to_center: 0.26
+      gravity_height: 0.20
+      reductionratio: 15.7647
+      wheel_resistance: 0.0
+      error_compensation: 0.0
+      gravity: 230
+      length: 0.3
+      width: 0.3
+      rotor_speed_scale: 1.0
+      rotor_omega_min_scale: 0.55
+      rotor_buffer_low_j: 35.0
+      rotor_buffer_high_j: 70.0
+      rotor_scale_lpf_alpha: 0.3
+    pid_follow_:
+      k: 1.0
+      p: 10.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      out_limit: 0.0
+      cycle: true
+    pid_velocity_x_:
+      k: 1.0
+      p: 320.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      out_limit: 0.0
+      cycle: false
+    pid_velocity_y_:
+      k: 1.0
+      p: 320.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      out_limit: 0.0
+      cycle: false
+    pid_omega_:
+      k: 1.0
+      p: 320.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      cycle: false
+    pid_wheel_speed_0_:
+      k: 1.0
+      p: 0.05
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 5.0
+      cycle: false
+    pid_wheel_speed_1_:
+      k: 1.0
+      p: 0.05
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 5.0
+      cycle: false
+    pid_wheel_speed_2_:
+      k: 1.0
+      p: 0.05
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 5.0
+      cycle: false
+    pid_wheel_speed_3_:
+      k: 1.0
+      p: 0.05
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 5.0
+      cycle: false
+    pid_steer_angle_0_:
+      k: 1.0
+      p: 0.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      cycle: false
+    pid_steer_angle_1_:
+      k: 1.0
+      p: 0.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      cycle: false
+    pid_steer_angle_2_:
+      k: 1.0
+      p: 0.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      cycle: false
+    pid_steer_angle_3_:
+      k: 1.0
+      p: 0.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      cycle: false
+    pid_steer_speed_0_:
+      k: 1.0
+      p: 0.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      cycle: false
+    pid_steer_speed_1_:
+      k: 1.0
+      p: 0.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      cycle: false
+    pid_steer_speed_2_:
+      k: 1.0
+      p: 0.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      cycle: false
+    pid_steer_speed_3_:
+      k: 1.0
+      p: 0.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      cycle: false
+    thread_priority: LibXR::Thread::Priority::HIGH
+  template_args:
+    ChassisType: Omni
+- id: gimbal
+  name: Gimbal
+  constructor_args:
+    cmd: '@cmd'
+    task_stack_depth: 1536
+    pid_yaw_angle:
+      k: 1.0
+      p: 16.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 80.0
+      cycle: true
+    pid_yaw_omega:
+      k: 1.0
+      p: 3.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0
+      out_limit: 0
+      cycle: false
+    pid_roll_angle:
+      k: 1.0
+      p: 13.5
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      cycle: true
+    pid_roll_omega:
+      k: 1.0
+      p: 0.9
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      cycle: false
+    motor_roll: '@&motor_roll'
+    motor_yaw: '@&motor_yaw'
+    pit_max_angle: 0.16
+    pit_min_angle: 5.75
+    pit_lc: 0.00
+    pit_theta: 0.0
+    yaw_k: 0.0
+    j_pit: 0.0
+    j_yaw: 0.0
+    pit_zero: 5.75
+    yaw_zero: 2.840731
+    patrol_range: 0.0
+    patrol_omega: 0.0
+    reverse_flag: true
+    thread_priority: LibXR::Thread::Priority::HIGH
+- id: launcher
+  name: InfantryLauncher
+  constructor_args:
+    motor_fric_front_left: '@&motor_fric_front_left'
+    motor_fric_front_right: '@&motor_fric_front_right'
+    motor_trig: '@&motor_trig'
+    task_stack_depth: 1536
+    pid_trig_angle:
+      k: 1.0
+      p: 40.0
+      i: 0.1
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      cycle: false
+    pid_trig_speed:
+      k: 1.0
+      p: 0.15
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      cycle: false
+    pid_fric_0:
+      k: 0.8
+      p: 0.0003
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.6
+      cycle: false
+    pid_fric_1:
+      k: 0.8
+      p: 0.0003
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.6
+      cycle: false
+    launch_param:
+      fric_setpoint_speed: 5800.0
+      trig_gear_ratio: 36.0
+      num_trig_tooth: 10
+      max_trig_freq: 20
+      fric_slowdown_threshold: 0.0230769231
+      cali_step: 0.04
+      cali_speed: 4.0
+      target_bullet_speed: 21.0
+      bullet_speed_tolerance: 1.0
+      jam_k: 0.3
+      single_heat: 10
+    cmd: '@&cmd'
+    referee: '@&ref'
+- id: event_binder
+  name: EventBinder
+  constructor_args:
+    modules:
+    - name: dr16
+      module_ref: '@dr16'
+    - name: vt13
+      module_ref: '@vt13'
+    - name: cmd
+      module_ref: '@cmd'
+    - name: chassis
+      module_ref: '@chassis'
+    - name: gimbal
+      module_ref: '@gimbal'
+    - name: launcher
+      module_ref: '@launcher'
+    event_binding_groups:
+    - bindings:
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_MID
+        target_module: cmd
+        target_event: CMD::Mode::CMD_OP_CTRL
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_BOT
+        target_module: cmd
+        target_event: CMD::Mode::CMD_AUTO_CTRL
+      # 鼠标右键切换自瞄模式
+      - source_module: dr16
+        source_event: DR16::Key::KEY_R_PRESS
+        target_module: cmd
+        target_event: CMD::Mode::CMD_AUTO_CTRL
+      - source_module: dr16
+        source_event: DR16::Key::KEY_R_RELEASE
+        target_module: cmd
+        target_event: CMD::Mode::CMD_OP_CTRL
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_L_POS_TOP
+        target_module: chassis
+        target_event: Omni::ChassisMode::RELAX
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_L_POS_MID
+        target_module: chassis
+        target_event: Omni::ChassisMode::FOLLOW
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_L_POS_BOT
+        target_module: chassis
+        target_event: Omni::ChassisMode::ROTOR
+      # Q键切换FOLLOW模式，E键切换ROTOR模式
+      - source_module: dr16
+        source_event: DR16::Key::KEY_Q
+        target_module: chassis
+        target_event: Omni::ChassisMode::FOLLOW
+      - source_module: dr16
+        source_event: DR16::Key::KEY_E
+        target_module: chassis
+        target_event: Omni::ChassisMode::ROTOR
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_L_POS_TOP
+        target_module: gimbal
+        target_event: GimbalEvent::SET_MODE_RELAX
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_L_POS_MID
+        target_module: gimbal
+        target_event: GimbalEvent::SET_MODE_COMMON
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_L_POS_TOP
+        target_module: launcher
+        target_event: InfantryLauncher::LauncherEvent::SET_FRICMODE_RELAX
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_TOP
+        target_module: launcher
+        target_event: InfantryLauncher::LauncherEvent::SET_FRICMODE_SAFE
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_MID
+        target_module: launcher
+        target_event: InfantryLauncher::LauncherEvent::SET_FRICMODE_SAFE
+      - source_module: dr16
+        source_event: DR16::SwitchPos::DR16_SW_R_POS_BOT
+        target_module: launcher
+        target_event: InfantryLauncher::LauncherEvent::SET_FRICMODE_READY
+      - source_module: dr16
+        source_event: DR16::Key::KEY_Z
+        target_module: launcher
+        target_event: InfantryLauncher::FireModeEvent::SET_FIREMODE_SINGLE
+      - source_module: dr16
+        source_event: DR16::Key::KEY_X
+        target_module: launcher
+        target_event: InfantryLauncher::FireModeEvent::SET_FIREMODE_CONTINUE
+      - source_module: dr16
+        source_event: DR16::Key::KEY_C
+        target_module: launcher
+        target_event: InfantryLauncher::FireModeEvent::SET_FIREMODE_BOOST
+
+      - source_module: vt13
+        source_event: VT13::SwitchPos::VT13_KEY_CUSTOM_R_TOGGLE_ON
+        target_module: cmd
+        target_event: CMD::Mode::CMD_AUTO_CTRL
+      - source_module: vt13
+        source_event: VT13::SwitchPos::VT13_KEY_CUSTOM_R_TOGGLE_OFF
+        target_module: cmd
+        target_event: CMD::Mode::CMD_OP_CTRL
+      - source_module: vt13
+        source_event: VT13::SwitchPos::VT13_SW_POS_C
+        target_module: chassis
+        target_event: Omni::ChassisMode::RELAX
+      - source_module: vt13
+        source_event: VT13::SwitchPos::VT13_SW_POS_N
+        target_module: chassis
+        target_event: Omni::ChassisMode::FOLLOW
+      - source_module: vt13
+        source_event: VT13::SwitchPos::VT13_SW_POS_S
+        target_module: chassis
+        target_event: Omni::ChassisMode::ROTOR
+      - source_module: vt13
+        source_event: VT13::SwitchPos::VT13_SW_POS_C
+        target_module: gimbal
+        target_event: GimbalEvent::SET_MODE_RELAX
+      - source_module: vt13
+        source_event: VT13::SwitchPos::VT13_SW_POS_N
+        target_module: gimbal
+        target_event: GimbalEvent::SET_MODE_COMMON
+      - source_module: vt13
+        source_event: VT13::SwitchPos::VT13_SW_POS_S
+        target_module: gimbal
+        target_event: GimbalEvent::SET_MODE_COMMON
+      - source_module: vt13
+        source_event: VT13::SwitchPos::VT13_KEY_PAUSE_TOGGLE_ON
+        target_module: gimbal
+        target_event: GimbalEvent::SET_MODE_COMMON
+      - source_module: vt13
+        source_event: VT13::SwitchPos::VT13_KEY_PAUSE_TOGGLE_OFF
+        target_module: gimbal
+        target_event: GimbalEvent::SET_MODE_RELAX
+      - source_module: vt13
+        source_event: VT13::SwitchPos::VT13_KEY_CUSTOM_R_TOGGLE_ON
+        target_module: gimbal
+        target_event: GimbalEvent::SET_MODE_COMMON
+      - source_module: vt13
+        source_event: VT13::SwitchPos::VT13_KEY_CUSTOM_R_TOGGLE_OFF
+        target_module: gimbal
+        target_event: GimbalEvent::SET_MODE_COMMON
+      - source_module: vt13
+        source_event: VT13::SwitchPos::VT13_KEY_CUSTOM_L_TOGGLE_OFF
+        target_module: launcher
+        target_event: InfantryLauncher::LauncherEvent::SET_FRICMODE_SAFE
+      - source_module: vt13
+        source_event: VT13::SwitchPos::VT13_KEY_CUSTOM_L_TOGGLE_OFF
+        target_module: launcher
+        target_event: InfantryLauncher::FireModeEvent::SET_FIREMODE_CONTINUE
+      - source_module: vt13
+        source_event: VT13::SwitchPos::VT13_KEY_CUSTOM_L_TOGGLE_ON
+        target_module: launcher
+        target_event: InfantryLauncher::LauncherEvent::SET_FRICMODE_READY
+      - source_module: vt13
+        source_event: VT13::SwitchPos::VT13_KEY_CUSTOM_L_TOGGLE_ON
+        target_module: launcher
+        target_event: InfantryLauncher::FireModeEvent::SET_FIREMODE_CONTINUE
+
+- id: hostdata
+  name: HostData
+  constructor_args:
+    cmd: '@cmd'
+    target_euler_topic_name: target_euler
+    chassis_data_topic_name: chassis_data
+    fire_notify_topic_name: fire_notify
+- id: sharedtopic
+  name: SharedTopic
+  constructor_args:
+    uart_name: usb_otg_hs_cdc
+    buffer_size: 512
+    topic_configs:
+    - target_euler
+    - fire_notify
+    - camera_sync_command
+- id: sharedtopicclient
+  name: SharedTopicClient
+  constructor_args:
+    uart_name: usb_otg_hs_cdc
+    slot_count: 16
+    topic_configs:
+    - gimbal_gyro
+    - gimbal_accl
+    - gimbal_quat
+    - camera_sync_result
+    - robot_game_ref

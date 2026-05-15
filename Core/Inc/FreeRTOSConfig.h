@@ -78,6 +78,7 @@
 #define configUSE_COUNTING_SEMAPHORES            1
 #define configENABLE_BACKWARD_COMPATIBILITY      0
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION  1
+#define configUSE_TASK_NOTIFICATIONS             0
 #define configRECORD_STACK_HIGH_ADDRESS          1
 /* USER CODE BEGIN MESSAGE_BUFFER_LENGTH_TYPE */
 /* Defaults to size_t for backward compatibility, but can be changed
@@ -129,7 +130,14 @@ See http://www.FreeRTOS.org/RTOS-Cortex-M3-M4.html. */
 /* Normal assert() semantics without relying on the provision of an assert.h
 header file. */
 /* USER CODE BEGIN 1 */
-#define configASSERT( x ) if ((x) == 0) {taskDISABLE_INTERRUPTS(); for( ;; );}
+void freertos_assert_fail(const char *file, uint32_t line);
+#define configASSERT(x)                                                     \
+  do {                                                                      \
+    if ((x) == 0) {                                                         \
+      taskDISABLE_INTERRUPTS();                                             \
+      freertos_assert_fail(__FILE__, __LINE__);                             \
+    }                                                                       \
+  } while (0)
 /* USER CODE END 1 */
 
 /* Definitions that map the FreeRTOS port interrupt handlers to their CMSIS
