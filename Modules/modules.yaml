@@ -23,3 +23,6 @@ modules:
   - qdu-future/Referee
   - qdu-future/VT13
   - qdu-future/SentryProtocol
+  - qdu-future/Dart
+  - qdu-future/HeroLauncher
+  - qdu-future/MiniGimbal
