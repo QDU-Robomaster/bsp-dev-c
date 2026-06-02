@@ -23,7 +23,8 @@ jobs:
           - dart
           - helm_infantry
           - hero
-          - omni_infantry
+          - omni_infantry_3
+          - omni_infantry_4
           - radar
           - sentry
           - wheel_leg
@@ -94,7 +95,8 @@ jobs:
           - dart
           - helm_infantry
           - hero
-          - omni_infantry
+          - omni_infantry_3
+          - omni_infantry_4
           - radar
           - sentry
           - wheel_leg
