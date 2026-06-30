@@ -74,9 +74,6 @@ extern "C" void app_main(void) {
   // clang-format on
   // NOLINTEND
   /* User Code Begin 2 */
-  auto topic_bootstrap = LibXR::Topic::CreateTopic<uint8_t>(
-      "__libxr_bootstrap", nullptr, false, false, true);
-  UNUSED(topic_bootstrap);
   /* User Code End 2 */
   // clang-format off
   // NOLINTBEGIN
