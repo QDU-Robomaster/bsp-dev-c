@@ -40,10 +40,13 @@ jobs:
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE" && git submodule update --init --recursive
 
       - name: install pip packages
-        run: pip install libxr xrobot
+        run: pip install libxr==5.2.4 xrobot==0.3.1
 
       - name: config libxr
-        run: xr_cubemx_cfg -d ./ --xrobot
+        run: |
+          libxr_commit="$(git rev-parse HEAD:Middlewares/Third_Party/LibXR)"
+          xr_cubemx_cfg -d ./ --xrobot --commit "$libxr_commit"
+          test "$(git -C Middlewares/Third_Party/LibXR rev-parse HEAD)" = "$libxr_commit"
 
       - name: xrobot generate code
         run: xrobot_setup
