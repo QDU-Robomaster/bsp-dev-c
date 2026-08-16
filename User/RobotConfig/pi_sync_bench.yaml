@@ -1,0 +1,66 @@
+global_settings:
+  monitor_sleep_ms: 1000
+
+modules:
+- id: bmi088
+  name: BMI088
+  constructor_args:
+    gyro_freq: BMI088::GyroFreq::GYRO_1000HZ_BW116HZ
+    accl_freq: BMI088::AcclFreq::ACCL_50HZ
+    gyro_range: BMI088::GyroRange::DEG_2000DPS
+    accl_range: BMI088::AcclRange::ACCL_24G
+    rotation:
+      w: 1.0
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    pid_param:
+      k: 1.0
+      p: 0.0
+      i: 0.0
+      d: 0.0
+      i_limit: 0.0
+      out_limit: 0.0
+      cycle: false
+    gyro_topic_name: gimbal_gyro
+    accl_topic_name: gimbal_accl
+    target_temperature: 45
+    task_stack_depth: 2048
+
+- id: ahrs
+  name: MadgwickAHRS
+  constructor_args:
+    beta: 0.05
+    gyro_topic_name: gimbal_gyro
+    accl_topic_name: gimbal_accl
+    quaternion_topic_name: gimbal_quat
+    euler_topic_name: gimbal_euler
+    task_stack_depth: 2048
+
+- id: camera_sync
+  name: CameraSync
+  constructor_args:
+    camera_pin_name: CAMERA
+    camera_sync_topic_name: camera_sync_result
+    imu_topic_name: gimbal_gyro
+    trigger_period_us: 50000
+    camera_sync_command_topic_name: camera_sync_command
+
+- id: sharedtopic
+  name: SharedTopic
+  constructor_args:
+    uart_name: usb_otg_hs_cdc
+    buffer_size: 256
+    topic_configs:
+    - camera_sync_command
+
+- id: sharedtopicclient
+  name: SharedTopicClient
+  constructor_args:
+    uart_name: usb_otg_hs_cdc
+    slot_count: 16
+    topic_configs:
+    - gimbal_gyro
+    - gimbal_accl
+    - gimbal_quat
+    - camera_sync_result
