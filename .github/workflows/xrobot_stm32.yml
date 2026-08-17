@@ -42,6 +42,9 @@ jobs:
       - name: install pip packages
         run: pip install libxr==5.2.4 xrobot==0.3.1
 
+      - name: validate CameraSync config contract
+        run: python3 tools/check_camera_sync_configs.py
+
       - name: config libxr
         run: |
           libxr_commit="$(git rev-parse HEAD:Middlewares/Third_Party/LibXR)"
