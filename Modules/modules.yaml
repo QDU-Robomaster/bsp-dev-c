@@ -4,8 +4,8 @@ modules:
   - xrobot-org/MadgwickAHRS
   - xrobot-org/BuzzerAlarm
   - xrobot-org/SharedTopic
-  - xrobot-org/SharedTopicClient
-  - xrobot-org/BMI088
+  - xrobot-org/SharedTopicClient@dev
+  - xrobot-org/BMI088@dev
   - qdu-future/CameraSync
   - qdu-future/CMD
   - qdu-future/DR16
