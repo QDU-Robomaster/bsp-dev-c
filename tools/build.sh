@@ -440,7 +440,7 @@ else
 fi
 
 echo "[2/4] Generating xrobot header from ${CONFIG_PATH}..."
-xrobot_gen_main --config "${CONFIG_PATH}"
+xrobot_gen_main --config "${CONFIG_PATH}" --register-source User/app_main.cpp --lock xrobot.lock
 
 echo "[3/4] Configuring with cube-cmake (${BUILD_TARGET_DESC})..."
 configure_build_tree

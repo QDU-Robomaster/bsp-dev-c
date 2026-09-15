@@ -1,4 +1,5 @@
-# Sources prepared separately from native CMake configuration.
+# Generated source list; build with the BSP native CMake entry.
+
 include("${CMAKE_CURRENT_LIST_DIR}/QDU-Robomaster/CMD/CMakeLists.txt")
 include("${CMAKE_CURRENT_LIST_DIR}/QDU-Robomaster/CameraSync/CMakeLists.txt")
 include("${CMAKE_CURRENT_LIST_DIR}/QDU-Robomaster/Chassis/CMakeLists.txt")

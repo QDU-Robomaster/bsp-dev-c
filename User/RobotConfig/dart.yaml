@@ -74,6 +74,7 @@ modules:
 - module: QDU-Robomaster/Dart
   id: Dart_0
   args:
+  - '&USER_KEY'
   - '4096'
   - '{1.0, 900.0, 0.0, 0.0, 0.0, 1000.0, false}'
   - '{1.0, 0.001, 0.0, 0.0, 0.0, 1.0, false}'
