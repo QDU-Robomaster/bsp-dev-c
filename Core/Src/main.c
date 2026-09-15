@@ -83,6 +83,8 @@ PCD_HandleTypeDef hpcd_USB_OTG_FS;
 PCD_HandleTypeDef hpcd_USB_OTG_HS;
 
 osThreadId defaultTaskHandle;
+uint32_t defaultTaskBuffer[ 6144 ];
+osStaticThreadDef_t defaultTaskControlBlock;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -173,7 +175,7 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 3192);
+  osThreadStaticDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 6144, defaultTaskBuffer, &defaultTaskControlBlock);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
