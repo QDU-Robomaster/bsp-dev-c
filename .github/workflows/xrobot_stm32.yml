@@ -5,10 +5,10 @@ on:
     # 18:00 Asia/Shanghai (UTC+8)
     - cron: "0 10 * * *"
   push:
-    branches: [ "main", "master" ]
+    branches: [ "main", "master", "dev" ]
     tags: [ "v*" ]
   pull_request:
-    branches: [ "main", "master" ]
+    branches: [ "main", "master", "dev" ]
   release:
     types: [published]
 
