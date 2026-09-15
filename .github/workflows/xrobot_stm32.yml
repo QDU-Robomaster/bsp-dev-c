@@ -43,7 +43,7 @@ jobs:
         run: pip install libxr xrobot
 
       - name: config libxr
-        run: xr_cubemx_cfg -d ./ --xrobot
+        run: xr_cubemx_cfg -d ./ --xrobot --commit "$(git rev-parse HEAD:Middlewares/Third_Party/LibXR)"
 
       - name: xrobot generate code
         run: xrobot_setup

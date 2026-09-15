@@ -1,7 +1,8 @@
-global_settings:
-  monitor_sleep_ms: 1000
 modules:
-- id: blink_led
-  name: BlinkLED
-  constructor_args:
-    blink_cycle: 250
+- module: xrobot-org/BlinkLED
+  id: blink_led
+  args:
+  - LED_B
+  - '250'
+settings:
+  monitor_sleep_ms: 1000
