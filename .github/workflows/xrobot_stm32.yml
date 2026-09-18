@@ -79,7 +79,7 @@ jobs:
         cmake . -DCMAKE_TOOLCHAIN_FILE:STRING=cmake/starm-clang.cmake -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -Bbuild -G Ninja
     - name: build ${{ matrix.robot_config }}
       run: |
-        xrobot_gen_main --config User/RobotConfig/${{ matrix.robot_config }}.yaml
+        xrobot_gen_main --config User/RobotConfig/${{ matrix.robot_config }}.yaml --register-source User/app_main.cpp
         cmake --build build
     - name: package firmware
       run: |
