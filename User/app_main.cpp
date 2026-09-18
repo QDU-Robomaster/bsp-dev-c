@@ -142,78 +142,6 @@ alignas(4) static uint8_t i2c3_buf[32];
 static struct alignas(__SCB_DCACHE_LINE_SIZE)
 {
   uint8_t data[8];
-} usb_otg_hs_ep0_in_buf_storage;
-static constexpr auto& usb_otg_hs_ep0_in_buf = usb_otg_hs_ep0_in_buf_storage.data;
-#else
-alignas(4) static uint8_t usb_otg_hs_ep0_in_buf[8];
-#endif
-#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
-static struct alignas(__SCB_DCACHE_LINE_SIZE)
-{
-  uint8_t data[8];
-} usb_otg_hs_ep0_out_buf_storage;
-static constexpr auto& usb_otg_hs_ep0_out_buf = usb_otg_hs_ep0_out_buf_storage.data;
-#else
-alignas(4) static uint8_t usb_otg_hs_ep0_out_buf[8];
-#endif
-#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
-static struct alignas(__SCB_DCACHE_LINE_SIZE)
-{
-  uint8_t data[128];
-} usb_otg_hs_ep1_in_buf_storage;
-static constexpr auto& usb_otg_hs_ep1_in_buf = usb_otg_hs_ep1_in_buf_storage.data;
-#else
-alignas(4) static uint8_t usb_otg_hs_ep1_in_buf[128];
-#endif
-#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
-static struct alignas(__SCB_DCACHE_LINE_SIZE)
-{
-  uint8_t data[128];
-} usb_otg_hs_ep1_out_buf_storage;
-static constexpr auto& usb_otg_hs_ep1_out_buf = usb_otg_hs_ep1_out_buf_storage.data;
-#else
-alignas(4) static uint8_t usb_otg_hs_ep1_out_buf[128];
-#endif
-#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
-static struct alignas(__SCB_DCACHE_LINE_SIZE)
-{
-  uint8_t data[16];
-} usb_otg_hs_ep2_in_buf_storage;
-static constexpr auto& usb_otg_hs_ep2_in_buf = usb_otg_hs_ep2_in_buf_storage.data;
-#else
-alignas(4) static uint8_t usb_otg_hs_ep2_in_buf[16];
-#endif
-#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
-static struct alignas(__SCB_DCACHE_LINE_SIZE)
-{
-  uint8_t data[128];
-} usb_otg_hs_ep2_out_buf_storage;
-static constexpr auto& usb_otg_hs_ep2_out_buf = usb_otg_hs_ep2_out_buf_storage.data;
-#else
-alignas(4) static uint8_t usb_otg_hs_ep2_out_buf[128];
-#endif
-#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
-static struct alignas(__SCB_DCACHE_LINE_SIZE)
-{
-  uint8_t data[128];
-} usb_otg_hs_ep3_in_buf_storage;
-static constexpr auto& usb_otg_hs_ep3_in_buf = usb_otg_hs_ep3_in_buf_storage.data;
-#else
-alignas(4) static uint8_t usb_otg_hs_ep3_in_buf[128];
-#endif
-#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
-static struct alignas(__SCB_DCACHE_LINE_SIZE)
-{
-  uint8_t data[16];
-} usb_otg_hs_ep4_in_buf_storage;
-static constexpr auto& usb_otg_hs_ep4_in_buf = usb_otg_hs_ep4_in_buf_storage.data;
-#else
-alignas(4) static uint8_t usb_otg_hs_ep4_in_buf[16];
-#endif
-#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
-static struct alignas(__SCB_DCACHE_LINE_SIZE)
-{
-  uint8_t data[8];
 } usb_otg_fs_ep0_in_buf_storage;
 static constexpr auto& usb_otg_fs_ep0_in_buf = usb_otg_fs_ep0_in_buf_storage.data;
 #else
@@ -263,87 +191,69 @@ extern "C" void app_main(void) {
   /* User Code End 2 */
   // clang-format off
   // NOLINTBEGIN
-  STM32TimerTimebase timebase(&htim2);
+  static STM32TimerTimebase timebase(&htim2);
   PlatformInit(2, 2048);
-  STM32PowerManager power_manager;
+  static STM32PowerManager power_manager;
 
   /* GPIO Configuration */
-  STM32GPIO USER_KEY(USER_KEY_GPIO_Port, USER_KEY_Pin, EXTI0_IRQn);
-  STM32GPIO ACCL_CS(ACCL_CS_GPIO_Port, ACCL_CS_Pin);
-  STM32GPIO GYRO_CS(GYRO_CS_GPIO_Port, GYRO_CS_Pin);
-  STM32GPIO HW0(HW0_GPIO_Port, HW0_Pin);
-  STM32GPIO HW1(HW1_GPIO_Port, HW1_Pin);
-  STM32GPIO HW2(HW2_GPIO_Port, HW2_Pin);
-  STM32GPIO ACCL_INT(ACCL_INT_GPIO_Port, ACCL_INT_Pin, EXTI4_IRQn);
-  STM32GPIO GYRO_INT(GYRO_INT_GPIO_Port, GYRO_INT_Pin, EXTI9_5_IRQn);
-  STM32GPIO CAMERA(CAMERA_GPIO_Port, CAMERA_Pin);
-  STM32GPIO IMU_INT(IMU_INT_GPIO_Port, IMU_INT_Pin, EXTI1_IRQn);
-  STM32GPIO CMPS_INT(CMPS_INT_GPIO_Port, CMPS_INT_Pin, EXTI3_IRQn);
-  STM32GPIO CMPS_RST(CMPS_RST_GPIO_Port, CMPS_RST_Pin);
-  STM32GPIO LED_B(LED_B_GPIO_Port, LED_B_Pin);
-  STM32GPIO LED_G(LED_G_GPIO_Port, LED_G_Pin);
-  STM32GPIO LED_R(LED_R_GPIO_Port, LED_R_Pin);
+  static STM32GPIO USER_KEY(USER_KEY_GPIO_Port, USER_KEY_Pin, EXTI0_IRQn);
+  static STM32GPIO ACCL_CS(ACCL_CS_GPIO_Port, ACCL_CS_Pin);
+  static STM32GPIO GYRO_CS(GYRO_CS_GPIO_Port, GYRO_CS_Pin);
+  static STM32GPIO HW0(HW0_GPIO_Port, HW0_Pin);
+  static STM32GPIO HW1(HW1_GPIO_Port, HW1_Pin);
+  static STM32GPIO HW2(HW2_GPIO_Port, HW2_Pin);
+  static STM32GPIO ACCL_INT(ACCL_INT_GPIO_Port, ACCL_INT_Pin, EXTI4_IRQn);
+  static STM32GPIO GYRO_INT(GYRO_INT_GPIO_Port, GYRO_INT_Pin, EXTI9_5_IRQn);
+  static STM32GPIO CAMERA(CAMERA_GPIO_Port, CAMERA_Pin);
+  static STM32GPIO IMU_INT(IMU_INT_GPIO_Port, IMU_INT_Pin, EXTI1_IRQn);
+  static STM32GPIO CMPS_INT(CMPS_INT_GPIO_Port, CMPS_INT_Pin, EXTI3_IRQn);
+  static STM32GPIO CMPS_RST(CMPS_RST_GPIO_Port, CMPS_RST_Pin);
+  static STM32GPIO LED_B(LED_B_GPIO_Port, LED_B_Pin);
+  static STM32GPIO LED_G(LED_G_GPIO_Port, LED_G_Pin);
+  static STM32GPIO LED_R(LED_R_GPIO_Port, LED_R_Pin);
 
-  STM32ADC adc3(&hadc3, adc3_buf, {ADC_CHANNEL_8}, 3.3);
-  auto& adc3_adc_channel_8 = adc3.GetChannel(0);
+  static STM32ADC adc3(&hadc3, adc3_buf, {ADC_CHANNEL_8}, 3.3);
+  static auto& adc3_adc_channel_8 = adc3.GetChannel(0);
   UNUSED(adc3_adc_channel_8);
 
-  STM32PWM pwm_tim1_ch1(&htim1, TIM_CHANNEL_1, false);
-  STM32PWM pwm_tim1_ch2(&htim1, TIM_CHANNEL_2, false);
-  STM32PWM pwm_tim1_ch3(&htim1, TIM_CHANNEL_3, false);
-  STM32PWM pwm_tim1_ch4(&htim1, TIM_CHANNEL_4, false);
+  static STM32PWM pwm_tim1_ch1(&htim1, TIM_CHANNEL_1, false);
+  static STM32PWM pwm_tim1_ch2(&htim1, TIM_CHANNEL_2, false);
+  static STM32PWM pwm_tim1_ch3(&htim1, TIM_CHANNEL_3, false);
+  static STM32PWM pwm_tim1_ch4(&htim1, TIM_CHANNEL_4, false);
 
-  STM32PWM pwm_tim10_ch1(&htim10, TIM_CHANNEL_1, false);
+  static STM32PWM pwm_tim10_ch1(&htim10, TIM_CHANNEL_1, false);
 
-  STM32PWM pwm_tim3_ch3(&htim3, TIM_CHANNEL_3, false);
+  static STM32PWM pwm_tim3_ch3(&htim3, TIM_CHANNEL_3, false);
 
-  STM32PWM pwm_tim4_ch3(&htim4, TIM_CHANNEL_3, false);
+  static STM32PWM pwm_tim4_ch3(&htim4, TIM_CHANNEL_3, false);
 
-  STM32PWM pwm_tim8_ch1(&htim8, TIM_CHANNEL_1, false);
-  STM32PWM pwm_tim8_ch2(&htim8, TIM_CHANNEL_2, false);
-  STM32PWM pwm_tim8_ch3(&htim8, TIM_CHANNEL_3, false);
+  static STM32PWM pwm_tim8_ch1(&htim8, TIM_CHANNEL_1, false);
+  static STM32PWM pwm_tim8_ch2(&htim8, TIM_CHANNEL_2, false);
+  static STM32PWM pwm_tim8_ch3(&htim8, TIM_CHANNEL_3, false);
 
-  STM32SPI spi1(&hspi1, spi1_rx_buf, spi1_tx_buf, 3);
+  static STM32SPI spi1(&hspi1, spi1_rx_buf, spi1_tx_buf, 3);
 
-  STM32UART usart1(&huart1,
+  static STM32UART usart1(&huart1,
               usart1_rx_buf, usart1_tx_buf, 5);
 
-  STM32UART usart3(&huart3,
+  static STM32UART usart3(&huart3,
               usart3_rx_buf, {nullptr, 0}, 5);
 
-  STM32UART usart6(&huart6,
+  static STM32UART usart6(&huart6,
               usart6_rx_buf, usart6_tx_buf, 15);
 
-  STM32I2C i2c1(&hi2c1, i2c1_buf, 3);
+  static STM32I2C i2c1(&hi2c1, i2c1_buf, 3);
 
-  STM32I2C i2c3(&hi2c3, i2c3_buf, 3);
+  static STM32I2C i2c3(&hi2c3, i2c3_buf, 3);
 
-  STM32CAN can1(&hcan1, 5);
+  static STM32CAN can1(&hcan1, 5);
 
-  STM32CAN can2(&hcan2, 5);
-
-  static constexpr auto USB_OTG_HS_LANG_PACK = LibXR::USB::DescriptorStrings::MakeLanguagePack(LibXR::USB::DescriptorStrings::Language::EN_US, "QDU-Future", "MainCtrl", "QDU-Future-MainCtrl-89ABCDEF0123456701234567");
-  LibXR::USB::CDCUart usb_otg_hs_cdc(LibXR::USB::Endpoint::EPNumber::EP1, LibXR::USB::Endpoint::EPNumber::EP1, LibXR::USB::Endpoint::EPNumber::EP2, 128, 128, 3);
-  LibXR::USB::CDCUart usb_otg_hs_cdc2(LibXR::USB::Endpoint::EPNumber::EP3, LibXR::USB::Endpoint::EPNumber::EP2, LibXR::USB::Endpoint::EPNumber::EP4, 128, 128, 3);
-
-  STM32USBDeviceOtgHS usb_hs(
-      &hpcd_USB_OTG_HS,
-      256,
-      {usb_otg_hs_ep0_out_buf, usb_otg_hs_ep1_out_buf, usb_otg_hs_ep2_out_buf},
-      {{usb_otg_hs_ep0_in_buf, 8}, {usb_otg_hs_ep1_in_buf, 128}, {usb_otg_hs_ep2_in_buf, 16}, {usb_otg_hs_ep3_in_buf, 128}, {usb_otg_hs_ep4_in_buf, 16}},
-      USB::DeviceDescriptor::PacketSize0::SIZE_8,
-      0x16D0, 0x1492, 0xF407,
-      {&USB_OTG_HS_LANG_PACK},
-      {{&usb_otg_hs_cdc, &usb_otg_hs_cdc2}},
-      {reinterpret_cast<void *>(UID_BASE), 12}
-  );
-  usb_hs.Init(false);
-  usb_hs.Start(false);
+  static STM32CAN can2(&hcan2, 5);
 
   static constexpr auto USB_OTG_FS_LANG_PACK = LibXR::USB::DescriptorStrings::MakeLanguagePack(LibXR::USB::DescriptorStrings::Language::EN_US, "QDU-Future", "MainCtrl", "QDU-Future-MainCtrl-89ABCDEF0123456701234567");
-  LibXR::USB::CDCUart usb_otg_fs_cdc(LibXR::USB::Endpoint::EPNumber::EP1, LibXR::USB::Endpoint::EPNumber::EP1, LibXR::USB::Endpoint::EPNumber::EP2, 128, 128, 3);
+  static LibXR::USB::CDCUart usb_otg_fs_cdc(LibXR::USB::Endpoint::EPNumber::EP1, LibXR::USB::Endpoint::EPNumber::EP1, LibXR::USB::Endpoint::EPNumber::EP2, 128, 128, 3);
 
-  STM32USBDeviceOtgFS usb_fs(
+  static STM32USBDeviceOtgFS usb_fs(
       &hpcd_USB_OTG_FS,
       256,
       {usb_otg_fs_ep0_out_buf, usb_otg_fs_ep1_out_buf},
@@ -361,9 +271,9 @@ extern "C" void app_main(void) {
   STDIO::read_ = usb_otg_fs_cdc.read_port_;
   STDIO::write_ = usb_otg_fs_cdc.write_port_;
 
-  RamFS ramfs("XRobot");
-  Terminal<32, 32, 5, 5> terminal(ramfs);
-  LibXR::Thread term_thread;
+  static RamFS ramfs("XRobot");
+  static Terminal<32, 32, 5, 5> terminal(ramfs);
+  static LibXR::Thread term_thread;
   term_thread.Create(&terminal, terminal.ThreadFun, "terminal", 2048,
                      static_cast<LibXR::Thread::Priority>(3));
 
@@ -405,14 +315,107 @@ extern "C" void app_main(void) {
   XR_REGISTER(usb_otg_fs_cdc, LibXR::UART);
   XR_REGISTER(CAMERA, LibXR::GPIO);
   XR_REGISTER(IMU_INT, LibXR::GPIO);
-  XR_REGISTER(usb_otg_hs_cdc, LibXR::UART);
-  XR_REGISTER(usb_otg_hs_cdc2, LibXR::UART);
 
   // clang-format on
   // NOLINTEND
   /* User Code Begin 3 */
-  STM32Flash flash(FLASH_SECTORS, FLASH_SECTOR_NUMBER);
-  LibXR::DatabaseRaw<1> database(flash);
+  // Sentry composite USB is BSP-owned; generic generation remains single CDC.
+#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
+  static struct alignas(__SCB_DCACHE_LINE_SIZE)
+  {
+    uint8_t data[8];
+  } usb_otg_hs_ep0_in_buf_storage;
+  static constexpr auto& usb_otg_hs_ep0_in_buf = usb_otg_hs_ep0_in_buf_storage.data;
+#else
+  alignas(4) static uint8_t usb_otg_hs_ep0_in_buf[8];
+#endif
+#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
+  static struct alignas(__SCB_DCACHE_LINE_SIZE)
+  {
+    uint8_t data[8];
+  } usb_otg_hs_ep0_out_buf_storage;
+  static constexpr auto& usb_otg_hs_ep0_out_buf = usb_otg_hs_ep0_out_buf_storage.data;
+#else
+  alignas(4) static uint8_t usb_otg_hs_ep0_out_buf[8];
+#endif
+#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
+  static struct alignas(__SCB_DCACHE_LINE_SIZE)
+  {
+    uint8_t data[128];
+  } usb_otg_hs_ep1_in_buf_storage;
+  static constexpr auto& usb_otg_hs_ep1_in_buf = usb_otg_hs_ep1_in_buf_storage.data;
+#else
+  alignas(4) static uint8_t usb_otg_hs_ep1_in_buf[128];
+#endif
+#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
+  static struct alignas(__SCB_DCACHE_LINE_SIZE)
+  {
+    uint8_t data[128];
+  } usb_otg_hs_ep1_out_buf_storage;
+  static constexpr auto& usb_otg_hs_ep1_out_buf = usb_otg_hs_ep1_out_buf_storage.data;
+#else
+  alignas(4) static uint8_t usb_otg_hs_ep1_out_buf[128];
+#endif
+#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
+  static struct alignas(__SCB_DCACHE_LINE_SIZE)
+  {
+    uint8_t data[16];
+  } usb_otg_hs_ep2_in_buf_storage;
+  static constexpr auto& usb_otg_hs_ep2_in_buf = usb_otg_hs_ep2_in_buf_storage.data;
+#else
+  alignas(4) static uint8_t usb_otg_hs_ep2_in_buf[16];
+#endif
+#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
+  static struct alignas(__SCB_DCACHE_LINE_SIZE)
+  {
+    uint8_t data[128];
+  } usb_otg_hs_ep2_out_buf_storage;
+  static constexpr auto& usb_otg_hs_ep2_out_buf = usb_otg_hs_ep2_out_buf_storage.data;
+#else
+  alignas(4) static uint8_t usb_otg_hs_ep2_out_buf[128];
+#endif
+#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
+  static struct alignas(__SCB_DCACHE_LINE_SIZE)
+  {
+    uint8_t data[128];
+  } usb_otg_hs_ep3_in_buf_storage;
+  static constexpr auto& usb_otg_hs_ep3_in_buf = usb_otg_hs_ep3_in_buf_storage.data;
+#else
+  alignas(4) static uint8_t usb_otg_hs_ep3_in_buf[128];
+#endif
+#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
+  static struct alignas(__SCB_DCACHE_LINE_SIZE)
+  {
+    uint8_t data[16];
+  } usb_otg_hs_ep4_in_buf_storage;
+  static constexpr auto& usb_otg_hs_ep4_in_buf = usb_otg_hs_ep4_in_buf_storage.data;
+#else
+  alignas(4) static uint8_t usb_otg_hs_ep4_in_buf[16];
+#endif
+  static constexpr auto USB_OTG_HS_LANG_PACK = LibXR::USB::DescriptorStrings::MakeLanguagePack(LibXR::USB::DescriptorStrings::Language::EN_US, "QDU-Future", "MainCtrl", "QDU-Future-MainCtrl-89ABCDEF0123456701234567");
+  static LibXR::USB::CDCUart usb_otg_hs_cdc(LibXR::USB::Endpoint::EPNumber::EP1, LibXR::USB::Endpoint::EPNumber::EP1, LibXR::USB::Endpoint::EPNumber::EP2, 128, 128, 3);
+  static LibXR::USB::CDCUart usb_otg_hs_cdc2(LibXR::USB::Endpoint::EPNumber::EP3, LibXR::USB::Endpoint::EPNumber::EP2, LibXR::USB::Endpoint::EPNumber::EP4, 128, 128, 3);
+
+  static STM32USBDeviceOtgHS usb_hs(
+      &hpcd_USB_OTG_HS,
+      256,
+      {usb_otg_hs_ep0_out_buf, usb_otg_hs_ep1_out_buf, usb_otg_hs_ep2_out_buf},
+      {{usb_otg_hs_ep0_in_buf, 8}, {usb_otg_hs_ep1_in_buf, 128}, {usb_otg_hs_ep2_in_buf, 16}, {usb_otg_hs_ep3_in_buf, 128}, {usb_otg_hs_ep4_in_buf, 16}},
+      USB::DeviceDescriptor::PacketSize0::SIZE_8,
+      0x16D0, 0x1492, 0xF407,
+      {&USB_OTG_HS_LANG_PACK},
+      {{&usb_otg_hs_cdc, &usb_otg_hs_cdc2}},
+      {reinterpret_cast<void *>(UID_BASE), 12}
+  );
+  usb_hs.Init(false);
+  usb_hs.Start(false);
+
+  XR_REGISTER(usb_otg_hs_cdc, LibXR::UART);
+  XR_REGISTER(usb_otg_hs_cdc2, LibXR::UART);
+
+
+  static STM32Flash flash(FLASH_SECTORS, FLASH_SECTOR_NUMBER);
+  static LibXR::DatabaseRaw<1> database(flash);
 
   XR_REGISTER(database, LibXR::Database);
   XROBOT_MAIN();

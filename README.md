@@ -39,3 +39,16 @@ cmake . -DCMAKE_TOOLCHAIN_FILE:STRING=cmake/starm-clang.cmake -DCMAKE_EXPORT_COM
 cmake --build build
 ls build/
 ```
+
+## FreeRTOS heap placement
+
+`ucHeap` is raw allocator storage in the dedicated `.ccm_heap` section. The tracked
+`STM32F407XX_FLASH.ld` marks this section `NOLOAD`, reserving 64 KiB of CCM RAM
+without a redundant Flash initialization image. Generic `.ccmram` remains loadable
+for explicitly initialized data. The allocator metadata is initialized separately;
+heap capacity and task stack settings are unchanged.
+
+Keep the `.ccm_heap` linker block when replacing or regenerating the linker script.
+The heap declaration stays inside the CubeMX user-preserved Variables block. A
+regenerated linker script must be checked together with the declaration; treating
+this as an orphan section would invalidate the measured memory layout.

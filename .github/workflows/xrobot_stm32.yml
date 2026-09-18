@@ -1,17 +1,4 @@
 name: xrobot stm32 build test
-
-on:
-  schedule:
-    # 18:00 Asia/Shanghai (UTC+8)
-    - cron: "0 10 * * *"
-  push:
-    branches: [ "main", "master" ]
-    tags: [ "v*" ]
-  pull_request:
-    branches: [ "main", "master" ]
-  release:
-    types: [published]
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,102 +6,156 @@ jobs:
       fail-fast: false
       matrix:
         robot_config:
-          - aerial
-          - dart
-          - helm_infantry
-          - hero
-          - omni_infantry_3
-          - omni_infantry_4
-          - radar
-          - sentry
-          - wheel_leg
-
+        - aerial
+        - dart
+        - helm_infantry
+        - hero
+        - omni_infantry_3
+        - omni_infantry_4
+        - radar
+        - sentry
+        - wheel_leg
     container:
       image: ghcr.io/xrobot-org/docker-image-stm32:main
       options: --user 0
-
     steps:
-      - uses: actions/checkout@v4
-
-      - name: init submodule
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE" && git submodule update --init --recursive
-
-      - name: install pip packages
-        run: pip install libxr xrobot
-
-      - name: config libxr
-        run: xr_cubemx_cfg -d ./ --xrobot --commit "$(git rev-parse HEAD:Middlewares/Third_Party/LibXR)"
-
-      - name: xrobot generate code
-        run: xrobot_setup
-
-      - name: config cmake
-        run: |
-          export GCC_TOOLCHAIN_ROOT=/opt/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi/bin
-          export CLANG_GCC_CMSIS_COMPILER=/opt/st-arm-clang
-          cmake . -DCMAKE_TOOLCHAIN_FILE:STRING=cmake/starm-clang.cmake -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -Bbuild -G Ninja
-
-      - name: build ${{ matrix.robot_config }}
-        run: |
-          xrobot_gen_main --config User/RobotConfig/${{ matrix.robot_config }}.yaml
-          cmake --build build
-
-      - name: package firmware
-        run: |
-          mkdir -p dist/${{ matrix.robot_config }}
-          cp build/DevC.elf dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.elf
-          cp build/DevC.hex dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.hex
-          cp build/DevC.bin dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.bin
-          cp User/RobotConfig/${{ matrix.robot_config }}.yaml dist/${{ matrix.robot_config }}/
-          tar -C dist -czf dist/${{ matrix.robot_config }}-firmware.tar.gz ${{ matrix.robot_config }}
-
-      - name: upload firmware artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.robot_config }}-firmware
-          path: |
-            dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.elf
-            dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.hex
-            dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.bin
-            dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.yaml
-            dist/${{ matrix.robot_config }}-firmware.tar.gz
-          if-no-files-found: error
-
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha || github.sha }}
+    - name: init submodule
+      run: git config --global --add safe.directory "$GITHUB_WORKSPACE" && git submodule update --init --recursive
+    - name: Checkout matching XRobot tools
+      shell: bash
+      run: |
+        set -euo pipefail
+        checkout_tool() {
+          local repo="$1" directory="$2" selected="$3" available
+          if [[ -n "$selected" ]]; then
+            if [[ "$selected" != refs/heads/* && "$selected" != refs/tags/* &&
+                  ! "$selected" =~ ^[0-9a-fA-F]{40}$ ]]; then
+              echo "Use a full refs/heads/, refs/tags/ or commit SHA for $directory" >&2
+              return 1
+            fi
+          elif [[ "$XR_REF_KIND" == tag ]]; then
+            selected="refs/tags/$XR_REF_NAME"
+          else
+            available=$(git ls-remote --heads "$repo" "refs/heads/$XR_REF_NAME")
+            if [[ -n "$available" ]]; then
+              selected="refs/heads/$XR_REF_NAME"
+            else
+              selected=refs/heads/dev
+            fi
+          fi
+          git init "$directory"
+          git -C "$directory" remote add origin "$repo"
+          git -C "$directory" fetch --depth=1 origin "$selected"
+          git -C "$directory" checkout --detach FETCH_HEAD
+          git -C "$directory" submodule update --init --recursive --depth=1
+        }
+        mkdir -p .ci-tools
+        checkout_tool https://github.com/xrobot-org/XRobot.git .ci-tools/XRobot "$XROBOT_REF"
+        checkout_tool https://github.com/xrobot-org/LibXR_CppCodeGenerator.git .ci-tools/CodeGenerator "$CODEGEN_REF"
+    - name: Install selected tools
+      run: |
+        python3 -m pip install ./.ci-tools/XRobot ./.ci-tools/CodeGenerator
+    - name: Regenerate static BSP objects
+      run: |
+        xr_gen_code_stm32 -i .config.yaml -o User/app_main.cpp --xrobot --libxr-config User/libxr_config.yaml
+    - name: Resolve configured modules and generate the entry
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [[ "$XR_REF_KIND" == tag ]]; then
+          context="refs/tags/$XR_REF_NAME"
+        else
+          context="refs/heads/$XR_REF_NAME"
+        fi
+        xrobot_setup --context-ref "$context" --register-source User/app_main.cpp
+    - name: config cmake
+      run: |
+        export GCC_TOOLCHAIN_ROOT=/opt/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi/bin
+        export CLANG_GCC_CMSIS_COMPILER=/opt/st-arm-clang
+        cmake . -DCMAKE_TOOLCHAIN_FILE:STRING=cmake/starm-clang.cmake -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -Bbuild -G Ninja
+    - name: build ${{ matrix.robot_config }}
+      run: |
+        xrobot_gen_main --config User/RobotConfig/${{ matrix.robot_config }}.yaml
+        cmake --build build
+    - name: package firmware
+      run: |
+        mkdir -p dist/${{ matrix.robot_config }}
+        cp build/DevC.elf dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.elf
+        cp build/DevC.hex dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.hex
+        cp build/DevC.bin dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.bin
+        cp User/RobotConfig/${{ matrix.robot_config }}.yaml dist/${{ matrix.robot_config }}/
+        tar -C dist -czf dist/${{ matrix.robot_config }}-firmware.tar.gz ${{ matrix.robot_config }}
+    - name: upload firmware artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.robot_config }}-firmware
+        path: |
+          dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.elf
+          dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.hex
+          dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.bin
+          dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.yaml
+          dist/${{ matrix.robot_config }}-firmware.tar.gz
+        if-no-files-found: error
+    env:
+      XR_REF_NAME: ${{ github.head_ref || github.ref_name }}
+      XR_REF_KIND: ${{ github.ref_type }}
+      XROBOT_REF: ${{ vars.XROBOT_REF || '' }}
+      CODEGEN_REF: ${{ vars.CODEGEN_REF || '' }}
+      PYTHONPATH: ${{ github.workspace }}/.ci-tools/XRobot/src:${{ github.workspace }}/.ci-tools/CodeGenerator/src
   release:
     if: github.event_name == 'release' || startsWith(github.ref, 'refs/tags/v')
     needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     strategy:
       fail-fast: false
       matrix:
         robot_config:
-          - aerial
-          - dart
-          - helm_infantry
-          - hero
-          - omni_infantry_3
-          - omni_infantry_4
-          - radar
-          - sentry
-          - wheel_leg
-
+        - aerial
+        - dart
+        - helm_infantry
+        - hero
+        - omni_infantry_3
+        - omni_infantry_4
+        - radar
+        - sentry
+        - wheel_leg
     steps:
-      - name: download firmware artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ matrix.robot_config }}-firmware
-          path: release-artifacts/${{ matrix.robot_config }}
-
-      - name: upload release assets
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            release-artifacts/${{ matrix.robot_config }}/${{ matrix.robot_config }}.elf
-            release-artifacts/${{ matrix.robot_config }}/${{ matrix.robot_config }}.hex
-            release-artifacts/${{ matrix.robot_config }}/${{ matrix.robot_config }}.bin
-            release-artifacts/${{ matrix.robot_config }}/${{ matrix.robot_config }}.yaml
-            release-artifacts/${{ matrix.robot_config }}/${{ matrix.robot_config }}-firmware.tar.gz
-          fail_on_unmatched_files: true
+    - name: download firmware artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ matrix.robot_config }}-firmware
+        path: release-artifacts/${{ matrix.robot_config }}
+    - name: upload release assets
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          release-artifacts/${{ matrix.robot_config }}/${{ matrix.robot_config }}.elf
+          release-artifacts/${{ matrix.robot_config }}/${{ matrix.robot_config }}.hex
+          release-artifacts/${{ matrix.robot_config }}/${{ matrix.robot_config }}.bin
+          release-artifacts/${{ matrix.robot_config }}/${{ matrix.robot_config }}.yaml
+          release-artifacts/${{ matrix.robot_config }}/${{ matrix.robot_config }}-firmware.tar.gz
+        fail_on_unmatched_files: true
+'on':
+  schedule:
+  - cron: 0 10 * * *
+  push:
+    branches:
+    - main
+    - master
+    - dev
+    tags:
+    - v*
+  pull_request:
+    branches:
+    - main
+    - master
+    - dev
+  release:
+    types:
+    - published
+  workflow_dispatch: null

@@ -2,7 +2,7 @@ modules:
 - module: xrobot-org/BlinkLED
   id: blink_led
   args:
-  - LED_B
-  - '250'
+  - led: LED_B
+  - blink_cycle: '250'
 settings:
-  monitor_sleep_ms: 1000
+  monitor_sleep_ms: '1000'

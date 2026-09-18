@@ -2,119 +2,150 @@ modules:
 - module: xrobot-org/BlinkLED
   id: blink_led
   args:
-  - LED_B
-  - '250'
+  - led: LED_B
+  - blink_cycle: '250'
 - module: xrobot-org/BuzzerAlarm
   id: buzzer_alarm
   args:
-  - pwm_tim4_ch3
-  - '1500'
-  - '300'
-  - '300'
+  - pwm: pwm_tim4_ch3
+  - alarm_freq: '1500'
+  - alarm_duration: '300'
+  - alarm_delay: '300'
 - module: QDU-Robomaster/RMMotor
   id: motor_fric_front_left
   args:
-  - '{RMMotor::Model::MOTOR_M3508, true, 516, can1}'
+  - can_bus: can1
+  - param:
+    - RMMotor::Model::MOTOR_M3508
+    - 'true'
+    - '516'
 - module: QDU-Robomaster/RMMotor
   id: motor_fric_front_right
   args:
-  - '{RMMotor::Model::MOTOR_M3508, false, 514, can1}'
+  - can_bus: can1
+  - param:
+    - RMMotor::Model::MOTOR_M3508
+    - 'false'
+    - '514'
 - module: QDU-Robomaster/RMMotor
   id: motor_fric_back_left
   args:
-  - '{RMMotor::Model::MOTOR_M3508, true, 515, can1}'
+  - can_bus: can1
+  - param:
+    - RMMotor::Model::MOTOR_M3508
+    - 'true'
+    - '515'
 - module: QDU-Robomaster/RMMotor
   id: motor_fric_back_right
   args:
-  - '{RMMotor::Model::MOTOR_M3508, false, 513, can1}'
+  - can_bus: can1
+  - param:
+    - RMMotor::Model::MOTOR_M3508
+    - 'false'
+    - '513'
 - module: QDU-Robomaster/RMMotor
   id: push_motor
   args:
-  - '{RMMotor::Model::MOTOR_M2006, false, 519, can1}'
+  - can_bus: can1
+  - param:
+    - RMMotor::Model::MOTOR_M2006
+    - 'false'
+    - '519'
 - module: QDU-Robomaster/RMMotor
   id: motor_pitch
   args:
-  - '{RMMotor::Model::MOTOR_M3508, false, 518, can1}'
+  - can_bus: can1
+  - param:
+    - RMMotor::Model::MOTOR_M3508
+    - 'false'
+    - '518'
 - module: QDU-Robomaster/RMMotor
   id: motor_yaw
   args:
-  - '{RMMotor::Model::MOTOR_M3508, false, 517, can1}'
+  - can_bus: can1
+  - param:
+    - RMMotor::Model::MOTOR_M3508
+    - 'false'
+    - '517'
 - module: QDU-Robomaster/CMD
   id: cmd
   args:
-  - CMD::Mode::CMD_OP_CTRL
-  - '"chassis_cmd"'
-  - '"gimbal_cmd"'
-  - '"launcher_cmd"'
+  - mode: CMD::Mode::CMD_OP_CTRL
+  - chassis_cmd_topic_name: '"chassis_cmd"'
+  - gimbal_cmd_topic_name: '"gimbal_cmd"'
+  - launcher_cmd_topic_name: '"launcher_cmd"'
 - module: QDU-Robomaster/DR16
   id: dr16
   args:
-  - '&usart3'
-  - cmd
-  - '1536'
-  - LibXR::Thread::Priority::HIGH
+  - uart: usart3
+  - cmd: cmd
+  - param:
+      task_stack_depth_uart: '1536'
+      thread_priority_uart: LibXR::Thread::Priority::HIGH
 - module: QDU-Robomaster/HostData
   id: hostdata
   args:
-  - cmd
-  - '"target_euler"'
-  - '"chassis_data"'
-  - '"fire_notify"'
+  - cmd: cmd
+  - host_gimbal_topic_name: '"target_euler"'
+  - host_chassis_data_topic_name: '"chassis_data"'
+  - host_fire_topic_name: '"fire_notify"'
 - module: QDU-Robomaster/Referee
   id: ref
   args:
-  - '&usart1'
-  - '756'
-  - '115200'
-  - '"chassis_ref"'
-  - '"launcher_ref"'
-  - '"robot_game_ref"'
-  - '"radar_ref"'
-  - LibXR::Thread::Priority::LOW
+  - uart: usart1
+  - cmd: nullptr
+  - param:
+      task_stack_depth_uart: '756'
+      baudrate: '115200'
+      referee_chassis_tp_name: '"chassis_ref"'
+      referee_launcher_tp_name: '"launcher_ref"'
+      referee_robot_game_tp_name: '"robot_game_ref"'
+      referee_radar_tp_name: '"radar_ref"'
+      thread_priority_uart: LibXR::Thread::Priority::LOW
 - module: QDU-Robomaster/Dart
   id: Dart_0
   args:
-  - '&USER_KEY'
-  - '4096'
-  - '{1.0, 900.0, 0.0, 0.0, 0.0, 1000.0, false}'
-  - '{1.0, 0.001, 0.0, 0.0, 0.0, 1.0, false}'
-  - '&motor_yaw'
-  - '&motor_pitch'
-  - '&motor_fric_front_left'
-  - '&motor_fric_front_right'
-  - '&motor_fric_back_left'
-  - '&motor_fric_back_right'
-  - '&push_motor'
-  - '36.0'
-  - '4500.0'
-  - '4400.0'
-  - '{1.0, 0.001, 0.0, 0.0, 0.0, 1.0, false}'
-  - '{1.0, 0.001, 0.0, 0.0, 0.0, 1.0, false}'
-  - '{1.0, 0.001, 0.0, 0.0, 0.0, 1.0, false}'
-  - '{1.0, 0.001, 0.0, 0.0, 0.0, 1.0, false}'
-  - '{1.0, 0.0008, 0.0, 0.0, 0.0, 1.0, false}'
-  - '{1.0, 1000.0, 0.0, 0.0, 0.0, 2000.0, false}'
-  - '&cmd'
+  - motor_yaw: motor_yaw
+  - motor_pitch: motor_pitch
+  - motor_fric_front_left: motor_fric_front_left
+  - motor_fric_front_right: motor_fric_front_right
+  - motor_fric_back_left: motor_fric_back_left
+  - motor_fric_back_right: motor_fric_back_right
+  - push_motor: push_motor
+  - cmd: cmd
+  - param:
+      task_stack_depth: '4096'
+      pid_yaw_angle: '{1.0, 900.0, 0.0, 0.0, 0.0, 1000.0, false}'
+      pid_yaw_speed: '{1.0, 0.001, 0.0, 0.0, 0.0, 1.0, false}'
+      push_motor_gear_ratio: '36.0'
+      fric1_setpoint_speed: '4500.0'
+      fric2_setpoint_speed: '4400.0'
+      fric_speed_pid_0: '{1.0, 0.001, 0.0, 0.0, 0.0, 1.0, false}'
+      fric_speed_pid_1: '{1.0, 0.001, 0.0, 0.0, 0.0, 1.0, false}'
+      fric_speed_pid_2: '{1.0, 0.001, 0.0, 0.0, 0.0, 1.0, false}'
+      fric_speed_pid_3: '{1.0, 0.001, 0.0, 0.0, 0.0, 1.0, false}'
+      push_motor_speed_pid: '{1.0, 0.0008, 0.0, 0.0, 0.0, 1.0, false}'
+      push_motor_angle_pid: '{1.0, 1000.0, 0.0, 0.0, 0.0, 2000.0, false}'
 - module: xrobot-org/SharedTopic
   id: shared_topic
   args:
-  - usb_otg_hs_cdc
-  - ramfs
-  - '"usb_otg_hs_cdc"'
-  - '256'
-  - '{"target_euler", "chassis_data", "fire_notify", "host_dart_gimbal_cmd"}'
+  - uart: usb_otg_hs_cdc
+  - ramfs: ramfs
+  - uart_name: '"usb_otg_hs_cdc"'
+  - buffer_size: '256'
+  - topic_configs: '{"target_euler", "chassis_data", "fire_notify", "host_dart_gimbal_cmd"}'
 - module: xrobot-org/SharedTopicClient
   id: shared_topic_client
   args:
-  - usb_otg_hs_cdc
-  - '16'
-  - '{"launch_flag"}'
+  - uart: usb_otg_hs_cdc
+  - slot_count: '16'
+  - topic_configs: '{"launch_flag"}'
 - module: QDU-Robomaster/EventBinder
   id: EventBinder_0
   args:
-  - '{{"dr16", dr16}, {"cmd", cmd}, {"dart", Dart_0}}'
-  - '{{{{"dr16", DR16::SwitchPos::DR16_SW_R_POS_TOP, "dart", Dart::DartMode::YAW_COMMON},
-    {"dr16", DR16::SwitchPos::DR16_SW_R_POS_MID, "dart", Dart::DartMode::RELAX}, {"dr16",
-    DR16::SwitchPos::DR16_SW_R_POS_BOT, "dart", Dart::DartMode::GAME}}}}'
+  - modules: '{{"dr16", dr16}, {"cmd", cmd}, {"dart", Dart_0}}'
+  - event_binding_groups: '{{{{"dr16", DR16::SwitchPos::DR16_SW_R_POS_TOP, "dart", Dart::DartMode::YAW_COMMON},
+      {"dr16", DR16::SwitchPos::DR16_SW_R_POS_MID, "dart", Dart::DartMode::RELAX}, {"dr16", DR16::SwitchPos::DR16_SW_R_POS_BOT,
+      "dart", Dart::DartMode::GAME}}}}'
 settings:
-  monitor_sleep_ms: 1000
+  monitor_sleep_ms: '1000'

@@ -2,274 +2,311 @@ modules:
 - module: xrobot-org/BlinkLED
   id: blink_led
   args:
-  - LED_B
-  - '250'
+  - led: LED_B
+  - blink_cycle: '250'
 - module: xrobot-org/BuzzerAlarm
   id: buzzer_alarm
   args:
-  - pwm_tim4_ch3
-  - '1500'
-  - '300'
-  - '300'
+  - pwm: pwm_tim4_ch3
+  - alarm_freq: '1500'
+  - alarm_duration: '300'
+  - alarm_delay: '300'
 - module: QDU-Robomaster/CMD
   id: cmd
   args:
-  - CMD::Mode::CMD_OP_CTRL
-  - '"chassis_cmd"'
-  - '"gimbal_cmd"'
-  - '"launcher_cmd"'
+  - mode: CMD::Mode::CMD_OP_CTRL
+  - chassis_cmd_topic_name: '"chassis_cmd"'
+  - gimbal_cmd_topic_name: '"gimbal_cmd"'
+  - launcher_cmd_topic_name: '"launcher_cmd"'
 - module: QDU-Robomaster/DR16
   id: dr16
   args:
-  - '&usart3'
-  - cmd
-  - '1536'
-  - LibXR::Thread::Priority::MEDIUM
+  - uart: usart3
+  - cmd: cmd
+  - param:
+      task_stack_depth_uart: '1536'
+      thread_priority_uart: LibXR::Thread::Priority::MEDIUM
 - module: QDU-Robomaster/VT13
   id: vt13
   args:
-  - '&usart6'
-  - cmd
-  - '1536'
-  - LibXR::Thread::Priority::MEDIUM
+  - uart: usart6
+  - cmd: cmd
+  - param:
+      task_stack_depth_uart: '1536'
+      thread_priority_uart: LibXR::Thread::Priority::MEDIUM
 - module: QDU-Robomaster/Referee
   id: ref
   args:
-  - '&usart1'
-  - '1536'
-  - '115200'
-  - '"chassis_ref"'
-  - '"launcher_ref"'
-  - '"robot_game_ref"'
-  - '"radar_ref"'
-  - LibXR::Thread::Priority::MEDIUM
+  - uart: usart1
+  - cmd: nullptr
+  - param:
+      task_stack_depth_uart: '1536'
+      baudrate: '115200'
+      referee_chassis_tp_name: '"chassis_ref"'
+      referee_launcher_tp_name: '"launcher_ref"'
+      referee_robot_game_tp_name: '"robot_game_ref"'
+      referee_radar_tp_name: '"radar_ref"'
+      thread_priority_uart: LibXR::Thread::Priority::MEDIUM
 - module: xrobot-org/BMI088
   id: bmi088
   args:
-  - ACCL_CS
-  - GYRO_CS
-  - GYRO_INT
-  - spi1
-  - pwm_tim10_ch1
-  - database
-  - ramfs
-  - BMI088::GyroFreq::GYRO_2000HZ_BW532HZ
-  - BMI088::AcclFreq::ACCL_1600HZ
-  - BMI088::GyroRange::DEG_2000DPS
-  - BMI088::AcclRange::ACCL_24G
-  - '{1.0, 0.0, 0.0, 0.0}'
-  - '{1.0, 0.35, 0.0, 0.0, 0.0, 0.0, false}'
-  - '"gimbal_gyro"'
-  - '"gimbal_accl"'
-  - '45'
-  - '2048'
+  - accl_cs: ACCL_CS
+  - gyro_cs: GYRO_CS
+  - gyro_int: GYRO_INT
+  - spi: spi1
+  - heater_pwm: pwm_tim10_ch1
+  - database: database
+  - ramfs: ramfs
+  - param:
+      gyro_freq: BMI088::GyroFreq::GYRO_2000HZ_BW532HZ
+      accl_freq: BMI088::AcclFreq::ACCL_1600HZ
+      gyro_range: BMI088::GyroRange::DEG_2000DPS
+      accl_range: BMI088::AcclRange::ACCL_24G
+      rotation: '{1.0, 0.0, 0.0, 0.0}'
+      pid_param: '{1.0, 0.35, 0.0, 0.0, 0.0, 0.0, false}'
+      gyro_topic_name: '"gimbal_gyro"'
+      accl_topic_name: '"gimbal_accl"'
+      target_temperature: '45'
+      task_stack_depth: '2048'
 - module: xrobot-org/MadgwickAHRS
   id: ahrs
   args:
-  - ramfs
-  - '0.05'
-  - '"gimbal_gyro"'
-  - '"gimbal_accl"'
-  - '"gimbal_quat"'
-  - '"gimbal_euler"'
-  - '2048'
+  - ramfs: ramfs
+  - param:
+      beta: '0.05'
+      gyro_topic_name: '"gimbal_gyro"'
+      accl_topic_name: '"gimbal_accl"'
+      quaternion_topic_name: '"gimbal_quat"'
+      euler_topic_name: '"gimbal_euler"'
+      task_stack_depth: '2048'
 - module: QDU-Robomaster/CameraSync
   id: camera_sync
   args:
-  - CAMERA
-  - '"camera_sync_result"'
-  - '"gimbal_gyro"'
-  - '10'
-  - '"camera_sync_command"'
+  - camera_pin: CAMERA
+  - param:
+      camera_sync_topic_name: '"camera_sync_result"'
+      imu_topic_name: '"gimbal_gyro"'
+      trigger_period_us: '10'
+      camera_sync_command_topic_name: '"camera_sync_command"'
 - module: QDU-Robomaster/RMMotor
   id: motor_wheel_0
   args:
-  - '{RMMotor::Model::MOTOR_M3508, false, 514, can1}'
+  - can_bus: can1
+  - param:
+    - RMMotor::Model::MOTOR_M3508
+    - 'false'
+    - '514'
 - module: QDU-Robomaster/RMMotor
   id: motor_wheel_1
   args:
-  - '{RMMotor::Model::MOTOR_M3508, false, 515, can1}'
+  - can_bus: can1
+  - param:
+    - RMMotor::Model::MOTOR_M3508
+    - 'false'
+    - '515'
 - module: QDU-Robomaster/RMMotor
   id: motor_wheel_2
   args:
-  - '{RMMotor::Model::MOTOR_M3508, false, 516, can1}'
+  - can_bus: can1
+  - param:
+    - RMMotor::Model::MOTOR_M3508
+    - 'false'
+    - '516'
 - module: QDU-Robomaster/RMMotor
   id: motor_wheel_3
   args:
-  - '{RMMotor::Model::MOTOR_M3508, false, 513, can1}'
+  - can_bus: can1
+  - param:
+    - RMMotor::Model::MOTOR_M3508
+    - 'false'
+    - '513'
 - module: QDU-Robomaster/RMMotor
   id: motor_pit
   args:
-  - '{RMMotor::Model::MOTOR_GM6020, true, 522, can2}'
+  - can_bus: can2
+  - param:
+    - RMMotor::Model::MOTOR_GM6020
+    - 'true'
+    - '522'
 - module: QDU-Robomaster/DMMotor
   id: motor_yaw
   args:
-  - '{DMMotor::Model::MOTOR_DM4310, false, 5, can2}'
+  - can_bus: can2
+  - param:
+    - DMMotor::Model::MOTOR_DM4310
+    - 'false'
+    - '5'
 - module: QDU-Robomaster/RMMotor
   id: motor_trig
   args:
-  - '{RMMotor::Model::MOTOR_M2006, false, 513, can2}'
+  - can_bus: can2
+  - param:
+    - RMMotor::Model::MOTOR_M2006
+    - 'false'
+    - '513'
 - module: QDU-Robomaster/RMMotor
   id: motor_fric_front_left
   args:
-  - '{RMMotor::Model::MOTOR_M3508, true, 514, can2}'
+  - can_bus: can2
+  - param:
+    - RMMotor::Model::MOTOR_M3508
+    - 'true'
+    - '514'
 - module: QDU-Robomaster/RMMotor
   id: motor_fric_front_right
   args:
-  - '{RMMotor::Model::MOTOR_M3508, false, 515, can2}'
+  - can_bus: can2
+  - param:
+    - RMMotor::Model::MOTOR_M3508
+    - 'false'
+    - '515'
 - module: QDU-Robomaster/SuperPower
   id: superpower
   args:
-  - can1
+  - can_bus: can1
 - module: QDU-Robomaster/PowerControl
   id: power_control
   args:
-  - '&superpower'
-  - 'false'
-  - '4.5'
-  - '4'
-  - '0'
+  - super_power: superpower
+  - is_helm: 'false'
+  - chassis_static_power_loss: '4.5'
+  - motor_count_3508: '4'
+  - motor_count_6020: '0'
 - module: QDU-Robomaster/Chassis
   id: chassis
   template_args:
   - Omni
   args:
-  - '&motor_wheel_0'
-  - '&motor_wheel_1'
-  - '&motor_wheel_2'
-  - '&motor_wheel_3'
-  - nullptr
-  - nullptr
-  - nullptr
-  - nullptr
-  - '&cmd'
-  - '&power_control'
-  - '&ref'
-  - '1536'
-  - '{0.065, 0.26, 0.0, 15.7647, 0.0, 0.0, 230, 0.3, 0.3, 1.0, 0.55, 35.0, 70.0, 0.3}'
-  - '{1.0, 8.5, 0.0, 0.0, 0.0, 0.0, true}'
-  - '{1.0, 320.0, 0.0, 0.0, 0.0, 0.0, false}'
-  - '{1.0, 320.0, 0.0, 0.0, 0.0, 0.0, false}'
-  - '{1.0, 320.0, 0.0, 0.0, 0.0, 0.0, false}'
-  - '{1.0, 0.048, 0.0, 0.0, 0.0, 5.0, false}'
-  - '{1.0, 0.048, 0.0, 0.0, 0.0, 5.0, false}'
-  - '{1.0, 0.048, 0.0, 0.0, 0.0, 5.0, false}'
-  - '{1.0, 0.048, 0.0, 0.0, 0.0, 5.0, false}'
-  - '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
-  - '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
-  - '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
-  - '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
-  - '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
-  - '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
-  - '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
-  - '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
-  - LibXR::Thread::Priority::HIGH
+  - motor_wheel_0: motor_wheel_0
+  - motor_wheel_1: motor_wheel_1
+  - motor_wheel_2: motor_wheel_2
+  - motor_wheel_3: motor_wheel_3
+  - motor_steer_0: nullptr
+  - motor_steer_1: nullptr
+  - motor_steer_2: nullptr
+  - motor_steer_3: nullptr
+  - cmd: cmd
+  - power_control: power_control
+  - referee: ref
+  - task_stack_depth: '1536'
+  - param:
+      chassis_param: '{0.065, 0.26, 0.0, 15.7647, 0.0, 0.0, 230, 0.3, 0.3, 1.0, 0.55, 35.0, 70.0, 0.3}'
+      pid_follow: '{1.0, 8.5, 0.0, 0.0, 0.0, 0.0, true}'
+      pid_velocity_x: '{1.0, 320.0, 0.0, 0.0, 0.0, 0.0, false}'
+      pid_velocity_y: '{1.0, 320.0, 0.0, 0.0, 0.0, 0.0, false}'
+      pid_omega: '{1.0, 320.0, 0.0, 0.0, 0.0, 0.0, false}'
+      pid_wheel_speed_0: '{1.0, 0.048, 0.0, 0.0, 0.0, 5.0, false}'
+      pid_wheel_speed_1: '{1.0, 0.048, 0.0, 0.0, 0.0, 5.0, false}'
+      pid_wheel_speed_2: '{1.0, 0.048, 0.0, 0.0, 0.0, 5.0, false}'
+      pid_wheel_speed_3: '{1.0, 0.048, 0.0, 0.0, 0.0, 5.0, false}'
+      pid_steer_angle_0: '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
+      pid_steer_angle_1: '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
+      pid_steer_angle_2: '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
+      pid_steer_angle_3: '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
+      pid_steer_speed_0: '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
+      pid_steer_speed_1: '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
+      pid_steer_speed_2: '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
+      pid_steer_speed_3: '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
+      thread_priority: LibXR::Thread::Priority::HIGH
 - module: QDU-Robomaster/Gimbal
   id: gimbal
   args:
-  - cmd
-  - '1536'
-  - '{1.0, 14.0, 0.0, 0.0, 0.0, 80.0, true}'
-  - '{1.0, 2.95, 0.0, 0.0, 0, 0, false}'
-  - '{1.0, 10.0, 0.0, 0.0, 0.0, 0.0, true}'
-  - '{1.0, 0.9, 0.0, 0.0, 0.0, 0.0, false}'
-  - '&motor_pit'
-  - '&motor_yaw'
-  - '0.4665'
-  - '6.15'
-  - '0.0'
-  - '0.0'
-  - '0.0'
-  - '0.01'
-  - '0.0'
-  - '6.28'
-  - '2.89073563'
-  - '0.0'
-  - '0.0'
-  - 'true'
-  - '&ref'
-  - LibXR::Thread::Priority::HIGH
+  - cmd: cmd
+  - motor_pit: motor_pit
+  - motor_yaw: motor_yaw
+  - referee: '&ref'
+  - param:
+      task_stack_depth: '1536'
+      pid_yaw_angle: '{1.0, 14.0, 0.0, 0.0, 0.0, 80.0, true}'
+      pid_yaw_omega: '{1.0, 2.95, 0.0, 0.0, 0, 0, false}'
+      pid_pit_angle: '{1.0, 10.0, 0.0, 0.0, 0.0, 0.0, true}'
+      pid_pit_omega: '{1.0, 0.9, 0.0, 0.0, 0.0, 0.0, false}'
+      pit_max_angle: '0.4665'
+      pit_min_angle: '6.15'
+      pit_lc: '0.0'
+      pit_theta: '0.0'
+      yaw_k: '0.0'
+      j_pit: '0.01'
+      j_yaw: '0.0'
+      pit_zero: '6.28'
+      yaw_zero: '2.89073563'
+      patrol_range: '0.0'
+      patrol_omega: '0.0'
+      reverse_flag: 'true'
+      thread_priority: LibXR::Thread::Priority::HIGH
 - module: QDU-Robomaster/InfantryLauncher
   id: launcher
   args:
-  - '&motor_fric_front_left'
-  - '&motor_fric_front_right'
-  - '&motor_trig'
-  - '1536'
-  - '{1.0, 40.0, 0.0, 0.0, 0.0, 0.0, false}'
-  - '{1.0, 0.15, 0.0, 0.0, 0.0, 0.0, false}'
-  - '{0.8, 0.0008, 0.0, 0.0, 0.0, 0.6, false}'
-  - '{0.8, 0.0008, 0.0, 0.0, 0.0, 0.6, false}'
-  - '{5800.0, 21.0, 1.0, 36.0, 10}'
-  - '&cmd'
-  - '&ref'
-  - LibXR::Thread::Priority::HIGH
+  - motor_fric_0: motor_fric_front_left
+  - motor_fric_1: motor_fric_front_right
+  - motor_trig: motor_trig
+  - cmd: cmd
+  - referee: '&ref'
+  - param:
+      task_stack_depth: '1536'
+      pid_param_trig_angle: '{1.0, 40.0, 0.0, 0.0, 0.0, 0.0, false}'
+      pid_param_trig_speed: '{1.0, 0.15, 0.0, 0.0, 0.0, 0.0, false}'
+      pid_param_fric_speed_0: '{0.8, 0.0008, 0.0, 0.0, 0.0, 0.6, false}'
+      pid_param_fric_speed_1: '{0.8, 0.0008, 0.0, 0.0, 0.0, 0.6, false}'
+      launcher_param: '{5800.0, 21.0, 1.0, 36.0, 10}'
+      thread_priority: LibXR::Thread::Priority::HIGH
 - module: QDU-Robomaster/EventBinder
   id: event_binder
   args:
-  - '{{"dr16", dr16}, {"vt13", vt13}, {"cmd", cmd}, {"chassis", chassis}, {"gimbal",
-    gimbal}, {"launcher", launcher}}'
-  - '{{{{"dr16", DR16::SwitchPos::DR16_SW_R_POS_MID, "cmd", CMD::Mode::CMD_OP_CTRL},
-    {"dr16", DR16::SwitchPos::DR16_SW_R_POS_BOT, "cmd", CMD::Mode::CMD_OP_CTRL}, {"dr16",
-    DR16::Key::KEY_R_PRESS, "cmd", CMD::Mode::CMD_AUTO_CTRL}, {"dr16", DR16::Key::KEY_R_RELEASE,
-    "cmd", CMD::Mode::CMD_OP_CTRL}, {"dr16", DR16::SwitchPos::DR16_SW_L_POS_TOP, "chassis",
-    Omni::ChassisMode::RELAX}, {"dr16", DR16::SwitchPos::DR16_SW_L_POS_MID, "chassis",
-    Omni::ChassisMode::FOLLOW}, {"dr16", DR16::SwitchPos::DR16_SW_L_POS_BOT, "chassis",
-    Omni::ChassisMode::ROTOR}, {"dr16", DR16::Key::KEY_Q, "chassis", Omni::ChassisMode::FOLLOW},
-    {"dr16", DR16::Key::KEY_E, "chassis", Omni::ChassisMode::ROTOR}, {"dr16", DR16::SwitchPos::DR16_SW_L_POS_TOP,
-    "gimbal", GimbalEvent::SET_MODE_RELAX}, {"dr16", DR16::SwitchPos::DR16_SW_L_POS_MID,
-    "gimbal", GimbalEvent::SET_MODE_COMMON}, {"dr16", DR16::SwitchPos::DR16_SW_L_POS_TOP,
-    "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_RELAX}, {"dr16", DR16::SwitchPos::DR16_SW_R_POS_TOP,
-    "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_SAFE}, {"dr16", DR16::SwitchPos::DR16_SW_R_POS_MID,
-    "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_SAFE}, {"dr16", DR16::SwitchPos::DR16_SW_R_POS_BOT,
-    "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_READY}, {"vt13", VT13::SwitchPos::VT13_KEY_CUSTOM_R_TOGGLE_ON,
-    "cmd", CMD::Mode::CMD_AUTO_CTRL}, {"vt13", VT13::SwitchPos::VT13_KEY_CUSTOM_R_TOGGLE_OFF,
-    "cmd", CMD::Mode::CMD_OP_CTRL}, {"vt13", VT13::Key::KEY_R_PRESS, "cmd", CMD::Mode::CMD_AUTO_CTRL},
-    {"vt13", VT13::Key::KEY_R_RELEASE, "cmd", CMD::Mode::CMD_OP_CTRL}, {"vt13", VT13::SwitchPos::VT13_SW_POS_C,
-    "chassis", Omni::ChassisMode::RELAX}, {"vt13", VT13::SwitchPos::VT13_SW_POS_N,
-    "chassis", Omni::ChassisMode::FOLLOW}, {"vt13", VT13::SwitchPos::VT13_SW_POS_S,
-    "chassis", Omni::ChassisMode::ROTOR}, {"vt13", VT13::Key::KEY_Q, "chassis", Omni::ChassisMode::FOLLOW},
-    {"vt13", VT13::Key::KEY_E, "chassis", Omni::ChassisMode::ROTOR}, {"vt13", VT13::Key::KEY_Q,
-    "gimbal", GimbalEvent::SET_MODE_COMMON}, {"vt13", VT13::Key::KEY_E, "gimbal",
-    GimbalEvent::SET_MODE_COMMON}, {"vt13", VT13::SwitchPos::VT13_SW_POS_C, "gimbal",
-    GimbalEvent::SET_MODE_RELAX}, {"vt13", VT13::SwitchPos::VT13_SW_POS_N, "gimbal",
-    GimbalEvent::SET_MODE_COMMON}, {"vt13", VT13::SwitchPos::VT13_SW_POS_S, "gimbal",
-    GimbalEvent::SET_MODE_COMMON}, {"vt13", VT13::SwitchPos::VT13_KEY_PAUSE_TOGGLE_ON,
-    "gimbal", GimbalEvent::SET_MODE_COMMON}, {"vt13", VT13::SwitchPos::VT13_KEY_PAUSE_TOGGLE_OFF,
-    "gimbal", GimbalEvent::SET_MODE_RELAX}, {"vt13", VT13::SwitchPos::VT13_KEY_CUSTOM_R_TOGGLE_ON,
-    "gimbal", GimbalEvent::SET_MODE_COMMON}, {"vt13", VT13::SwitchPos::VT13_KEY_CUSTOM_R_TOGGLE_OFF,
-    "gimbal", GimbalEvent::SET_MODE_COMMON}, {"vt13", VT13::SwitchPos::VT13_KEY_CUSTOM_L_TOGGLE_OFF,
-    "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_SAFE}, {"vt13", VT13::SwitchPos::VT13_KEY_CUSTOM_L_TOGGLE_OFF,
-    "launcher", InfantryLauncher::LauncherEvent::SET_SHOTMODE_SINGLE}, {"vt13", VT13::SwitchPos::VT13_KEY_CUSTOM_L_TOGGLE_ON,
-    "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_READY}, {"vt13", VT13::SwitchPos::VT13_KEY_CUSTOM_L_TOGGLE_ON,
-    "launcher", InfantryLauncher::LauncherEvent::SET_SHOTMODE_SINGLE}, {"vt13", VT13::Key::KEY_G,
-    "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_SAFE}, {"vt13", VT13::Key::KEY_C,
-    "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_READY}, {"vt13", VT13::Key::KEY_C,
-    "launcher", InfantryLauncher::LauncherEvent::SET_SHOTMODE_SINGLE}, {"vt13", VT13::Key::KEY_V,
-    "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_READY}, {"vt13", VT13::Key::KEY_V,
-    "launcher", InfantryLauncher::LauncherEvent::SET_SHOTMODE_BOOST_3}, {"vt13", VT13::Key::KEY_B,
-    "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_READY}, {"vt13", VT13::Key::KEY_B,
-    "launcher", InfantryLauncher::LauncherEvent::SET_SHOTMODE_CONTINUE}}}}'
+  - modules: '{{"dr16", dr16}, {"vt13", vt13}, {"cmd", cmd}, {"chassis", chassis}, {"gimbal", gimbal}, {"launcher",
+      launcher}}'
+  - event_binding_groups: '{{{{"dr16", DR16::SwitchPos::DR16_SW_R_POS_MID, "cmd", CMD::Mode::CMD_OP_CTRL}, {"dr16",
+      DR16::SwitchPos::DR16_SW_R_POS_BOT, "cmd", CMD::Mode::CMD_OP_CTRL}, {"dr16", DR16::Key::KEY_R_PRESS, "cmd",
+      CMD::Mode::CMD_AUTO_CTRL}, {"dr16", DR16::Key::KEY_R_RELEASE, "cmd", CMD::Mode::CMD_OP_CTRL}, {"dr16", DR16::SwitchPos::DR16_SW_L_POS_TOP,
+      "chassis", Omni::ChassisMode::RELAX}, {"dr16", DR16::SwitchPos::DR16_SW_L_POS_MID, "chassis", Omni::ChassisMode::FOLLOW},
+      {"dr16", DR16::SwitchPos::DR16_SW_L_POS_BOT, "chassis", Omni::ChassisMode::ROTOR}, {"dr16", DR16::Key::KEY_Q,
+      "chassis", Omni::ChassisMode::FOLLOW}, {"dr16", DR16::Key::KEY_E, "chassis", Omni::ChassisMode::ROTOR}, {"dr16",
+      DR16::SwitchPos::DR16_SW_L_POS_TOP, "gimbal", GimbalEvent::SET_MODE_RELAX}, {"dr16", DR16::SwitchPos::DR16_SW_L_POS_MID,
+      "gimbal", GimbalEvent::SET_MODE_COMMON}, {"dr16", DR16::SwitchPos::DR16_SW_L_POS_TOP, "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_RELAX},
+      {"dr16", DR16::SwitchPos::DR16_SW_R_POS_TOP, "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_SAFE},
+      {"dr16", DR16::SwitchPos::DR16_SW_R_POS_MID, "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_SAFE},
+      {"dr16", DR16::SwitchPos::DR16_SW_R_POS_BOT, "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_READY},
+      {"vt13", VT13::SwitchPos::VT13_KEY_CUSTOM_R_TOGGLE_ON, "cmd", CMD::Mode::CMD_AUTO_CTRL}, {"vt13", VT13::SwitchPos::VT13_KEY_CUSTOM_R_TOGGLE_OFF,
+      "cmd", CMD::Mode::CMD_OP_CTRL}, {"vt13", VT13::Key::KEY_R_PRESS, "cmd", CMD::Mode::CMD_AUTO_CTRL}, {"vt13",
+      VT13::Key::KEY_R_RELEASE, "cmd", CMD::Mode::CMD_OP_CTRL}, {"vt13", VT13::SwitchPos::VT13_SW_POS_C, "chassis",
+      Omni::ChassisMode::RELAX}, {"vt13", VT13::SwitchPos::VT13_SW_POS_N, "chassis", Omni::ChassisMode::FOLLOW},
+      {"vt13", VT13::SwitchPos::VT13_SW_POS_S, "chassis", Omni::ChassisMode::ROTOR}, {"vt13", VT13::Key::KEY_Q,
+      "chassis", Omni::ChassisMode::FOLLOW}, {"vt13", VT13::Key::KEY_E, "chassis", Omni::ChassisMode::ROTOR}, {"vt13",
+      VT13::Key::KEY_Q, "gimbal", GimbalEvent::SET_MODE_COMMON}, {"vt13", VT13::Key::KEY_E, "gimbal", GimbalEvent::SET_MODE_COMMON},
+      {"vt13", VT13::SwitchPos::VT13_SW_POS_C, "gimbal", GimbalEvent::SET_MODE_RELAX}, {"vt13", VT13::SwitchPos::VT13_SW_POS_N,
+      "gimbal", GimbalEvent::SET_MODE_COMMON}, {"vt13", VT13::SwitchPos::VT13_SW_POS_S, "gimbal", GimbalEvent::SET_MODE_COMMON},
+      {"vt13", VT13::SwitchPos::VT13_KEY_PAUSE_TOGGLE_ON, "gimbal", GimbalEvent::SET_MODE_COMMON}, {"vt13", VT13::SwitchPos::VT13_KEY_PAUSE_TOGGLE_OFF,
+      "gimbal", GimbalEvent::SET_MODE_RELAX}, {"vt13", VT13::SwitchPos::VT13_KEY_CUSTOM_R_TOGGLE_ON, "gimbal", GimbalEvent::SET_MODE_COMMON},
+      {"vt13", VT13::SwitchPos::VT13_KEY_CUSTOM_R_TOGGLE_OFF, "gimbal", GimbalEvent::SET_MODE_COMMON}, {"vt13",
+      VT13::SwitchPos::VT13_KEY_CUSTOM_L_TOGGLE_OFF, "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_SAFE},
+      {"vt13", VT13::SwitchPos::VT13_KEY_CUSTOM_L_TOGGLE_OFF, "launcher", InfantryLauncher::LauncherEvent::SET_SHOTMODE_SINGLE},
+      {"vt13", VT13::SwitchPos::VT13_KEY_CUSTOM_L_TOGGLE_ON, "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_READY},
+      {"vt13", VT13::SwitchPos::VT13_KEY_CUSTOM_L_TOGGLE_ON, "launcher", InfantryLauncher::LauncherEvent::SET_SHOTMODE_SINGLE},
+      {"vt13", VT13::Key::KEY_G, "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_SAFE}, {"vt13", VT13::Key::KEY_C,
+      "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_READY}, {"vt13", VT13::Key::KEY_C, "launcher", InfantryLauncher::LauncherEvent::SET_SHOTMODE_SINGLE},
+      {"vt13", VT13::Key::KEY_V, "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_READY}, {"vt13", VT13::Key::KEY_V,
+      "launcher", InfantryLauncher::LauncherEvent::SET_SHOTMODE_BOOST_3}, {"vt13", VT13::Key::KEY_B, "launcher",
+      InfantryLauncher::LauncherEvent::SET_FRICMODE_READY}, {"vt13", VT13::Key::KEY_B, "launcher", InfantryLauncher::LauncherEvent::SET_SHOTMODE_CONTINUE}}}}'
 - module: QDU-Robomaster/HostData
   id: hostdata
   args:
-  - cmd
-  - '"target_euler"'
-  - '"chassis_data"'
-  - '"fire_notify"'
+  - cmd: cmd
+  - host_gimbal_topic_name: '"target_euler"'
+  - host_chassis_data_topic_name: '"chassis_data"'
+  - host_fire_topic_name: '"fire_notify"'
 - module: xrobot-org/SharedTopic
   id: sharedtopic
   args:
-  - usb_otg_hs_cdc
-  - ramfs
-  - '"usb_otg_hs_cdc"'
-  - '512'
-  - '{"target_euler", "fire_notify", "camera_sync_command"}'
+  - uart: usb_otg_hs_cdc
+  - ramfs: ramfs
+  - uart_name: '"usb_otg_hs_cdc"'
+  - buffer_size: '512'
+  - topic_configs: '{"target_euler", "fire_notify", "camera_sync_command"}'
 - module: xrobot-org/SharedTopicClient
   id: sharedtopicclient
   args:
-  - usb_otg_hs_cdc
-  - '16'
-  - '{"gimbal_gyro", "gimbal_accl", "gimbal_quat", "camera_sync_result", "robot_game_ref"}'
+  - uart: usb_otg_hs_cdc
+  - slot_count: '16'
+  - topic_configs: '{"gimbal_gyro", "gimbal_accl", "gimbal_quat", "camera_sync_result", "robot_game_ref"}'
 settings:
-  monitor_sleep_ms: 1000
+  monitor_sleep_ms: '1000'
