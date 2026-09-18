@@ -60,6 +60,7 @@ jobs:
         python3 -m pip install ./.ci-tools/XRobot ./.ci-tools/CodeGenerator
     - name: Regenerate static BSP objects
       run: |
+        xr_parse_ioc -d . -o .config.yaml
         xr_gen_code_stm32 -i .config.yaml -o User/app_main.cpp --xrobot --libxr-config User/libxr_config.yaml
     - name: Resolve configured modules and generate the entry
       shell: bash
