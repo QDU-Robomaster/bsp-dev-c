@@ -104,10 +104,12 @@ device_aliases:
   ACCL_CS:
     type: GPIO
     aliases:
+    - ACCL_CS
     - bmi088_accl_cs
   GYRO_CS:
     type: GPIO
     aliases:
+    - GYRO_CS
     - bmi088_gyro_cs
   HW0:
     type: GPIO
@@ -124,26 +126,32 @@ device_aliases:
   ACCL_INT:
     type: GPIO
     aliases:
+    - ACCL_INT
     - bmi088_accl_int
   GYRO_INT:
     type: GPIO
     aliases:
+    - GYRO_INT
     - bmi088_gyro_int
   spi1:
     type: SPI
     aliases:
+    - spi1
     - spi_bmi088
   pwm_tim10_ch1:
     type: PWM
     aliases:
     - pwm_bmi088_heat
+    - pwm_tim10_ch1
   CMPS_INT:
     type: GPIO
     aliases:
+    - CMPS_INT
     - ist8310_int
   CMPS_RST:
     type: GPIO
     aliases:
+    - CMPS_RST
     - ist8310_rst
   LED_B:
     type: GPIO
@@ -163,56 +171,69 @@ device_aliases:
     aliases:
     - pwm_a
     - pwm_launcher_cover_servo
+    - pwm_tim1_ch1
   pwm_tim1_ch2:
     type: PWM
     aliases:
     - pwm_b
+    - pwm_tim1_ch2
   pwm_tim1_ch3:
     type: PWM
     aliases:
     - pwm_c
+    - pwm_tim1_ch3
   pwm_tim1_ch4:
     type: PWM
     aliases:
     - pwm_d
+    - pwm_tim1_ch4
   pwm_tim3_ch3:
     type: PWM
     aliases:
     - pwm_5v
+    - pwm_tim3_ch3
   pwm_tim4_ch3:
     type: PWM
     aliases:
     - pwm_buzzer
+    - pwm_tim4_ch3
   pwm_tim8_ch1:
     type: PWM
     aliases:
     - pwm_e
+    - pwm_tim8_ch1
   pwm_tim8_ch2:
     type: PWM
     aliases:
     - pwm_f
+    - pwm_tim8_ch2
   pwm_tim8_ch3:
     type: PWM
     aliases:
     - pwm_g
+    - pwm_tim8_ch3
   adc3_adc_channel_8:
     type: ADC
     aliases:
+    - adc3_adc_channel_8
     - adc_bat
   usart1:
     type: UART
     aliases:
     - imu_data_uart
     - uart_referee
+    - usart1
   usart3:
     type: UART
     aliases:
     - uart_dr16
+    - usart3
   usart6:
     type: UART
     aliases:
     - uart_ai
     - uart_ext_controller
+    - usart6
   i2c1:
     type: I2C
     aliases:
@@ -220,6 +241,7 @@ device_aliases:
   i2c3:
     type: I2C
     aliases:
+    - i2c3
     - i2c_ist8310
   can1:
     type: CAN

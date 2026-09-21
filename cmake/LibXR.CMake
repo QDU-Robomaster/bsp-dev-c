@@ -16,6 +16,8 @@ target_link_libraries(xr
     PUBLIC stm32cubemx
 )
 
+
+target_compile_features(xr PUBLIC cxx_std_20)
 target_include_directories(xr
     PUBLIC $<TARGET_PROPERTY:stm32cubemx,INTERFACE_INCLUDE_DIRECTORIES>
     PUBLIC Core/Inc
@@ -23,6 +25,11 @@ target_include_directories(xr
 )
 
 # Add include paths
+set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
+    CXX_STANDARD 20
+    CXX_STANDARD_REQUIRED ON
+)
+
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     PUBLIC $<TARGET_PROPERTY:xr,INTERFACE_INCLUDE_DIRECTORIES>

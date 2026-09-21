@@ -59,21 +59,22 @@ static uint8_t usart6_tx_buf[512];
 static uint8_t usart6_rx_buf[512];
 static uint8_t i2c1_buf[32];
 static uint8_t i2c3_buf[32];
-static uint8_t usb_otg_hs_ep0_in_buf[8];
-static uint8_t usb_otg_hs_ep0_out_buf[8];
-static uint8_t usb_otg_hs_ep1_in_buf[128];
-static uint8_t usb_otg_hs_ep1_out_buf[128];
-static uint8_t usb_otg_hs_ep2_in_buf[16];
 static uint8_t usb_otg_fs_ep0_in_buf[8];
 static uint8_t usb_otg_fs_ep0_out_buf[8];
 static uint8_t usb_otg_fs_ep1_in_buf[128];
 static uint8_t usb_otg_fs_ep1_out_buf[128];
 static uint8_t usb_otg_fs_ep2_in_buf[16];
+static uint8_t usb_otg_hs_ep0_in_buf[8];
+static uint8_t usb_otg_hs_ep0_out_buf[8];
+static uint8_t usb_otg_hs_ep1_in_buf[128];
+static uint8_t usb_otg_hs_ep1_out_buf[128];
+static uint8_t usb_otg_hs_ep2_in_buf[16];
 
 extern "C" void app_main(void) {
   // clang-format on
   // NOLINTEND
   /* User Code Begin 2 */
+  
   /* User Code End 2 */
   // clang-format off
   // NOLINTBEGIN
@@ -136,25 +137,8 @@ extern "C" void app_main(void) {
 
   STM32CAN can2(&hcan2, 5);
 
-  static constexpr auto USB_OTG_HS_LANG_PACK = LibXR::USB::DescriptorStrings::MakeLanguagePack(LibXR::USB::DescriptorStrings::Language::EN_US, "QDU-Future", "MainCtrl", "QDU-Future-MainCtrl-89ABCDEF0123456701234567");
-  LibXR::USB::CDCUart usb_otg_hs_cdc(256, 256, 15);
-
-  STM32USBDeviceOtgHS usb_hs(
-      &hpcd_USB_OTG_HS,
-      256,
-      {usb_otg_hs_ep0_out_buf, usb_otg_hs_ep1_out_buf},
-      {{usb_otg_hs_ep0_in_buf, 8}, {usb_otg_hs_ep1_in_buf, 128}, {usb_otg_hs_ep2_in_buf, 16}},
-      USB::DeviceDescriptor::PacketSize0::SIZE_8,
-      0x16D0, 0x1492, 0xF407,
-      {&USB_OTG_HS_LANG_PACK},
-      {{&usb_otg_hs_cdc}},
-      {reinterpret_cast<void *>(UID_BASE), 12}
-  );
-  usb_hs.Init(false);
-  usb_hs.Start(false);
-
   static constexpr auto USB_OTG_FS_LANG_PACK = LibXR::USB::DescriptorStrings::MakeLanguagePack(LibXR::USB::DescriptorStrings::Language::EN_US, "QDU-Future", "MainCtrl", "QDU-Future-MainCtrl-89ABCDEF0123456701234567");
-  LibXR::USB::CDCUart usb_otg_fs_cdc(256, 256, 15);
+  LibXR::USB::CDCUart usb_otg_fs_cdc(LibXR::USB::Endpoint::EPNumber::EP1, LibXR::USB::Endpoint::EPNumber::EP1, LibXR::USB::Endpoint::EPNumber::EP2, 128, 128, 3);
 
   STM32USBDeviceOtgFS usb_fs(
       &hpcd_USB_OTG_FS,
@@ -170,6 +154,23 @@ extern "C" void app_main(void) {
   usb_fs.Init(false);
   usb_fs.Start(false);
 
+  static constexpr auto USB_OTG_HS_LANG_PACK = LibXR::USB::DescriptorStrings::MakeLanguagePack(LibXR::USB::DescriptorStrings::Language::EN_US, "QDU-Future", "MainCtrl", "QDU-Future-MainCtrl-89ABCDEF0123456701234567");
+  LibXR::USB::CDCUart usb_otg_hs_cdc(LibXR::USB::Endpoint::EPNumber::EP1, LibXR::USB::Endpoint::EPNumber::EP1, LibXR::USB::Endpoint::EPNumber::EP2, 128, 128, 3);
+
+  STM32USBDeviceOtgHS usb_hs(
+      &hpcd_USB_OTG_HS,
+      256,
+      {usb_otg_hs_ep0_out_buf, usb_otg_hs_ep1_out_buf},
+      {{usb_otg_hs_ep0_in_buf, 8}, {usb_otg_hs_ep1_in_buf, 128}, {usb_otg_hs_ep2_in_buf, 16}},
+      USB::DeviceDescriptor::PacketSize0::SIZE_8,
+      0x16D0, 0x1492, 0xF407,
+      {&USB_OTG_HS_LANG_PACK},
+      {{&usb_otg_hs_cdc}},
+      {reinterpret_cast<void *>(UID_BASE), 12}
+  );
+  usb_hs.Init(false);
+  usb_hs.Start(false);
+
   /* Terminal Configuration */
   STDIO::read_ = usb_otg_fs_cdc.read_port_;
   STDIO::write_ = usb_otg_fs_cdc.write_port_;
@@ -184,35 +185,35 @@ extern "C" void app_main(void) {
   LibXR::HardwareContainer peripherals{
     LibXR::Entry<LibXR::PowerManager>({power_manager, {"power_manager"}}),
     LibXR::Entry<LibXR::GPIO>({USER_KEY, {"USER_KEY", "wakeup_key"}}),
-    LibXR::Entry<LibXR::GPIO>({ACCL_CS, {"bmi088_accl_cs"}}),
-    LibXR::Entry<LibXR::GPIO>({GYRO_CS, {"bmi088_gyro_cs"}}),
+    LibXR::Entry<LibXR::GPIO>({ACCL_CS, {"ACCL_CS", "bmi088_accl_cs"}}),
+    LibXR::Entry<LibXR::GPIO>({GYRO_CS, {"GYRO_CS", "bmi088_gyro_cs"}}),
     LibXR::Entry<LibXR::GPIO>({HW0, {"HW0"}}),
     LibXR::Entry<LibXR::GPIO>({HW1, {"HW1"}}),
     LibXR::Entry<LibXR::GPIO>({HW2, {"HW2"}}),
-    LibXR::Entry<LibXR::GPIO>({ACCL_INT, {"bmi088_accl_int"}}),
-    LibXR::Entry<LibXR::GPIO>({GYRO_INT, {"bmi088_gyro_int"}}),
-    LibXR::Entry<LibXR::SPI>({spi1, {"spi_bmi088"}}),
-    LibXR::Entry<LibXR::PWM>({pwm_tim10_ch1, {"pwm_bmi088_heat"}}),
-    LibXR::Entry<LibXR::GPIO>({CMPS_INT, {"ist8310_int"}}),
-    LibXR::Entry<LibXR::GPIO>({CMPS_RST, {"ist8310_rst"}}),
+    LibXR::Entry<LibXR::GPIO>({ACCL_INT, {"ACCL_INT", "bmi088_accl_int"}}),
+    LibXR::Entry<LibXR::GPIO>({GYRO_INT, {"GYRO_INT", "bmi088_gyro_int"}}),
+    LibXR::Entry<LibXR::SPI>({spi1, {"spi1", "spi_bmi088"}}),
+    LibXR::Entry<LibXR::PWM>({pwm_tim10_ch1, {"pwm_bmi088_heat", "pwm_tim10_ch1"}}),
+    LibXR::Entry<LibXR::GPIO>({CMPS_INT, {"CMPS_INT", "ist8310_int"}}),
+    LibXR::Entry<LibXR::GPIO>({CMPS_RST, {"CMPS_RST", "ist8310_rst"}}),
     LibXR::Entry<LibXR::GPIO>({LED_B, {"LED", "LED_B"}}),
     LibXR::Entry<LibXR::GPIO>({LED_G, {"LED_G"}}),
     LibXR::Entry<LibXR::GPIO>({LED_R, {"LED_R"}}),
-    LibXR::Entry<LibXR::PWM>({pwm_tim1_ch1, {"pwm_a", "pwm_launcher_cover_servo"}}),
-    LibXR::Entry<LibXR::PWM>({pwm_tim1_ch2, {"pwm_b"}}),
-    LibXR::Entry<LibXR::PWM>({pwm_tim1_ch3, {"pwm_c"}}),
-    LibXR::Entry<LibXR::PWM>({pwm_tim1_ch4, {"pwm_d"}}),
-    LibXR::Entry<LibXR::PWM>({pwm_tim3_ch3, {"pwm_5v"}}),
-    LibXR::Entry<LibXR::PWM>({pwm_tim4_ch3, {"pwm_buzzer"}}),
-    LibXR::Entry<LibXR::PWM>({pwm_tim8_ch1, {"pwm_e"}}),
-    LibXR::Entry<LibXR::PWM>({pwm_tim8_ch2, {"pwm_f"}}),
-    LibXR::Entry<LibXR::PWM>({pwm_tim8_ch3, {"pwm_g"}}),
-    LibXR::Entry<LibXR::ADC>({adc3_adc_channel_8, {"adc_bat"}}),
-    LibXR::Entry<LibXR::UART>({usart1, {"imu_data_uart", "uart_referee"}}),
-    LibXR::Entry<LibXR::UART>({usart3, {"uart_dr16"}}),
-    LibXR::Entry<LibXR::UART>({usart6, {"uart_ai", "uart_ext_controller"}}),
+    LibXR::Entry<LibXR::PWM>({pwm_tim1_ch1, {"pwm_a", "pwm_launcher_cover_servo", "pwm_tim1_ch1"}}),
+    LibXR::Entry<LibXR::PWM>({pwm_tim1_ch2, {"pwm_b", "pwm_tim1_ch2"}}),
+    LibXR::Entry<LibXR::PWM>({pwm_tim1_ch3, {"pwm_c", "pwm_tim1_ch3"}}),
+    LibXR::Entry<LibXR::PWM>({pwm_tim1_ch4, {"pwm_d", "pwm_tim1_ch4"}}),
+    LibXR::Entry<LibXR::PWM>({pwm_tim3_ch3, {"pwm_5v", "pwm_tim3_ch3"}}),
+    LibXR::Entry<LibXR::PWM>({pwm_tim4_ch3, {"pwm_buzzer", "pwm_tim4_ch3"}}),
+    LibXR::Entry<LibXR::PWM>({pwm_tim8_ch1, {"pwm_e", "pwm_tim8_ch1"}}),
+    LibXR::Entry<LibXR::PWM>({pwm_tim8_ch2, {"pwm_f", "pwm_tim8_ch2"}}),
+    LibXR::Entry<LibXR::PWM>({pwm_tim8_ch3, {"pwm_g", "pwm_tim8_ch3"}}),
+    LibXR::Entry<LibXR::ADC>({adc3_adc_channel_8, {"adc3_adc_channel_8", "adc_bat"}}),
+    LibXR::Entry<LibXR::UART>({usart1, {"imu_data_uart", "uart_referee", "usart1"}}),
+    LibXR::Entry<LibXR::UART>({usart3, {"uart_dr16", "usart3"}}),
+    LibXR::Entry<LibXR::UART>({usart6, {"uart_ai", "uart_ext_controller", "usart6"}}),
     LibXR::Entry<LibXR::I2C>({i2c1, {"i2c1"}}),
-    LibXR::Entry<LibXR::I2C>({i2c3, {"i2c_ist8310"}}),
+    LibXR::Entry<LibXR::I2C>({i2c3, {"i2c3", "i2c_ist8310"}}),
     LibXR::Entry<LibXR::CAN>({can1, {"can1", "imu_can"}}),
     LibXR::Entry<LibXR::CAN>({can2, {"can2"}}),
     LibXR::Entry<LibXR::RamFS>({ramfs, {"ramfs"}}),
