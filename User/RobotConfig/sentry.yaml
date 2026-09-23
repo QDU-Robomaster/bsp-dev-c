@@ -53,14 +53,14 @@ modules:
       baudrate: '115200'
       referee_chassis_tp_name: '"chassis_ref"'
       referee_launcher_tp_name: '"launcher_ref"'
-      referee_robot_game_tp_name: '"sentry_ref"'
+      referee_robot_game_tp_name: '"robot_game_ref"'
       referee_radar_tp_name: '"radar_ref"'
       thread_priority_uart: LibXR::Thread::Priority::MEDIUM
 - module: QDU-Robomaster/SentryProtocol
   id: SentryProtocol_0
   args:
   - referee: '&ref'
-  - referee_sentry_tp_name: '"sentry_ref"'
+  - referee_sentry_tp_name: '"robot_game_ref"'
   - buy_bullet_topic_name: '"sentry_buy_bullet_num"'
   - remote_buy_bullet_times_topic_name: '"sentry_remote_buy_bullet_times"'
   - remote_buy_hp_times_topic_name: '"sentry_remote_buy_hp_times"'
@@ -310,7 +310,7 @@ modules:
   args:
   - uart: usb_otg_hs_cdc2
   - slot_count: '16'
-  - topic_configs: '{"yawmotor_angle", "sentry_ref", "ahrs_quaternion"}'
+  - topic_configs: '{"yawmotor_angle", "robot_game_ref", "ahrs_quaternion"}'
 - module: xrobot-org/SharedTopic
   id: sharetopic_autoaim
   args:
