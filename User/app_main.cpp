@@ -293,8 +293,8 @@ extern "C" void app_main(void) {
   XR_REGISTER(HW2, LibXR::GPIO);
   XR_REGISTER(ACCL_INT, LibXR::GPIO);
   XR_REGISTER(GYRO_INT, LibXR::GPIO);
-  XR_REGISTER(spi1, LibXR::SPI);
-  XR_REGISTER(pwm_tim10_ch1, LibXR::PWM);
+  XR_REGISTER(CAMERA, LibXR::GPIO);
+  XR_REGISTER(IMU_INT, LibXR::GPIO);
   XR_REGISTER(CMPS_INT, LibXR::GPIO);
   XR_REGISTER(CMPS_RST, LibXR::GPIO);
   XR_REGISTER(LED_B, LibXR::GPIO);
@@ -304,12 +304,14 @@ extern "C" void app_main(void) {
   XR_REGISTER(pwm_tim1_ch2, LibXR::PWM);
   XR_REGISTER(pwm_tim1_ch3, LibXR::PWM);
   XR_REGISTER(pwm_tim1_ch4, LibXR::PWM);
+  XR_REGISTER(pwm_tim10_ch1, LibXR::PWM);
   XR_REGISTER(pwm_tim3_ch3, LibXR::PWM);
   XR_REGISTER(pwm_tim4_ch3, LibXR::PWM);
   XR_REGISTER(pwm_tim8_ch1, LibXR::PWM);
   XR_REGISTER(pwm_tim8_ch2, LibXR::PWM);
   XR_REGISTER(pwm_tim8_ch3, LibXR::PWM);
   XR_REGISTER(adc3_adc_channel_8, LibXR::ADC);
+  XR_REGISTER(spi1, LibXR::SPI);
   XR_REGISTER(usart1, LibXR::UART);
   XR_REGISTER(usart3, LibXR::UART);
   XR_REGISTER(usart6, LibXR::UART);
@@ -317,11 +319,9 @@ extern "C" void app_main(void) {
   XR_REGISTER(i2c3, LibXR::I2C);
   XR_REGISTER(can1, LibXR::CAN);
   XR_REGISTER(can2, LibXR::CAN);
+  XR_REGISTER(usb_otg_fs_cdc, LibXR::UART);
   XR_REGISTER(ramfs, LibXR::RamFS);
   XR_REGISTER(terminal, LibXR::Terminal<32, 32, 5, 5>);
-  XR_REGISTER(usb_otg_fs_cdc, LibXR::UART);
-  XR_REGISTER(CAMERA, LibXR::GPIO);
-  XR_REGISTER(IMU_INT, LibXR::GPIO);
 
   // clang-format on
   // NOLINTEND

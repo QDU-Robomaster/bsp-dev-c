@@ -1,35 +1,58 @@
-name: xrobot stm32 build test
+name: build
+
+on:
+  push:
+    branches: [main, master, dev]
+    tags: ['v*']
+  pull_request:
+    branches: [main, master, dev]
+  schedule:
+    - cron: '0 10 * * *'
+  release:
+    types: [published]
+  workflow_dispatch:
+
+env:
+  XR_REF_NAME: ${{ github.head_ref || github.ref_name }}
+  XR_REF_KIND: ${{ github.ref_type }}
+  XR_CONTEXT_REF: ${{ github.ref_type == 'tag' && format('refs/tags/{0}', github.ref_name) || format('refs/heads/{0}', github.head_ref || github.ref_name) }}
+  XROBOT_REF: ${{ vars.XROBOT_REF || '' }}
+  CODEGEN_REF: ${{ vars.CODEGEN_REF || '' }}
+
 jobs:
   build:
+    name: build (${{ matrix.robot_config }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         robot_config:
-        - aerial
-        - dart
-        - helm_infantry
-        - hero
-        - omni_infantry_3
-        - omni_infantry_4
-        - radar
-        - sentry
-        - wheel_leg
+          - default
+          - aerial
+          - dart
+          - helm_infantry
+          - hero
+          - omni_infantry_3
+          - omni_infantry_4
+          - radar
+          - sentry
+          - wheel_leg
     container:
       image: ghcr.io/xrobot-org/docker-image-stm32:main
       options: --user 0
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
       with:
         ref: ${{ github.event.pull_request.head.sha || github.sha }}
-    - name: init submodule
+    - name: Init submodules
       run: git config --global --add safe.directory "$GITHUB_WORKSPACE" && git submodule update --init --recursive
-    - name: Checkout matching XRobot tools
+    - name: Fetch XRobot tools
       shell: bash
       run: |
         set -euo pipefail
         checkout_tool() {
-          local repo="$1" directory="$2" selected="$3" available
+          local repo="$1" directory="$2" selected="$3"
           if [[ -n "$selected" ]]; then
             if [[ "$selected" != refs/heads/* && "$selected" != refs/tags/* &&
                   ! "$selected" =~ ^[0-9a-fA-F]{40}$ ]]; then
@@ -38,13 +61,10 @@ jobs:
             fi
           elif [[ "$XR_REF_KIND" == tag ]]; then
             selected="refs/tags/$XR_REF_NAME"
+          elif [[ -n "$(git ls-remote --heads "$repo" "refs/heads/$XR_REF_NAME")" ]]; then
+            selected="refs/heads/$XR_REF_NAME"
           else
-            available=$(git ls-remote --heads "$repo" "refs/heads/$XR_REF_NAME")
-            if [[ -n "$available" ]]; then
-              selected="refs/heads/$XR_REF_NAME"
-            else
-              selected=refs/heads/dev
-            fi
+            selected=refs/heads/dev
           fi
           git init "$directory"
           git -C "$directory" remote add origin "$repo"
@@ -52,36 +72,42 @@ jobs:
           git -C "$directory" checkout --detach FETCH_HEAD
           git -C "$directory" submodule update --init --recursive --depth=1
         }
-        mkdir -p .ci-tools
         checkout_tool https://github.com/xrobot-org/XRobot.git .ci-tools/XRobot "$XROBOT_REF"
         checkout_tool https://github.com/xrobot-org/LibXR_CppCodeGenerator.git .ci-tools/CodeGenerator "$CODEGEN_REF"
-    - name: Install selected tools
+    - name: Install XRobot tools
+      run: python3 -m pip install ./.ci-tools/XRobot ./.ci-tools/CodeGenerator
+    - name: Regenerate BSP objects
       run: |
-        python3 -m pip install ./.ci-tools/XRobot ./.ci-tools/CodeGenerator
-    - name: Regenerate static BSP objects
-      run: |
-        xr_parse_ioc -d . -o .config.yaml
-        xr_gen_code_stm32 -i .config.yaml -o User/app_main.cpp --xrobot --libxr-config User/libxr_config.yaml
-    - name: Resolve configured modules and generate the entry
+        xr_parse_ioc -d . -o .ci-tools/cubemx.yaml
+        xr_gen_code_stm32 -i .ci-tools/cubemx.yaml -o User/app_main.cpp --xrobot --libxr-config User/libxr_config.yaml
+    - name: Resolve locked modules and generate the entry
+      run: xrobot_setup --frozen --context-ref "$XR_CONTEXT_REF" --register-source User/app_main.cpp
+    - name: Check generated files are committed
       shell: bash
       run: |
         set -euo pipefail
-        if [[ "$XR_REF_KIND" == tag ]]; then
-          context="refs/tags/$XR_REF_NAME"
-        else
-          context="refs/heads/$XR_REF_NAME"
+        generated=(User/app_main.cpp User/libxr_config.yaml User/xrobot_main.hpp Modules/CMakeLists.txt xrobot.lock)
+        if [[ -n "$(git status --porcelain -- "${generated[@]}")" ]]; then
+          git status --short -- "${generated[@]}"
+          git --no-pager diff -- "${generated[@]}"
+          echo "::error::Generated files differ from the commit; regenerate them and commit the result"
+          exit 1
         fi
-        xrobot_setup --context-ref "$context" --register-source User/app_main.cpp
-    - name: config cmake
+    - name: Configure
       run: |
         export GCC_TOOLCHAIN_ROOT=/opt/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi/bin
         export CLANG_GCC_CMSIS_COMPILER=/opt/st-arm-clang
         cmake . -DCMAKE_TOOLCHAIN_FILE:STRING=cmake/starm-clang.cmake -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -Bbuild -G Ninja
-    - name: build ${{ matrix.robot_config }}
+    - name: Build
+      shell: bash
       run: |
-        xrobot_gen_main --config User/RobotConfig/${{ matrix.robot_config }}.yaml --register-source User/app_main.cpp
+        set -euo pipefail
+        if [[ "${{ matrix.robot_config }}" != default ]]; then
+          xrobot_gen_main --config User/RobotConfig/${{ matrix.robot_config }}.yaml --register-source User/app_main.cpp
+        fi
         cmake --build build
-    - name: package firmware
+    - name: Package firmware
+      if: matrix.robot_config != 'default'
       run: |
         mkdir -p dist/${{ matrix.robot_config }}
         cp build/DevC.elf dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.elf
@@ -89,7 +115,8 @@ jobs:
         cp build/DevC.bin dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.bin
         cp User/RobotConfig/${{ matrix.robot_config }}.yaml dist/${{ matrix.robot_config }}/
         tar -C dist -czf dist/${{ matrix.robot_config }}-firmware.tar.gz ${{ matrix.robot_config }}
-    - name: upload firmware artifact
+    - name: Upload firmware artifact
+      if: matrix.robot_config != 'default'
       uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.robot_config }}-firmware
@@ -100,12 +127,7 @@ jobs:
           dist/${{ matrix.robot_config }}/${{ matrix.robot_config }}.yaml
           dist/${{ matrix.robot_config }}-firmware.tar.gz
         if-no-files-found: error
-    env:
-      XR_REF_NAME: ${{ github.head_ref || github.ref_name }}
-      XR_REF_KIND: ${{ github.ref_type }}
-      XROBOT_REF: ${{ vars.XROBOT_REF || '' }}
-      CODEGEN_REF: ${{ vars.CODEGEN_REF || '' }}
-      PYTHONPATH: ${{ github.workspace }}/.ci-tools/XRobot/src:${{ github.workspace }}/.ci-tools/CodeGenerator/src
+
   release:
     if: github.event_name == 'release' || startsWith(github.ref, 'refs/tags/v')
     needs: build
@@ -116,22 +138,22 @@ jobs:
       fail-fast: false
       matrix:
         robot_config:
-        - aerial
-        - dart
-        - helm_infantry
-        - hero
-        - omni_infantry_3
-        - omni_infantry_4
-        - radar
-        - sentry
-        - wheel_leg
+          - aerial
+          - dart
+          - helm_infantry
+          - hero
+          - omni_infantry_3
+          - omni_infantry_4
+          - radar
+          - sentry
+          - wheel_leg
     steps:
-    - name: download firmware artifact
+    - name: Download firmware artifact
       uses: actions/download-artifact@v4
       with:
         name: ${{ matrix.robot_config }}-firmware
         path: release-artifacts/${{ matrix.robot_config }}
-    - name: upload release assets
+    - name: Upload release assets
       uses: softprops/action-gh-release@v2
       with:
         files: |
@@ -141,22 +163,3 @@ jobs:
           release-artifacts/${{ matrix.robot_config }}/${{ matrix.robot_config }}.yaml
           release-artifacts/${{ matrix.robot_config }}/${{ matrix.robot_config }}-firmware.tar.gz
         fail_on_unmatched_files: true
-'on':
-  schedule:
-  - cron: 0 10 * * *
-  push:
-    branches:
-    - main
-    - master
-    - dev
-    tags:
-    - v*
-  pull_request:
-    branches:
-    - main
-    - master
-    - dev
-  release:
-    types:
-    - published
-  workflow_dispatch: null
