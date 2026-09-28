@@ -98,17 +98,17 @@ modules:
     args:
       - can_bus: can2
       - param:
-          - DMMotor::Model::MOTOR_DM4310
-          - 'false'
-          - '1'
+          model: DMMotor::Model::MOTOR_DM4310
+          reverse: 'false'
+          can_id: '1'
   - module: QDU-Robomaster/RMMotor
     id: motor_pit
     args:
       - can_bus: can1
       - param:
-          - RMMotor::Model::MOTOR_GM6020
-          - 'false'
-          - '521'
+          model: RMMotor::Model::MOTOR_GM6020
+          reverse: 'false'
+          feedback_id: '521'
   - module: QDU-Robomaster/Gimbal
     id: gimbal
     args:
@@ -140,65 +140,65 @@ modules:
     args:
       - can_bus: can1
       - param:
-          - RMMotor::Model::MOTOR_M3508
-          - 'false'
-          - '516'
+          model: RMMotor::Model::MOTOR_M3508
+          reverse: 'false'
+          feedback_id: '516'
   - module: QDU-Robomaster/RMMotor
     id: motor_wheel_1
     args:
       - can_bus: can1
       - param:
-          - RMMotor::Model::MOTOR_M3508
-          - 'false'
-          - '513'
+          model: RMMotor::Model::MOTOR_M3508
+          reverse: 'false'
+          feedback_id: '513'
   - module: QDU-Robomaster/RMMotor
     id: motor_wheel_2
     args:
       - can_bus: can1
       - param:
-          - RMMotor::Model::MOTOR_M3508
-          - 'true'
-          - '514'
+          model: RMMotor::Model::MOTOR_M3508
+          reverse: 'true'
+          feedback_id: '514'
   - module: QDU-Robomaster/RMMotor
     id: motor_wheel_3
     args:
       - can_bus: can1
       - param:
-          - RMMotor::Model::MOTOR_M3508
-          - 'false'
-          - '515'
+          model: RMMotor::Model::MOTOR_M3508
+          reverse: 'false'
+          feedback_id: '515'
   - module: QDU-Robomaster/RMMotor
     id: motor_steer_0
     args:
       - can_bus: can2
       - param:
-          - RMMotor::Model::MOTOR_GM6020
-          - 'false'
-          - '520'
+          model: RMMotor::Model::MOTOR_GM6020
+          reverse: 'false'
+          feedback_id: '520'
   - module: QDU-Robomaster/RMMotor
     id: motor_steer_1
     args:
       - can_bus: can2
       - param:
-          - RMMotor::Model::MOTOR_GM6020
-          - 'false'
-          - '517'
+          model: RMMotor::Model::MOTOR_GM6020
+          reverse: 'false'
+          feedback_id: '517'
   - module: QDU-Robomaster/RMMotor
     id: motor_steer_2
     args:
       - can_bus: can2
       - param:
-          - RMMotor::Model::MOTOR_GM6020
-          - 'false'
-          - '518'
+          model: RMMotor::Model::MOTOR_GM6020
+          reverse: 'false'
+          feedback_id: '518'
   - module: QDU-Robomaster/RMMotor
     id: motor_steer_3
     args:
       - can_bus: can2
       - param:
-          - RMMotor::Model::MOTOR_GM6020
-          - 'false'
-          - '519'
+          model: RMMotor::Model::MOTOR_GM6020
+          reverse: 'false'
+          feedback_id: '519'
   - module: QDU-Robomaster/Chassis
     id: helm_chassis
     template_args:
@@ -217,7 +217,21 @@ modules:
       - referee: ref
       - task_stack_depth: '2048'
       - param:
-          chassis_param: '{0.07, 0.31, 0.0, 14, 0.0, 0.0, 83.692, 0.0, 0.0, 0.95, 0.55, 35.0, 70.0, 0.2}'
+          chassis_param:
+            wheel_radius: '0.07'
+            wheel_to_center: '0.31'
+            gravity_height: '0.0'
+            reduction_ratio: '14'
+            wheel_resistance: '0.0'
+            error_compensation: '0.0'
+            gravity: '83.692'
+            length: '0.0'
+            width: '0.0'
+            rotor_speed_scale: '0.95'
+            rotor_omega_min_scale: '0.55'
+            rotor_buffer_low_j: '35.0'
+            rotor_buffer_high_j: '70.0'
+            rotor_scale_lpf_alpha: '0.2'
           pid_follow: '{1, 1.0, 0.0, 0.0, 0.0, 0.0, true}'
           pid_velocity_x: '{0.0015, 14.0, 0.0, 0.0, 0.0, 0.0, false}'
           pid_velocity_y: '{0.0015, 14.0, 0.0, 0.0, 0.0, 0.0, false}'
@@ -240,25 +254,25 @@ modules:
     args:
       - can_bus: can1
       - param:
-          - RMMotor::Model::MOTOR_M2006
-          - 'false'
-          - '517'
+          model: RMMotor::Model::MOTOR_M2006
+          reverse: 'false'
+          feedback_id: '517'
   - module: QDU-Robomaster/RMMotor
     id: motor_fric_0
     args:
       - can_bus: can2
       - param:
-          - RMMotor::Model::MOTOR_M3508
-          - 'true'
-          - '513'
+          model: RMMotor::Model::MOTOR_M3508
+          reverse: 'true'
+          feedback_id: '513'
   - module: QDU-Robomaster/RMMotor
     id: motor_fric_1
     args:
       - can_bus: can2
       - param:
-          - RMMotor::Model::MOTOR_M3508
-          - 'false'
-          - '515'
+          model: RMMotor::Model::MOTOR_M3508
+          reverse: 'false'
+          feedback_id: '515'
   - module: QDU-Robomaster/InfantryLauncher
     id: launcher
     args:
@@ -273,7 +287,12 @@ modules:
           pid_param_trig_speed: '{1.0, 0.65, 0.0, 0.0, 0.0, 0.0, false}'
           pid_param_fric_speed_0: '{1.0, 0.002, 0.0, 0.0, 0.0, 1.0, false}'
           pid_param_fric_speed_1: '{1.0, 0.002, 0.0, 0.0, 0.0, 1.0, false}'
-          launcher_param: '{6000.0, 24.0, 1.5, 36, 10}'
+          launcher_param:
+            fric1_setpoint_speed: '6000.0'
+            target_bullet_speed: '24.0'
+            bullet_speed_tolerance: '1.5'
+            trig_gear_ratio: '36'
+            num_trig_tooth: '10'
           thread_priority: LibXR::Thread::Priority::HIGH
   - module: QDU-Robomaster/EventBinder
     id: event_binder

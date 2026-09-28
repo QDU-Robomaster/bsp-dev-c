@@ -83,41 +83,41 @@ modules:
     args:
       - can_bus: can1
       - param:
-          - RMMotor::Model::MOTOR_M3508
-          - 'true'
-          - '513'
+          model: RMMotor::Model::MOTOR_M3508
+          reverse: 'true'
+          feedback_id: '513'
   - module: QDU-Robomaster/RMMotor
     id: motor_fric_1
     args:
       - can_bus: can1
       - param:
-          - RMMotor::Model::MOTOR_M3508
-          - 'false'
-          - '515'
+          model: RMMotor::Model::MOTOR_M3508
+          reverse: 'false'
+          feedback_id: '515'
   - module: QDU-Robomaster/RMMotor
     id: motor_trig
     args:
       - can_bus: can1
       - param:
-          - RMMotor::Model::MOTOR_M2006
-          - 'false'
-          - '514'
+          model: RMMotor::Model::MOTOR_M2006
+          reverse: 'false'
+          feedback_id: '514'
   - module: QDU-Robomaster/RMMotor
     id: motor_pit
     args:
       - can_bus: can1
       - param:
-          - RMMotor::Model::MOTOR_GM6020
-          - 'false'
-          - '520'
+          model: RMMotor::Model::MOTOR_GM6020
+          reverse: 'false'
+          feedback_id: '520'
   - module: QDU-Robomaster/RMMotor
     id: motor_yaw
     args:
       - can_bus: can1
       - param:
-          - RMMotor::Model::MOTOR_GM6020
-          - 'true'
-          - '522'
+          model: RMMotor::Model::MOTOR_GM6020
+          reverse: 'true'
+          feedback_id: '522'
   - module: QDU-Robomaster/Gimbal
     id: gimbal
     args:
@@ -158,7 +158,12 @@ modules:
           pid_param_trig_speed: '{1.0, 0.65, 0.8, 0.0, 0.0, 0.5, false}'
           pid_param_fric_speed_0: '{1.0, 0.002, 0.0, 0.0, 0.0, 1.0, false}'
           pid_param_fric_speed_1: '{1.0, 0.002, 0.0, 0.0, 0.0, 1.0, false}'
-          launcher_param: '{7200.0, 0.0, 1.0, 36.0, 10}'
+          launcher_param:
+            fric1_setpoint_speed: '7200.0'
+            target_bullet_speed: '0.0'
+            bullet_speed_tolerance: '1.0'
+            trig_gear_ratio: '36.0'
+            num_trig_tooth: '10'
           thread_priority: LibXR::Thread::Priority::HIGH
   - module: xrobot-org/SharedTopic
     id: sharedtopic
