@@ -57,7 +57,9 @@ jobs:
           echo "::error::Pin xrobot in Modules/modules.yaml and generator in User/libxr_config.yaml"
           exit 1
         fi
-        python3 -m pip install           "$(spec xrobot https://github.com/xrobot-org/XRobot.git "$xrobot_pin")"           "$(spec libxr https://github.com/xrobot-org/LibXR_CppCodeGenerator.git "$generator_pin")"
+        python3 -m pip install \
+          "$(spec xrobot https://github.com/xrobot-org/XRobot.git "$xrobot_pin")" \
+          "$(spec libxr https://github.com/xrobot-org/LibXR_CppCodeGenerator.git "$generator_pin")"
     - name: Regenerate BSP objects
       run: |
         mkdir -p .ci-tools
