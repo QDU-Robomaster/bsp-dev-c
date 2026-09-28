@@ -425,6 +425,6 @@ extern "C" void app_main(void) {
   static LibXR::DatabaseRaw<1> database(flash);
 
   XR_REGISTER(database, LibXR::Database);
-  XROBOT_MAIN();
   /* User Code End 3 */
+  XROBOT_MAIN();
 }
