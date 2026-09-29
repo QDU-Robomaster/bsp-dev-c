@@ -135,6 +135,8 @@ modules:
           patrol_omega: '0.01'
           reverse_flag: 'true'
           thread_priority: LibXR::Thread::Priority::HIGH
+          euler_topic_name: '"gimbal_euler"'
+          gyro_topic_name: '"gimbal_gyro"'
   - module: QDU-Robomaster/RMMotor
     id: motor_wheel_0
     args:

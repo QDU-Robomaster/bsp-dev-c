@@ -144,6 +144,8 @@ modules:
           patrol_omega: '0.0'
           reverse_flag: 'true'
           thread_priority: LibXR::Thread::Priority::HIGH
+          euler_topic_name: '"ahrs_euler"'
+          gyro_topic_name: '"bmi088_gyro"'
   - module: QDU-Robomaster/InfantryLauncher
     id: launcher
     args:
