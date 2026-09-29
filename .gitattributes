@@ -1,2 +1,5 @@
 # 让 Git 识别文本并在仓库内规范化为 LF
 * text=auto
+
+# Agent instructions are not part of source archives
+AGENTS.md export-ignore
