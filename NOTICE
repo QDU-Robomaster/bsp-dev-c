@@ -17,12 +17,6 @@ Drivers/STM32F4xx_HAL_Driver/
   STMicroelectronics STM32F4xx HAL driver. BSD 3-Clause License; see
   Drivers/STM32F4xx_HAL_Driver/LICENSE.txt.
 
-Middlewares/ST/STM32_USB_Device_Library/
-  STMicroelectronics USB Device Library. ST Ultimate Liberty Software License
-  Agreement SLA0044; the full text is in
-  Middlewares/ST/STM32_USB_Device_Library/LICENSE.txt. SLA0044 is not an open
-  source license and restricts use to STMicroelectronics devices.
-
 Middlewares/Third_Party/FreeRTOS/Source/
   FreeRTOS Kernel V10.3.1, Copyright (C) Amazon.com, Inc. or its affiliates.
   MIT License; see Middlewares/Third_Party/FreeRTOS/Source/LICENSE.
