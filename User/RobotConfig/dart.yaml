@@ -126,6 +126,10 @@ modules:
           fric_speed_pid_3: '{1.0, 0.001, 0.0, 0.0, 0.0, 1.0, false}'
           push_motor_speed_pid: '{1.0, 0.0008, 0.0, 0.0, 0.0, 1.0, false}'
           push_motor_angle_pid: '{1.0, 1000.0, 0.0, 0.0, 0.0, 2000.0, false}'
+          launcher_cmd_topic_name: '"launcher_cmd"'
+          launcher_ref_topic_name: '"launcher_ref"'
+          chassis_cmd_topic_name: '"chassis_cmd"'
+          fire_notify_topic_name: '"fire_notify"'
   - module: xrobot-org/SharedTopic
     id: shared_topic
     args:

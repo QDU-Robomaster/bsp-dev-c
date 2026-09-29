@@ -146,6 +146,7 @@ modules:
           thread_priority: LibXR::Thread::Priority::HIGH
           euler_topic_name: '"ahrs_euler"'
           gyro_topic_name: '"bmi088_gyro"'
+          gimbal_cmd_topic_name: '"gimbal_cmd"'
   - module: QDU-Robomaster/InfantryLauncher
     id: launcher
     args:
@@ -167,6 +168,8 @@ modules:
             trig_gear_ratio: '36.0'
             num_trig_tooth: '10'
           thread_priority: LibXR::Thread::Priority::HIGH
+          launcher_cmd_topic_name: '"launcher_cmd"'
+          launcher_ref_topic_name: '"launcher_ref"'
   - module: xrobot-org/SharedTopic
     id: sharedtopic
     args:

@@ -85,6 +85,7 @@ modules:
     id: super_power
     args:
       - can_bus: can2
+      - chassis_ref_topic_name: '"chassis_ref"'
   - module: QDU-Robomaster/PowerControl
     id: power_control
     args:
@@ -137,6 +138,7 @@ modules:
           thread_priority: LibXR::Thread::Priority::HIGH
           euler_topic_name: '"gimbal_euler"'
           gyro_topic_name: '"gimbal_gyro"'
+          gimbal_cmd_topic_name: '"gimbal_cmd"'
   - module: QDU-Robomaster/RMMotor
     id: motor_wheel_0
     args:
@@ -251,6 +253,9 @@ modules:
           pid_steer_speed_2: '{1.0, 0.15, 0.0, 0.0, 0.0, 0.0, false}'
           pid_steer_speed_3: '{1.0, 0.15, 0.0, 0.0, 0.0, 0.0, false}'
           thread_priority: LibXR::Thread::Priority::HIGH
+          chassis_cmd_topic_name: '"chassis_cmd"'
+          chassis_ref_topic_name: '"chassis_ref"'
+          gimbal_euler_topic_name: '"gimbal_euler"'
   - module: QDU-Robomaster/RMMotor
     id: motor_trig
     args:
@@ -296,6 +301,8 @@ modules:
             trig_gear_ratio: '36'
             num_trig_tooth: '10'
           thread_priority: LibXR::Thread::Priority::HIGH
+          launcher_cmd_topic_name: '"launcher_cmd"'
+          launcher_ref_topic_name: '"launcher_ref"'
   - module: QDU-Robomaster/EventBinder
     id: event_binder
     args:

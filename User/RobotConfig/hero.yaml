@@ -151,6 +151,8 @@ modules:
           pid_fric_speed_2: '{1.0, 0.00048, 0.0, 0.0, 0.0, 1.0, false}'
           pid_fric_speed_3: '{1.0, 0.00048, 0.0, 0.0, 0.0, 1.0, false}'
           thread_priority: LibXR::Thread::Priority::MEDIUM
+          launcher_cmd_topic_name: '"launcher_cmd"'
+          launcher_ref_topic_name: '"launcher_ref"'
   - module: QDU-Robomaster/DMMotor
     id: motor_pit
     args:
@@ -249,6 +251,7 @@ modules:
     id: super_power
     args:
       - can_bus: can2
+      - chassis_ref_topic_name: '"chassis_ref"'
   - module: QDU-Robomaster/PowerControl
     id: power_control
     args:
@@ -315,6 +318,9 @@ modules:
           pid_steer_speed_2: '{}'
           pid_steer_speed_3: '{}'
           thread_priority: LibXR::Thread::Priority::HIGH
+          chassis_cmd_topic_name: '"chassis_cmd"'
+          chassis_ref_topic_name: '"chassis_ref"'
+          gimbal_euler_topic_name: '"gimbal_euler"'
   - module: QDU-Robomaster/Gimbal
     id: gimbal
     args:
@@ -343,6 +349,7 @@ modules:
           thread_priority: LibXR::Thread::Priority::MEDIUM
           euler_topic_name: '"ahrs_euler"'
           gyro_topic_name: '"bmi088_gyro"'
+          gimbal_cmd_topic_name: '"gimbal_cmd"'
   - module: QDU-Robomaster/RMMotor
     id: motor_small_pit
     args:
@@ -373,6 +380,7 @@ modules:
           pid_scope_omega: '{1.0, 1.0, 0.0, 0.0, 0.0, 0.0, false}'
           scope_open_angle: '1.5'
           thread_priority: LibXR::Thread::Priority::MEDIUM
+          euler_topic_name: '"ahrs_euler"'
   - module: QDU-Robomaster/EventBinder
     id: event_binder
     args:

@@ -57,9 +57,6 @@ modules:
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
     commit: de75d238def422100da5ff588c3d13c261efe0a6
   QDU-Robomaster/CameraSync:
     repo: https://github.com/QDU-Robomaster/CameraSync.git
@@ -67,9 +64,6 @@ modules:
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
     commit: 55070a63ce07b190efd2a2419b6fb8b142cae2e7
   QDU-Robomaster/Chassis:
     repo: https://github.com/QDU-Robomaster/Chassis.git
@@ -77,19 +71,13 @@ modules:
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
-    commit: 7b659a4df5c805e837ff267229e9eb321834798a
+    commit: ae70cd38b161f63050fa3470672e56e8e4abc19c
   QDU-Robomaster/DMMotor:
     repo: https://github.com/QDU-Robomaster/DMMotor.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
     commit: e28851658bfd43f2714484655eb08de917f59983
   QDU-Robomaster/DR16:
     repo: https://github.com/QDU-Robomaster/DR16.git
@@ -97,9 +85,6 @@ modules:
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
     commit: 92753241770f1f995c828ad84f0f3fdb9ce090fe
   QDU-Robomaster/Dart:
     repo: https://github.com/QDU-Robomaster/Dart.git
@@ -107,19 +92,13 @@ modules:
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
-    commit: 725880ffaa2bffe7aa18a64fb1d66652952dc468
+    commit: ad4a43c06df2e6c9aa64e6d42a68846807e9da3b
   QDU-Robomaster/EventBinder:
     repo: https://github.com/QDU-Robomaster/EventBinder.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
     commit: 90486997abdf4d41b37f4017a291b24095518c09
   QDU-Robomaster/Gimbal:
     repo: https://github.com/QDU-Robomaster/Gimbal.git
@@ -127,29 +106,20 @@ modules:
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
-    commit: d71003c6853bd038af07671e828b7979fcf68616
+    commit: b8e7686c9a40d8d25422cac5929dcac6a6421870
   QDU-Robomaster/HeroLauncher:
     repo: https://github.com/QDU-Robomaster/HeroLauncher.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
-    commit: cb5000c88c4a43144ce2312fc147336ee86bd802
+    commit: fbd8584e14a07b920f524df5af8d6e65c537c053
   QDU-Robomaster/HostData:
     repo: https://github.com/QDU-Robomaster/HostData.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
     commit: c1ea519704390c4005d7141d2333e76d55783a69
   QDU-Robomaster/InfantryLauncher:
     repo: https://github.com/QDU-Robomaster/InfantryLauncher.git
@@ -157,29 +127,20 @@ modules:
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
-    commit: ea4e901dea505d03fa01f4100ee68464d18ed9f2
+    commit: 011758d120b34ce9f2ee758a798e1ea5b4fcc31b
   QDU-Robomaster/MiniGimbal:
     repo: https://github.com/QDU-Robomaster/MiniGimbal.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
-    commit: 4748aee45d4d784e782dbf4ad471b0084cb23bd2
+    commit: b4f3306e328e5098bcfcc2f184148743a62201ba
   QDU-Robomaster/Motor:
     repo: https://github.com/QDU-Robomaster/Motor.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
     commit: 9292a4dfb122dfd5622c39dcd586fed0ea080036
   QDU-Robomaster/PowerControl:
     repo: https://github.com/QDU-Robomaster/PowerControl.git
@@ -187,9 +148,6 @@ modules:
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
     commit: f2f27101b6cdf4addb90439d222936e8af5d1402
   QDU-Robomaster/RMMotor:
     repo: https://github.com/QDU-Robomaster/RMMotor.git
@@ -197,9 +155,6 @@ modules:
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
     commit: e0b500535348716aa16a0ebcb63e1ebf988dd6d9
   QDU-Robomaster/Referee:
     repo: https://github.com/QDU-Robomaster/Referee.git
@@ -207,9 +162,6 @@ modules:
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
     commit: 8d3fb4f22bb2740d9d30375b9c9719e9d747ef36
   QDU-Robomaster/SentryProtocol:
     repo: https://github.com/QDU-Robomaster/SentryProtocol.git
@@ -217,9 +169,6 @@ modules:
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
     commit: 8174e8a7c42ddf23f811751f9ae1d51c08e999ea
   QDU-Robomaster/SuperPower:
     repo: https://github.com/QDU-Robomaster/SuperPower.git
@@ -227,19 +176,13 @@ modules:
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
-    commit: 242822d0d33acb9e7ea77d435c35aed92e4f9eb5
+    commit: 0cdb0843bcf78de46182df04d9a8e2431ecd8b0c
   QDU-Robomaster/VT13:
     repo: https://github.com/QDU-Robomaster/VT13.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
     commit: 7b08006236b072c47945cd22bc1f69244f60e16a
   xrobot-org/BMI088:
     repo: https://github.com/xrobot-org/BMI088.git
@@ -247,9 +190,6 @@ modules:
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
     commit: 2034ea59668ff420f96c82524499be1d9d7f078e
   xrobot-org/BlinkLED:
     repo: https://github.com/xrobot-org/BlinkLED.git
@@ -257,9 +197,6 @@ modules:
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
     commit: a06688f8b145a197527fa97e56679437b8fc2180
   xrobot-org/BuzzerAlarm:
     repo: https://github.com/xrobot-org/BuzzerAlarm.git
@@ -267,19 +204,13 @@ modules:
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
     commit: 44424519645a0d9297d5a7bd57b8dd4e0c342e74
   xrobot-org/MadgwickAHRS:
-    repo: https://github.com/xrobot-org/MadgwickAHRS
+    repo: https://github.com/xrobot-org/MadgwickAHRS.git
     source: https://xrobot.work/xrobot-modules/index.yaml
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
     commit: 286cc8935c9349c1d5c0446f6f5e957083465ee2
   xrobot-org/SharedTopic:
     repo: https://github.com/xrobot-org/SharedTopic.git
@@ -287,9 +218,6 @@ modules:
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
     commit: 42729a987dec7427cb997875ce0e679ccb5226d3
   xrobot-org/SharedTopicClient:
     repo: https://github.com/xrobot-org/SharedTopicClient.git
@@ -297,7 +225,4 @@ modules:
     requested: same-or-dev
     resolved_ref: feat/static-assembly-20260915
     ref_kind: branch
-    context:
-    - branch
-    - feat/static-assembly-20260915
     commit: 3499578e9c604db94d8990a4f3dbf0a4a88d9d51
