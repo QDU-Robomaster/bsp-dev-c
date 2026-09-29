@@ -12,7 +12,7 @@ Usage:
 
 Description:
   1) Run clang-format for C/C++ files under Modules/
-  2) Generate xrobot header from YAML via xrobot_gen_main
+  2) Generate User/xrobot_main.hpp for the config via xrobot gen
   3) Configure firmware with cube-cmake
   4) Build firmware with cube-cmake
 
@@ -26,7 +26,7 @@ Options:
 Examples:
   tools/build.sh
   tools/build.sh -p release
-  tools/build.sh -c User/RobotConfig/omni_infantry.yaml -p relWithDebInfo
+  tools/build.sh -c User/RobotConfig/omni_infantry_3.yaml -p relWithDebInfo
   tools/build.sh -c User/RobotConfig/hero.yaml -b /home/leo/Documents/bsp-dev-c/build/custom
 EOF
 }
@@ -400,8 +400,8 @@ if [[ ! -f "${CONFIG_PATH}" ]]; then
   exit 1
 fi
 
-if ! command -v xrobot_gen_main >/dev/null 2>&1; then
-  echo "Error: xrobot_gen_main not found in PATH." >&2
+if ! command -v xrobot >/dev/null 2>&1; then
+  echo "Error: xrobot not found in PATH (install the version pinned in Modules/modules.yaml)." >&2
   exit 1
 fi
 
@@ -440,7 +440,7 @@ else
 fi
 
 echo "[2/4] Generating xrobot header from ${CONFIG_PATH}..."
-xrobot_gen_main --config "${CONFIG_PATH}" --register-source User/app_main.cpp --lock xrobot.lock
+xrobot gen -c "${CONFIG_PATH}"
 
 echo "[3/4] Configuring with cube-cmake (${BUILD_TARGET_DESC})..."
 configure_build_tree

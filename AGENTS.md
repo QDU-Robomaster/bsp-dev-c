@@ -46,7 +46,7 @@ tools/format_code.sh --check                # C++ formatting of Modules/
 
 The presets use `cmake/starm-clang.cmake` (picolibc) and need `starm-clang` on `PATH`;
 `GCC_TOOLCHAIN_ROOT`/`CLANG_GCC_CMSIS_COMPILER` matter only for `STARM_HYBRID`.
-`tools/build.sh` still calls the removed `xrobot_gen_main`; use the commands above.
+`tools/build.sh -c <config> -p <preset>` runs formatting, `xrobot gen` and the cube-cmake build in one go.
 
 After changing `DevC.ioc` and regenerating with CubeMX:
 
