@@ -3,19 +3,19 @@ modules:
     id: blink_led
     args:
       - led: LED_B
-      - blink_cycle: '250'
+      - blink_cycle: 250
   - module: QDU-Robomaster/Referee
     id: referee
     args:
       - uart: usart1
       - cmd: nullptr
       - param:
-          task_stack_depth_uart: '1536'
-          baudrate: '115200'
-          referee_chassis_tp_name: '"chassis_ref"'
-          referee_launcher_tp_name: '"launcher_ref"'
-          referee_robot_game_tp_name: '"robot_game_ref"'
-          referee_radar_tp_name: '"radar_ref"'
+          task_stack_depth_uart: 1536
+          baudrate: 115200
+          referee_chassis_tp_name: "chassis_ref"
+          referee_launcher_tp_name: "launcher_ref"
+          referee_robot_game_tp_name: "robot_game_ref"
+          referee_radar_tp_name: "radar_ref"
           thread_priority_uart: LibXR::Thread::Priority::LOW
   - module: xrobot-org/BMI088
     id: bmi088
@@ -34,49 +34,49 @@ modules:
           accl_range: BMI088::AcclRange::ACCL_24G
           rotation: '{0.0, 0.707106781187, 0.707106781187, 0.0}'
           pid_param: '{0.15, 1.0, 0.1, 0.0, 0.3, 1.0, false}'
-          gyro_topic_name: '"bmi088_gyro"'
-          accl_topic_name: '"bmi088_accl"'
-          target_temperature: '45'
-          task_stack_depth: '2048'
+          gyro_topic_name: "bmi088_gyro"
+          accl_topic_name: "bmi088_accl"
+          target_temperature: 45
+          task_stack_depth: 2048
   - module: xrobot-org/MadgwickAHRS
     id: ahrs
     args:
       - ramfs: ramfs
       - param:
-          beta: '0.033'
-          gyro_topic_name: '"bmi088_gyro"'
-          accl_topic_name: '"bmi088_accl"'
-          quaternion_topic_name: '"ahrs_quaternion"'
-          euler_topic_name: '"ahrs_euler"'
-          task_stack_depth: '2048'
+          beta: 0.033
+          gyro_topic_name: "bmi088_gyro"
+          accl_topic_name: "bmi088_accl"
+          quaternion_topic_name: "ahrs_quaternion"
+          euler_topic_name: "ahrs_euler"
+          task_stack_depth: 2048
   - module: xrobot-org/BuzzerAlarm
     id: buzzer_alarm
     args:
       - pwm: pwm_tim4_ch3
-      - alarm_freq: '5000'
-      - alarm_duration: '300'
-      - alarm_delay: '300'
+      - alarm_freq: 5000
+      - alarm_duration: 300
+      - alarm_delay: 300
   - module: QDU-Robomaster/CMD
     id: cmd
     args:
       - mode: CMD::Mode::CMD_OP_CTRL
-      - chassis_cmd_topic_name: '"chassis_cmd"'
-      - gimbal_cmd_topic_name: '"gimbal_cmd"'
-      - launcher_cmd_topic_name: '"launcher_cmd"'
+      - chassis_cmd_topic_name: "chassis_cmd"
+      - gimbal_cmd_topic_name: "gimbal_cmd"
+      - launcher_cmd_topic_name: "launcher_cmd"
   - module: QDU-Robomaster/HostData
     id: hostdata
     args:
       - cmd: cmd
-      - host_gimbal_topic_name: '"target_euler"'
-      - host_chassis_data_topic_name: '"chassis_data"'
-      - host_fire_topic_name: '"fire_notify"'
+      - host_gimbal_topic_name: "target_euler"
+      - host_chassis_data_topic_name: "chassis_data"
+      - host_fire_topic_name: "fire_notify"
   - module: QDU-Robomaster/DR16
     id: dr16
     args:
       - uart: usart3
       - cmd: cmd
       - param:
-          task_stack_depth_uart: '1536'
+          task_stack_depth_uart: 1536
           thread_priority_uart: LibXR::Thread::Priority::MEDIUM
   - module: QDU-Robomaster/RMMotor
     id: motor_fric_0
@@ -84,40 +84,40 @@ modules:
       - can_bus: can1
       - param:
           model: RMMotor::Model::MOTOR_M3508
-          reverse: 'true'
-          feedback_id: '513'
+          reverse: true
+          feedback_id: 513
   - module: QDU-Robomaster/RMMotor
     id: motor_fric_1
     args:
       - can_bus: can1
       - param:
           model: RMMotor::Model::MOTOR_M3508
-          reverse: 'false'
-          feedback_id: '515'
+          reverse: false
+          feedback_id: 515
   - module: QDU-Robomaster/RMMotor
     id: motor_trig
     args:
       - can_bus: can1
       - param:
           model: RMMotor::Model::MOTOR_M2006
-          reverse: 'false'
-          feedback_id: '514'
+          reverse: false
+          feedback_id: 514
   - module: QDU-Robomaster/RMMotor
     id: motor_pit
     args:
       - can_bus: can1
       - param:
           model: RMMotor::Model::MOTOR_GM6020
-          reverse: 'false'
-          feedback_id: '520'
+          reverse: false
+          feedback_id: 520
   - module: QDU-Robomaster/RMMotor
     id: motor_yaw
     args:
       - can_bus: can1
       - param:
           model: RMMotor::Model::MOTOR_GM6020
-          reverse: 'true'
-          feedback_id: '522'
+          reverse: true
+          feedback_id: 522
   - module: QDU-Robomaster/Gimbal
     id: gimbal
     args:
@@ -126,27 +126,27 @@ modules:
       - motor_yaw: motor_yaw
       - referee: nullptr
       - param:
-          task_stack_depth: '2048'
+          task_stack_depth: 2048
           pid_yaw_angle: '{1.0, 30.0, 0.0, 0.0, 0.0, 0.0, true}'
           pid_yaw_omega: '{1.0, 1.1, 0.0, 0.0, 0.0, 2.2, false}'
           pid_pit_angle: '{1.0, 30.0, 0.0, 0.0, 0.0, 0.0, true}'
           pid_pit_omega: '{1.0, 1.0, 0.0, 0.0, 0.22, 2.2, false}'
-          pit_max_angle: '1.68'
-          pit_min_angle: '0.92'
-          pit_lc: '0.0'
-          pit_theta: '0.0'
-          yaw_k: '0.0'
-          j_pit: '0.0218'
-          j_yaw: '0.02183'
-          pit_zero: '0.0'
-          yaw_zero: '0.0'
-          patrol_range: '0.0'
-          patrol_omega: '0.0'
-          reverse_flag: 'true'
+          pit_max_angle: 1.68
+          pit_min_angle: 0.92
+          pit_lc: 0.0
+          pit_theta: 0.0
+          yaw_k: 0.0
+          j_pit: 0.0218
+          j_yaw: 0.02183
+          pit_zero: 0.0
+          yaw_zero: 0.0
+          patrol_range: 0.0
+          patrol_omega: 0.0
+          reverse_flag: true
           thread_priority: LibXR::Thread::Priority::HIGH
-          euler_topic_name: '"ahrs_euler"'
-          gyro_topic_name: '"bmi088_gyro"'
-          gimbal_cmd_topic_name: '"gimbal_cmd"'
+          euler_topic_name: "ahrs_euler"
+          gyro_topic_name: "bmi088_gyro"
+          gimbal_cmd_topic_name: "gimbal_cmd"
   - module: QDU-Robomaster/InfantryLauncher
     id: launcher
     args:
@@ -156,33 +156,33 @@ modules:
       - cmd: cmd
       - referee: nullptr
       - param:
-          task_stack_depth: '4096'
+          task_stack_depth: 4096
           pid_param_trig_angle: '{1.0, 35.0, 0.0, 0.0, 0.0, 0.0, false}'
           pid_param_trig_speed: '{1.0, 0.65, 0.8, 0.0, 0.0, 0.5, false}'
           pid_param_fric_speed_0: '{1.0, 0.002, 0.0, 0.0, 0.0, 1.0, false}'
           pid_param_fric_speed_1: '{1.0, 0.002, 0.0, 0.0, 0.0, 1.0, false}'
           launcher_param:
-            fric1_setpoint_speed: '7200.0'
-            target_bullet_speed: '0.0'
-            bullet_speed_tolerance: '1.0'
-            trig_gear_ratio: '36.0'
-            num_trig_tooth: '10'
+            fric1_setpoint_speed: 7200.0
+            target_bullet_speed: 0.0
+            bullet_speed_tolerance: 1.0
+            trig_gear_ratio: 36.0
+            num_trig_tooth: 10
           thread_priority: LibXR::Thread::Priority::HIGH
-          launcher_cmd_topic_name: '"launcher_cmd"'
-          launcher_ref_topic_name: '"launcher_ref"'
+          launcher_cmd_topic_name: "launcher_cmd"
+          launcher_ref_topic_name: "launcher_ref"
   - module: xrobot-org/SharedTopic
     id: sharedtopic
     args:
       - uart: usb_otg_hs_cdc
       - ramfs: ramfs
-      - uart_name: '"usb_otg_hs_cdc"'
-      - buffer_size: '256'
+      - uart_name: "usb_otg_hs_cdc"
+      - buffer_size: 256
       - topic_configs: '{"fire_notify", "target_euler", "chassis_data"}'
   - module: xrobot-org/SharedTopicClient
     id: sharedtopicclient
     args:
       - uart: usb_otg_hs_cdc
-      - slot_count: '16'
+      - slot_count: 16
       - topic_configs: '{"ahrs_quaternion"}'
   - module: QDU-Robomaster/EventBinder
     id: event_binder
@@ -190,4 +190,4 @@ modules:
       - modules: '{{"dr16", dr16}, {"cmd", cmd}, {"gimbal", gimbal}, {"launcher", launcher}}'
       - event_binding_groups: '{{{{"dr16", DR16::SwitchPos::DR16_SW_L_POS_MID, "cmd", CMD::Mode::CMD_OP_CTRL}, {"dr16", DR16::SwitchPos::DR16_SW_L_POS_BOT, "cmd", CMD::Mode::CMD_AUTO_CTRL}, {"dr16", DR16::SwitchPos::DR16_SW_R_POS_MID, "cmd", CMD::Mode::CMD_OP_CTRL}, {"dr16", DR16::SwitchPos::DR16_SW_R_POS_BOT, "cmd", CMD::Mode::CMD_AUTO_CTRL}}}, {{{"dr16", DR16::Key::KEY_L_PRESS, "cmd", CMD::Mode::CMD_OP_CTRL}, {"dr16", DR16::Key::KEY_L_RELEASE, "cmd", CMD::Mode::CMD_OP_CTRL}, {"dr16", DR16::Key::KEY_R_PRESS, "cmd", CMD::Mode::CMD_AUTO_CTRL}, {"dr16", DR16::Key::KEY_R_RELEASE, "cmd", CMD::Mode::CMD_OP_CTRL}}}, {{{"dr16", DR16::SwitchPos::DR16_SW_R_POS_TOP, "gimbal", GimbalEvent::SET_MODE_RELAX}, {"dr16", DR16::SwitchPos::DR16_SW_R_POS_MID, "gimbal", GimbalEvent::SET_MODE_COMMON}, {"dr16", DR16::SwitchPos::DR16_SW_R_POS_BOT, "gimbal", GimbalEvent::SET_MODE_COMMON}}}, {{{"dr16", DR16::SwitchPos::DR16_SW_L_POS_TOP, "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_SAFE}, {"dr16", DR16::SwitchPos::DR16_SW_L_POS_MID, "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_READY}, {"dr16", DR16::SwitchPos::DR16_SW_L_POS_BOT, "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_READY}}}}'
 settings:
-  monitor_sleep_ms: '1000'
+  monitor_sleep_ms: 1000

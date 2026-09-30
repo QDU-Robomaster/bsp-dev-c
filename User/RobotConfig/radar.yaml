@@ -3,6 +3,6 @@ modules:
     id: blink_led
     args:
       - led: LED_B
-      - blink_cycle: '250'
+      - blink_cycle: 250
 settings:
-  monitor_sleep_ms: '1000'
+  monitor_sleep_ms: 1000
