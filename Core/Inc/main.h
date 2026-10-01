@@ -84,6 +84,7 @@ void MX_TIM7_Init(void);
 #define LASER_GPIO_Port GPIOC
 #define IMU_INT_Pin GPIO_PIN_1
 #define IMU_INT_GPIO_Port GPIOF
+#define IMU_INT_EXTI_IRQn EXTI1_IRQn
 #define CMPS_RST_Pin GPIO_PIN_6
 #define CMPS_RST_GPIO_Port GPIOG
 #define IMU_HEAT_PWM_Pin GPIO_PIN_6
