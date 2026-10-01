@@ -44,9 +44,9 @@ ADC:
     vref: 3.3
     dma_section: ''
 CAN:
-  CAN1:
+  can1:
     queue_size: 5
-  CAN2:
+  can2:
     queue_size: 5
 USB:
   usb_otg_fs:
