@@ -47,7 +47,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 )
 
 file(
-    GLOB LIBXR_USER_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/User/*.cpp")
+    GLOB LIBXR_USER_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/User/*.cpp")
 
 
 target_sources(${CMAKE_PROJECT_NAME}
