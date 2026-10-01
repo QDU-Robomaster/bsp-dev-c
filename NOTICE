@@ -25,7 +25,7 @@ Middlewares/Third_Party/FreeRTOS/Source/
   CMSIS_RTOS_V2/: CMSIS-RTOS2 wrapper, Copyright Arm Limited; Apache License 2.0
   (SPDX headers).
 
-STM32CubeMX-generated files: Core/, startup_stm32f407xx.s, STM32F407XX_FLASH.ld
+STM32CubeMX-generated files: Core/, startup_stm32f407xx.s, STM32F407xx_FLASH.ld
   Generated from STMicroelectronics templates. They keep the STMicroelectronics
   (and, in Core/Inc/FreeRTOSConfig.h, Amazon) copyright notices and the license
   terms stated in their headers; the linker scripts carry a BSD 3-Clause style

@@ -64,7 +64,7 @@ libxr gen -i .config.yaml -o User/app_main.cpp --xrobot --libxr-config User/libx
 
 ## FreeRTOS 堆位置
 
-`ucHeap` 是放在专用 `.ccm_heap` 段中的分配器原始存储。仓库中的 `STM32F407XX_FLASH.ld` 把该段标为 `NOLOAD`，在 CCM RAM 中保留 64 KiB，而不在 Flash 中生成多余的初始化镜像。普通的 `.ccmram` 仍然可加载，用于显式初始化的数据。分配器元数据单独初始化；堆容量和任务栈设置不变。
+`ucHeap` 是放在专用 `.ccm_heap` 段中的分配器原始存储。仓库中的 `STM32F407xx_FLASH.ld` 把该段标为 `NOLOAD`，在 CCM RAM 中保留 64 KiB，而不在 Flash 中生成多余的初始化镜像。普通的 `.ccmram` 仍然可加载，用于显式初始化的数据。分配器元数据单独初始化；堆容量和任务栈设置不变。
 
 替换或重新生成链接脚本时保留 `.ccm_heap` 段。堆的声明位于 CubeMX 保留的用户 Variables 区域中；重新生成的链接脚本必须和该声明一起检查，把它当作孤立段处理会破坏测得的内存布局。
 
