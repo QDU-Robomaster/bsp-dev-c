@@ -423,7 +423,7 @@ extern "C" void app_main(void) {
   XR_REGISTER(usb_otg_hs_cdc2, LibXR::UART);
 
 
-  static STM32Flash flash(FLASH_SECTORS, FLASH_SECTOR_NUMBER);
+  static STM32Flash flash(FLASH_REGIONS, FLASH_REGION_NUMBER);
   static LibXR::DatabaseRaw<1> database(flash);
 
   XR_REGISTER(database, LibXR::Database);
