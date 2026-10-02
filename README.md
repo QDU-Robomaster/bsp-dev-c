@@ -41,7 +41,7 @@ cmake --preset debug
 cmake --build --preset debug
 ```
 
-Preset 有 `debug`、`relWithDebInfo`、`release`、`minSizeRel`，输出在 `build/<preset>/DevC.elf`。构建前 LibXR 检查 `User/xrobot_main.hpp` 是否比配置、锁文件、入口和模块头文件新，过期时构建失败并提示对应的 `xrobot gen -c <配置>`。
+Preset 有 `debug`、`relWithDebInfo`、`release`、`minSizeRel`，输出在 `build/<preset>/DevC.elf`。构建前 LibXR 检查配置、锁文件、模块头文件和入口源文件中的注册在生成 `User/xrobot_main.hpp` 之后是否有改动，有改动时构建失败并提示对应的 `xrobot gen -c <配置>`。
 
 产品配置：`User/xrobot.yaml`，以及 `User/RobotConfig/` 下的 `aerial`、`dart`、`helm_infantry`、`hero`、`omni_infantry_3`、`omni_infantry_4`、`radar`、`sentry`、`wheel_leg`。配置里的硬件名是 `User/app_main.cpp` 中 `XR_REGISTER` 注册的对象名（如 `can1`、`usart3`、`spi1`、`LED_B`）。
 
