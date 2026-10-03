@@ -3,3 +3,5 @@
 
 # Agent instructions are not part of source archives
 AGENTS.md export-ignore
+*.sh text eol=lf
+*.bat text eol=crlf
