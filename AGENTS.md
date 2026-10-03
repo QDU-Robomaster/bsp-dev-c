@@ -1,8 +1,7 @@
 # Agent instructions: bsp-dev-c
 
-This is the only agent instruction file in this repository. It replaces the former
-`Modules/AGENTS.md`, `User/AGENTS.md`, `CLAUDE.md` and `.claude/skills/`; delete those
-if a merge brings them back. It is excluded from source archives (`export-ignore`).
+This is the agent instruction file of this repository. It is excluded from source
+archives (`export-ignore`).
 
 ## Overview
 
@@ -48,7 +47,9 @@ The presets use `cmake/starm-clang.cmake` (picolibc) and need `starm-clang` on `
 `GCC_TOOLCHAIN_ROOT`/`CLANG_GCC_CMSIS_COMPILER` matter only for `STARM_HYBRID`.
 `tools/build.sh -c <config> -p <preset>` runs formatting, `xrobot gen` and the cube-cmake build in one go.
 
-After changing `DevC.ioc` and regenerating with CubeMX:
+After changing `DevC.ioc` and regenerating with CubeMX, the BSP objects are regenerated
+with the same two commands CI runs (`libxr stm32 setup` is the one-time command that adds
+LibXR to a CubeMX project):
 
 ```bash
 libxr parse -d . -o .config.yaml
@@ -67,8 +68,7 @@ Reset_Handler -> main(): HAL_Init, SystemClock_Config, MX_*_Init, osKernelStart
         -> loop: each instance's OnMonitor() in config order, sleep monitor_sleep_ms
 ```
 
-There is no HardwareContainer, ApplicationManager or string lookup. Hardware is
-referenced by the C++ object name registered with `XR_REGISTER`.
+Hardware is referenced by the C++ object name registered with `XR_REGISTER`.
 
 ## Application configurations
 
@@ -132,8 +132,8 @@ Formatting: `.clang-format` (Google-based, `IncludeBlocks: Regroup`), clang-form
 Build: C11 and C++20, `-Werror`, Cortex-M4F, `-fno-rtti -fno-exceptions`,
 `_printf_float` linked; Debug builds use `-Og`.
 
-LibXR allocates at initialization and never frees; do not add frees to balance
-allocations.
+LibXR allocates during initialization and keeps the allocations for the lifetime of the
+program; allocations are not paired with frees.
 
 ## Do not
 
