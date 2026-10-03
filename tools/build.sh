@@ -27,7 +27,7 @@ Examples:
   tools/build.sh
   tools/build.sh -p release
   tools/build.sh -c User/RobotConfig/omni_infantry_3.yaml -p relWithDebInfo
-  tools/build.sh -c User/RobotConfig/hero.yaml -b /home/leo/Documents/bsp-dev-c/build/custom
+  tools/build.sh -c User/RobotConfig/hero.yaml -b build/custom
 EOF
 }
 

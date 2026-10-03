@@ -328,7 +328,8 @@ extern "C" void app_main(void) {
   // clang-format on
   // NOLINTEND
   /* User Code Begin 3 */
-  // Sentry composite USB is BSP-owned; generic generation remains single CDC.
+  // USB OTG HS device with two CDC interfaces, registered as the UARTs usb_otg_hs_cdc
+  // and usb_otg_hs_cdc2; the endpoint buffers below are cache-line aligned when a D-cache exists.
 #if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
   static struct alignas(__SCB_DCACHE_LINE_SIZE)
   {
