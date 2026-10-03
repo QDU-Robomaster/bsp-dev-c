@@ -62,8 +62,9 @@ modules:
           accl_freq: BMI088::AcclFreq::ACCL_1600HZ
           gyro_range: BMI088::GyroRange::DEG_2000DPS
           accl_range: BMI088::AcclRange::ACCL_24G
+          # 安装方向四元数 (w, x, y, z) / mounting rotation quaternion (w, x, y, z)
           rotation: '{1.0, 0.0, 0.0, 0.0}'
-          pid_param: '{1.0, 0.35, 0.0, 0.0, 0.0, 0.0, false}'
+          pid_param: '{.p = 0.35}'
           gyro_topic_name: "gimbal_gyro"
           accl_topic_name: "gimbal_accl"
           target_temperature: 45
@@ -206,22 +207,22 @@ modules:
             rotor_buffer_low_j: 35.0
             rotor_buffer_high_j: 70.0
             rotor_scale_lpf_alpha: 0.3
-          pid_follow: '{1.0, 10.0, 0.0, 0.0, 0.0, 0.0, true}'
-          pid_velocity_x: '{1.0, 300.0, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_velocity_y: '{1.0, 300.0, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_omega: '{1.0, 300.0, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_wheel_speed_0: '{1.0, 0.05, 0.0, 0.0, 0.0, 5.0, false}'
-          pid_wheel_speed_1: '{1.0, 0.05, 0.0, 0.0, 0.0, 5.0, false}'
-          pid_wheel_speed_2: '{1.0, 0.05, 0.0, 0.0, 0.0, 5.0, false}'
-          pid_wheel_speed_3: '{1.0, 0.05, 0.0, 0.0, 0.0, 5.0, false}'
-          pid_steer_angle_0: '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_steer_angle_1: '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_steer_angle_2: '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_steer_angle_3: '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_steer_speed_0: '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_steer_speed_1: '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_steer_speed_2: '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_steer_speed_3: '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
+          pid_follow: '{.p = 10.0, .cycle = true}'
+          pid_velocity_x: '{.p = 300.0}'
+          pid_velocity_y: '{.p = 300.0}'
+          pid_omega: '{.p = 300.0}'
+          pid_wheel_speed_0: '{.p = 0.05, .out_limit = 5.0}'
+          pid_wheel_speed_1: '{.p = 0.05, .out_limit = 5.0}'
+          pid_wheel_speed_2: '{.p = 0.05, .out_limit = 5.0}'
+          pid_wheel_speed_3: '{.p = 0.05, .out_limit = 5.0}'
+          pid_steer_angle_0: '{}'
+          pid_steer_angle_1: '{}'
+          pid_steer_angle_2: '{}'
+          pid_steer_angle_3: '{}'
+          pid_steer_speed_0: '{}'
+          pid_steer_speed_1: '{}'
+          pid_steer_speed_2: '{}'
+          pid_steer_speed_3: '{}'
           thread_priority: LibXR::Thread::Priority::HIGH
           chassis_cmd_topic_name: "chassis_cmd"
           chassis_ref_topic_name: "chassis_ref"
@@ -235,10 +236,10 @@ modules:
       - referee: '&ref'
       - param:
           task_stack_depth: 1536
-          pid_yaw_angle: '{1.0, 14.0, 0.0, 0.0, 0.0, 0.0, true}'
-          pid_yaw_omega: '{1.0, 4.8, 0.0, 0.0, 0, 0, false}'
-          pid_pit_angle: '{1.0, 13.5, 0.0, 0.0, 0.0, 0.0, true}'
-          pid_pit_omega: '{1.0, 3.58, 0.0, 0.01, 0.0, 0.0, false}'
+          pid_yaw_angle: '{.p = 14.0, .cycle = true}'
+          pid_yaw_omega: '{.p = 4.8}'
+          pid_pit_angle: '{.p = 13.5, .cycle = true}'
+          pid_pit_omega: '{.p = 3.58, .d = 0.01}'
           pit_max_angle: 0.16
           pit_min_angle: 5.75
           pit_lc: 0.0
@@ -265,10 +266,10 @@ modules:
       - referee: '&ref'
       - param:
           task_stack_depth: 1536
-          pid_param_trig_angle: '{1.0, 40.0, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_param_trig_speed: '{1.0, 0.15, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_param_fric_speed_0: '{0.8, 0.0008, 0.0, 0.0, 0.0, 0.6, false}'
-          pid_param_fric_speed_1: '{0.8, 0.0008, 0.0, 0.0, 0.0, 0.6, false}'
+          pid_param_trig_angle: '{.p = 40.0}'
+          pid_param_trig_speed: '{.p = 0.15}'
+          pid_param_fric_speed_0: '{.k = 0.8, .p = 0.0008, .out_limit = 0.6}'
+          pid_param_fric_speed_1: '{.k = 0.8, .p = 0.0008, .out_limit = 0.6}'
           launcher_param:
             fric1_setpoint_speed: 5800.0
             target_bullet_speed: 21.0

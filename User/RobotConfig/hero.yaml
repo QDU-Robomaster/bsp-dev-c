@@ -26,8 +26,9 @@ modules:
           accl_freq: BMI088::AcclFreq::ACCL_800HZ
           gyro_range: BMI088::GyroRange::DEG_2000DPS
           accl_range: BMI088::AcclRange::ACCL_24G
+          # 安装方向四元数 (w, x, y, z) / mounting rotation quaternion (w, x, y, z)
           rotation: '{0.707, 0.0, 0.0, 0.707}'
-          pid_param: '{0.15, 1.0, 0.1, 0.0, 0.3, 1.0, false}'
+          pid_param: '{.k = 0.15, .p = 1.0, .i = 0.1, .i_limit = 0.3, .out_limit = 1.0}'
           gyro_topic_name: "bmi088_gyro"
           accl_topic_name: "bmi088_accl"
           target_temperature: 45
@@ -144,12 +145,12 @@ modules:
             speed_sync: false
           fric_setpoint_speed_0: 3730.0
           fric_setpoint_speed_1: 4000.0
-          pid_trig_angle: '{1.0, 2000.0, 0.0, 0.0, 0.0, 2000.0, true}'
-          pid_trig_speed: '{1.0, 0.0013, 0.0, 0.0, 1.0, 1.0, false}'
-          pid_fric_speed_0: '{1.0, 0.00048, 0.0, 0.0, 0.0, 1.0, false}'
-          pid_fric_speed_1: '{1.0, 0.00048, 0.0, 0.0, 0.0, 1.0, false}'
-          pid_fric_speed_2: '{1.0, 0.00048, 0.0, 0.0, 0.0, 1.0, false}'
-          pid_fric_speed_3: '{1.0, 0.00048, 0.0, 0.0, 0.0, 1.0, false}'
+          pid_trig_angle: '{.p = 2000.0, .out_limit = 2000.0, .cycle = true}'
+          pid_trig_speed: '{.p = 0.0013, .i_limit = 1.0, .out_limit = 1.0}'
+          pid_fric_speed_0: '{.p = 0.00048, .out_limit = 1.0}'
+          pid_fric_speed_1: '{.p = 0.00048, .out_limit = 1.0}'
+          pid_fric_speed_2: '{.p = 0.00048, .out_limit = 1.0}'
+          pid_fric_speed_3: '{.p = 0.00048, .out_limit = 1.0}'
           thread_priority: LibXR::Thread::Priority::MEDIUM
           launcher_cmd_topic_name: "launcher_cmd"
           launcher_ref_topic_name: "launcher_ref"
@@ -301,18 +302,18 @@ modules:
             rotor_buffer_low_j: 35.0f
             rotor_buffer_high_j: 70.0f
             rotor_scale_lpf_alpha: 0.2f
-          pid_follow: '{1.0, 30.0, 0.0, 1.0, 0.0, 0.0, true}'
-          pid_velocity_x: '{1.0, 200.0, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_velocity_y: '{1.0, 200.0, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_omega: '{1.0, 3.0, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_wheel_speed_0: '{1.0, 0.01, 0.0009, 0.0, 0.0, 0.85, false}'
-          pid_wheel_speed_1: '{1.0, 0.5, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_wheel_speed_2: '{1.0, 0.5, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_wheel_speed_3: '{1.0, 0.5, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_steer_angle_0: '{1.0, 9.0, 0.0, 0.0, 0.0, 1.0, false}'
-          pid_steer_angle_1: '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_steer_angle_2: '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_steer_angle_3: '{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, false}'
+          pid_follow: '{.p = 30.0, .d = 1.0, .cycle = true}'
+          pid_velocity_x: '{.p = 200.0}'
+          pid_velocity_y: '{.p = 200.0}'
+          pid_omega: '{.p = 3.0}'
+          pid_wheel_speed_0: '{.p = 0.01, .i = 0.0009, .out_limit = 0.85}'
+          pid_wheel_speed_1: '{.p = 0.5}'
+          pid_wheel_speed_2: '{.p = 0.5}'
+          pid_wheel_speed_3: '{.p = 0.5}'
+          pid_steer_angle_0: '{.p = 9.0, .out_limit = 1.0}'
+          pid_steer_angle_1: '{}'
+          pid_steer_angle_2: '{}'
+          pid_steer_angle_3: '{}'
           pid_steer_speed_0: '{}'
           pid_steer_speed_1: '{}'
           pid_steer_speed_2: '{}'
@@ -330,10 +331,10 @@ modules:
       - referee: '&ref'
       - param:
           task_stack_depth: 1536
-          pid_yaw_angle: '{1.0, 27.5, 0.5, 0.0, 0.3, 9.5, true}'
-          pid_yaw_omega: '{1.0, 4.0, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_pit_angle: '{1.0, 20.0, 0.0, 0.0, 0.0, 0.0, true}'
-          pid_pit_omega: '{1.0, 4.0, 0.0, 0.0, 0.0, 10.0, false}'
+          pid_yaw_angle: '{.p = 27.5, .i = 0.5, .i_limit = 0.3, .out_limit = 9.5, .cycle = true}'
+          pid_yaw_omega: '{.p = 4.0}'
+          pid_pit_angle: '{.p = 20.0, .cycle = true}'
+          pid_pit_omega: '{.p = 4.0, .out_limit = 10.0}'
           pit_max_angle: 1.33
           pit_min_angle: 0.52
           pit_lc: 0.0
@@ -374,10 +375,10 @@ modules:
       - referee: ref
       - param:
           task_stack_depth: 1536
-          pid_pit_angle: '{1.0, 1.0, 1.0, 0.0, 1.0, 0.0, false}'
-          pid_pit_omega: '{1.0, 8.0, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_scope_angle: '{1.0, 0.5, 0.0, 0.0, 0.0, 0.0, false}'
-          pid_scope_omega: '{1.0, 1.0, 0.0, 0.0, 0.0, 0.0, false}'
+          pid_pit_angle: '{.p = 1.0, .i = 1.0, .i_limit = 1.0}'
+          pid_pit_omega: '{.p = 8.0}'
+          pid_scope_angle: '{.p = 0.5}'
+          pid_scope_omega: '{.p = 1.0}'
           scope_open_angle: 1.5
           thread_priority: LibXR::Thread::Priority::MEDIUM
           euler_topic_name: "ahrs_euler"
