@@ -126,7 +126,8 @@ Naming (enforced by `.clangd` / clang-tidy):
 - constants (`const`/`constexpr`, any scope), enum constants and macros `UPPER_CASE`
 - Module headers `PascalCase.hpp`; configs `snake_case.yaml`
 
-Formatting: `.clang-format` (Google-based, `IncludeBlocks: Regroup`), clang-format
+Formatting: `.clang-format` is the LibXR style (Google-based, 90 columns, Allman braces,
+`IncludeBlocks: Regroup`), and the generated `User/` files already follow it. clang-format
 21.1.8 via `tools/format_code.sh`; scope is `Modules/` only.
 
 Build: C11 and C++20, `-Werror`, Cortex-M4F, `-fno-rtti -fno-exceptions`,
