@@ -11,7 +11,8 @@ Usage:
   tools/build.sh [options]
 
 Description:
-  1) Run clang-format for C/C++ files under Modules/
+  1) Run clang-format via tools/format_code.sh on the C/C++ files that are
+     modified or untracked in the Module repositories under Modules/
   2) Generate User/xrobot_main.hpp for the config via xrobot gen
   3) Configure firmware with cube-cmake
   4) Build firmware with cube-cmake
