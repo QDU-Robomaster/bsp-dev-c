@@ -8,7 +8,7 @@ archives (`export-ignore`).
 STM32F407IGHx (RoboMaster development board C) BSP built on LibXR and FreeRTOS. One
 firmware project builds several robots; each robot is an XRobot application
 configuration (product). Toolchain: XRobot 1.0 (`xrobot` CLI) and the LibXR code
-generator 6.0 (`libxr`, `xr_*` commands). Docs: <https://xrobot.work/docs/proj_man>.
+generator 6.0 (`libxr` command). Docs: <https://xrobot.work/docs/proj_man>.
 
 ## Layout
 
@@ -80,13 +80,13 @@ modules:
       - can_bus: can2               # an XR_REGISTER name or an earlier instance id
       - param:                      # struct from a Module header: all fields, in order
           model: RMMotor::Model::MOTOR_GM6020
-          reverse: 'false'
-          feedback_id: '522'
+          reverse: false
+          feedback_id: 522
 settings:
   monitor_sleep_ms: 1000
 ```
 
-- Values are C++ text; string literals keep their quotes (`'"chassis_cmd"'`).
+- Values are C++ text; a string literal is a double-quoted YAML value (`"chassis_cmd"`).
   `null`/empty means "not filled in"; use `nullptr` for a null pointer.
 - `args` names every parameter of one public constructor, in order.
 - Instances may refer only to earlier instances (`id`, or `&id` for a pointer).
