@@ -1,28 +1,27 @@
-# XRobot module configuration example
+xrobot: 1.0.0
 modules:
-  - xrobot-org/BlinkLED
-  - xrobot-org/MadgwickAHRS
-  - xrobot-org/BuzzerAlarm
-  - xrobot-org/SharedTopic
-  - xrobot-org/SharedTopicClient
-  - xrobot-org/BMI088
-  - qdu-future/CameraSync
-  - qdu-future/CMD
-  - qdu-future/DR16
-  - qdu-future/RMMotor
-  - qdu-future/DMMotor
-  - qdu-future/Chassis
-  - qdu-future/Gimbal
-  - qdu-future/InfantryLauncher
-  - qdu-future/EventBinder
-  - qdu-future/HostData
-  - qdu-future/LegVmc
-  - qdu-future/PowerControl
-  - qdu-future/SuperPower
-  - qdu-future/Motor
-  - qdu-future/Referee
-  - qdu-future/VT13
-  - qdu-future/SentryProtocol
-  - qdu-future/Dart
-  - qdu-future/HeroLauncher
-  - qdu-future/MiniGimbal
+- QDU-Robomaster/CMD@same-or-dev
+- QDU-Robomaster/CameraSync@same-or-dev
+- QDU-Robomaster/Chassis@same-or-dev
+- QDU-Robomaster/DMMotor@same-or-dev
+- QDU-Robomaster/DR16@same-or-dev
+- QDU-Robomaster/Dart@same-or-dev
+- QDU-Robomaster/EventBinder@same-or-dev
+- QDU-Robomaster/Gimbal@same-or-dev
+- QDU-Robomaster/HeroLauncher@same-or-dev
+- QDU-Robomaster/HostData@same-or-dev
+- QDU-Robomaster/InfantryLauncher@same-or-dev
+- QDU-Robomaster/MiniGimbal@same-or-dev
+- QDU-Robomaster/Motor@same-or-dev
+- QDU-Robomaster/PowerControl@same-or-dev
+- QDU-Robomaster/RMMotor@same-or-dev
+- QDU-Robomaster/Referee@same-or-dev
+- QDU-Robomaster/SentryProtocol@same-or-dev
+- QDU-Robomaster/SuperPower@same-or-dev
+- QDU-Robomaster/VT13@same-or-dev
+- xrobot-org/BMI088@same-or-dev
+- xrobot-org/BlinkLED@same-or-dev
+- xrobot-org/BuzzerAlarm@same-or-dev
+- xrobot-org/MadgwickAHRS@same-or-dev
+- xrobot-org/SharedTopic@same-or-dev
+- xrobot-org/SharedTopicClient@same-or-dev

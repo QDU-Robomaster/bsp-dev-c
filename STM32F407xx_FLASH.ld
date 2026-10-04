@@ -167,6 +167,24 @@ SECTIONS
     _eccmram = .;       /* create a global symbol at ccmram end */
   } >CCMRAM AT> FLASH
 
+  /* FreeRTOS heap_1 uses raw storage; its metadata is initialized separately.
+     Keep initialized .ccmram above unchanged and omit only the heap load image. */
+  .ccm_heap (NOLOAD) :
+  {
+    . = ALIGN(4);
+    *(.ccm_heap)
+    *(.ccm_heap.*)
+    . = ALIGN(4);
+  } >CCMRAM
+
+  /* GOT entries are link-time constants in this static image */
+  .got :
+  {
+    . = ALIGN(4);
+    *(.got .got.*)
+    . = ALIGN(4);
+  } >FLASH
+
   /* used by the startup to initialize data */
   _sidata = LOADADDR(.data);
 
@@ -177,7 +195,6 @@ SECTIONS
     _sdata = .;        /* create a global symbol at data start */
     *(.data)           /* .data sections */
     *(.data*)          /* .data* sections */
-    *(.got .got.*)     /* Load GOT entries from FLASH with initialized data */
     *(.RamFunc)        /* .RamFunc sections */
     *(.RamFunc*)       /* .RamFunc* sections */
 

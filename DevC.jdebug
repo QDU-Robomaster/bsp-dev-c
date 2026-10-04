@@ -4,7 +4,7 @@
 *                         www.segger.com                             *
 **********************************************************************
 
-File          : D:/Documents/XRobot/bsp-dev-c/DevC.jdebug
+File          : DevC.jdebug
 Created       : 5 Oct 2025 15:15
 Ozone Version : V3.38b
 */
@@ -26,8 +26,6 @@ void OnProjectLoad (void) {
   Project.SetHostIF ("USB", "");
   Project.SetTargetIF ("SWD");
   Project.SetTIFSpeed ("4 MHz");
-  Project.AddPathSubstitute ("D:/Documents/XRobot/bsp-dev-c", "$(ProjectDir)");
-  Project.AddPathSubstitute ("d:/documents/xrobot/bsp-dev-c", "$(ProjectDir)");
   Project.AddSvdFile ("$(InstallDir)/Config/CPU/Cortex-M4F.svd");
   //
   // User settings
