@@ -13,7 +13,7 @@ jobs:
     # The release job of the shared workflow attaches firmware to releases, which needs write access.
     permissions:
       contents: write
-    uses: xrobot-org/XRobot/.github/workflows/bsp-stm32-ci.yml@dev
+    uses: xrobot-org/XRobot/.github/workflows/bsp-stm32-ci.yml@v1
     with:
       project: DevC
       configs: |
