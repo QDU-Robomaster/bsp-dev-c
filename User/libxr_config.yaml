@@ -1,3 +1,4 @@
+generator: 6.0.0
 terminal_source: usb_otg_fs_cdc
 software_timer:
   priority: 2
@@ -43,9 +44,9 @@ ADC:
     vref: 3.3
     dma_section: ''
 CAN:
-  CAN1:
+  can1:
     queue_size: 5
-  CAN2:
+  can2:
     queue_size: 5
 USB:
   usb_otg_fs:
@@ -56,9 +57,8 @@ USB:
     rx_fifo_size: 256
     tx_fifo_size: 128
     dma_section: ''
-    cdc_tx_fifo_size: 128
-    cdc_rx_fifo_size: 128
-    cdc_queue_size: 3
+    cdc:
+    - {tx_fifo_size: 128, rx_fifo_size: 128, queue_size: 3}
     vid: 5840
     pid: 5266
     bcd: 62471
@@ -73,9 +73,9 @@ USB:
     rx_fifo_size: 256
     tx_fifo_size: 128
     dma_section: ''
-    cdc_tx_fifo_size: 128
-    cdc_rx_fifo_size: 128
-    cdc_queue_size: 3
+    cdc:
+    - {tx_fifo_size: 128, rx_fifo_size: 128, queue_size: 3}
+    - {tx_fifo_size: 128, rx_fifo_size: 128, queue_size: 3}
     vid: 5840
     pid: 5266
     bcd: 62471
@@ -90,209 +90,7 @@ Terminal:
   run_as_thread: true
   thread_stack_depth: 2048
   thread_priority: 3
+database:
+  enable: true
+  block_size: 1
 SYSTEM: FreeRTOS
-device_aliases:
-  power_manager:
-    type: PowerManager
-    aliases:
-    - power_manager
-  USER_KEY:
-    type: GPIO
-    aliases:
-    - USER_KEY
-    - wakeup_key
-  ACCL_CS:
-    type: GPIO
-    aliases:
-    - bmi088_accl_cs
-  GYRO_CS:
-    type: GPIO
-    aliases:
-    - bmi088_gyro_cs
-  HW0:
-    type: GPIO
-    aliases:
-    - HW0
-  HW1:
-    type: GPIO
-    aliases:
-    - HW1
-  HW2:
-    type: GPIO
-    aliases:
-    - HW2
-  ACCL_INT:
-    type: GPIO
-    aliases:
-    - bmi088_accl_int
-  GYRO_INT:
-    type: GPIO
-    aliases:
-    - bmi088_gyro_int
-  spi1:
-    type: SPI
-    aliases:
-    - spi_bmi088
-  pwm_tim10_ch1:
-    type: PWM
-    aliases:
-    - pwm_bmi088_heat
-  CMPS_INT:
-    type: GPIO
-    aliases:
-    - ist8310_int
-  CMPS_RST:
-    type: GPIO
-    aliases:
-    - ist8310_rst
-  LED_B:
-    type: GPIO
-    aliases:
-    - LED
-    - LED_B
-  LED_G:
-    type: GPIO
-    aliases:
-    - LED_G
-  LED_R:
-    type: GPIO
-    aliases:
-    - LED_R
-  pwm_tim1_ch1:
-    type: PWM
-    aliases:
-    - pwm_a
-    - pwm_launcher_cover_servo
-  pwm_tim1_ch2:
-    type: PWM
-    aliases:
-    - pwm_b
-  pwm_tim1_ch3:
-    type: PWM
-    aliases:
-    - pwm_c
-  pwm_tim1_ch4:
-    type: PWM
-    aliases:
-    - pwm_d
-  pwm_tim3_ch3:
-    type: PWM
-    aliases:
-    - pwm_5v
-  pwm_tim4_ch3:
-    type: PWM
-    aliases:
-    - pwm_buzzer
-  pwm_tim8_ch1:
-    type: PWM
-    aliases:
-    - pwm_e
-  pwm_tim8_ch2:
-    type: PWM
-    aliases:
-    - pwm_f
-  pwm_tim8_ch3:
-    type: PWM
-    aliases:
-    - pwm_g
-  adc3_adc_channel_8:
-    type: ADC
-    aliases:
-    - adc_bat
-  usart1:
-    type: UART
-    aliases:
-    - imu_data_uart
-    - uart_referee
-  usart3:
-    type: UART
-    aliases:
-    - uart_dr16
-  usart6:
-    type: UART
-    aliases:
-    - uart_ai
-    - uart_ext_controller
-  i2c1:
-    type: I2C
-    aliases:
-    - i2c1
-  i2c3:
-    type: I2C
-    aliases:
-    - i2c_ist8310
-  can1:
-    type: CAN
-    aliases:
-    - can1
-    - imu_can
-  can2:
-    type: CAN
-    aliases:
-    - can2
-  ramfs:
-    type: RamFS
-    aliases:
-    - ramfs
-  terminal:
-    type: Terminal<32, 32, 5, 5>
-    aliases:
-    - terminal
-  usb_otg_fs_cdc:
-    type: UART
-    aliases:
-    - usb_ai
-    - usb_otg_fs_cdc
-  usb_otg_hs_cdc:
-    type: UART
-    aliases:
-    - usb_otg_hs_cdc
-  CAMERA:
-    type: GPIO
-    aliases:
-    - CAMERA
-  IMU_INT:
-    type: GPIO
-    aliases:
-    - IMU_INT
-FlashLayout:
-  model: STM32F407IGH6
-  flash_base: '0x08000000'
-  flash_size_kb: 1024
-  sectors:
-  - index: 0
-    address: '0x08000000'
-    size_kb: 16.0
-  - index: 1
-    address: '0x08004000'
-    size_kb: 16.0
-  - index: 2
-    address: '0x08008000'
-    size_kb: 16.0
-  - index: 3
-    address: '0x0800C000'
-    size_kb: 16.0
-  - index: 4
-    address: '0x08010000'
-    size_kb: 64.0
-  - index: 5
-    address: '0x08020000'
-    size_kb: 128.0
-  - index: 6
-    address: '0x08040000'
-    size_kb: 128.0
-  - index: 7
-    address: '0x08060000'
-    size_kb: 128.0
-  - index: 8
-    address: '0x08080000'
-    size_kb: 128.0
-  - index: 9
-    address: '0x080A0000'
-    size_kb: 128.0
-  - index: 10
-    address: '0x080C0000'
-    size_kb: 128.0
-  - index: 11
-    address: '0x080E0000'
-    size_kb: 128.0

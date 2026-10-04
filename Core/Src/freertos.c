@@ -44,7 +44,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-uint8_t ucHeap[configTOTAL_HEAP_SIZE] __attribute__((section(".ccmram")));
+/* Raw allocator storage has no Flash initialization image. */
+uint8_t ucHeap[configTOTAL_HEAP_SIZE] __attribute__((section(".ccm_heap")));
 /* USER CODE END Variables */
 
 /* Private function prototypes -----------------------------------------------*/

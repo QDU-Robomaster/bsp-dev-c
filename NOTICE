@@ -1,0 +1,37 @@
+bsp-dev-c
+
+The files written for this repository are licensed under the Apache License,
+Version 2.0 (see LICENSE). The third-party code listed below is distributed
+with this repository under its own license, which is not changed by LICENSE.
+
+Drivers/CMSIS/
+  Arm CMSIS. Apache License 2.0; see Drivers/CMSIS/LICENSE.txt.
+  Drivers/CMSIS/DSP/ComputeLibrary/: MIT License, Copyright (c) 2017-2019 ARM
+  Software; see Drivers/CMSIS/DSP/ComputeLibrary/LICENSE.txt.
+
+Drivers/CMSIS/Device/ST/STM32F4xx/
+  STMicroelectronics CMSIS device support. Apache License 2.0; see
+  Drivers/CMSIS/Device/ST/STM32F4xx/LICENSE.txt.
+
+Drivers/STM32F4xx_HAL_Driver/
+  STMicroelectronics STM32F4xx HAL driver. BSD 3-Clause License; see
+  Drivers/STM32F4xx_HAL_Driver/LICENSE.txt.
+
+Middlewares/Third_Party/FreeRTOS/Source/
+  FreeRTOS Kernel V10.3.1, Copyright (C) Amazon.com, Inc. or its affiliates.
+  MIT License; see Middlewares/Third_Party/FreeRTOS/Source/LICENSE.
+  CMSIS_RTOS/: CMSIS-RTOS v1 wrapper, portions Copyright STMicroelectronics and
+  ARM Limited; BSD 3-Clause style terms as stated in the file headers.
+  CMSIS_RTOS_V2/: CMSIS-RTOS2 wrapper, Copyright Arm Limited; Apache License 2.0
+  (SPDX headers).
+
+STM32CubeMX-generated files: Core/, startup_stm32f407xx.s, STM32F407xx_FLASH.ld
+  Generated from STMicroelectronics templates. They keep the STMicroelectronics
+  (and, in Core/Inc/FreeRTOSConfig.h, Amazon) copyright notices and the license
+  terms stated in their headers; the linker scripts carry a BSD 3-Clause style
+  license and FreeRTOSConfig.h the MIT License. Code inside the USER CODE
+  sections was written for this repository.
+
+Middlewares/Third_Party/LibXR
+  Git submodule, not part of this repository's files. LibXR is licensed under
+  the Apache License 2.0; see its own LICENSE.
