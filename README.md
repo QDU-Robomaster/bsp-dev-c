@@ -12,11 +12,15 @@ USB OTG HS 的两路 CDC 和数据库 `database`（使用 Flash 末尾的两个�
 
 ```yaml
 USB:
+  # ...
   usb_otg_hs:
     enable: true
+    # ...
     cdc:
     - {tx_fifo_size: 128, rx_fifo_size: 128, queue_size: 3}
     - {tx_fifo_size: 128, rx_fifo_size: 128, queue_size: 3}
+    # ...
+# ...
 database:
   enable: true
   block_size: 1
@@ -62,7 +66,7 @@ The two CDC serial ports of USB OTG HS and the database `database` (which uses t
 
 | 配置文件 | 产品或用途 |
 | --- | --- |
-| `User/xrobot.yaml` | 默认配置，仅含 BlinkLED，用于点亮状态灯 |
+| `User/xrobot.yaml` | 默认配置，仅含 BlinkLED，使状态灯闪烁 |
 | `User/RobotConfig/aerial.yaml` | 空中机器人：云台、发射机构、DR16 遥控器、裁判系统 |
 | `User/RobotConfig/dart.yaml` | 飞镖：Dart 模块、DR16 遥控器、裁判系统 |
 | `User/RobotConfig/hero.yaml` | 英雄：麦轮底盘、云台、HeroLauncher、MiniGimbal、DR16 与 VT13 遥控器、功率控制 |
@@ -102,11 +106,11 @@ $ cmake --preset debug
 $ cmake --build --preset debug
 ```
 
-`xrobot` 与 `libxr` 的版本由 `Modules/modules.yaml` 的 `xrobot:` 和 `User/libxr_config.yaml` 的 `generator:` 记录。`xrobot setup` 按 lock 拉取模块、检查所有配置并生成 `User/xrobot_main.hpp`；`xrobot gen -c <配置>` 选择要构建的配置，省略时使用 `User/xrobot.yaml`。已克隆的仓库先运行 `git submodule update --init --recursive`。
+`xrobot` 与 `libxr` 的版本由 `Modules/modules.yaml` 的 `xrobot:` 和 `User/libxr_config.yaml` 的 `generator:` 记录。`xrobot setup` 按 lock 拉取模块、检查所有配置并生成 `User/xrobot_main.hpp`；`xrobot gen -c <配置>` 选择要构建的配置；省略 `-c` 时使用当前选中的配置（已生成的 `User/xrobot_main.hpp` 对应的配置），尚未生成时为 `User/xrobot.yaml`。已克隆但未带子模块时，先运行 `git submodule update --init --recursive`。
 
 应用代码的优化级别由 `cmake/LibXR.CMake` 开头 “Project settings” 块中的 `LIBXR_OPT_DEBUG`（`-Og`）和 `LIBXR_OPT_RELEASE`（`-O3`）设置，两个工具链相同：Release 构建中应用、`xr` 和 CubeMX 生成的库使用 `LIBXR_OPT_RELEASE`，Debug 构建中应用使用 `LIBXR_OPT_DEBUG`，`xr` 和这些库使用 `-O2`。`cmake/starm-clang.cmake` 与 `cmake/gcc-arm-none-eabi.cmake` 保持 CubeMX 写出的内容。
 
-CMake 预设有 `debug`、`relWithDebInfo`、`release` 和 `minSizeRel`，输出位于 `build/<预设>/DevC.elf`。构建前，LibXR 检查配置、lock、模块头文件和入口源文件中的注册是否与已生成的 `User/xrobot_main.hpp` 一致；不一致时构建失败，并提示对应的 `xrobot gen -c <配置>`。`tools/build.sh -c <配置> -p <预设>` 依次执行格式化、`xrobot gen`、`cube-cmake` 配置与构建。
+CMake 预设有 `debug`、`relWithDebInfo`、`release` 和 `minSizeRel`，输出位于 `build/<预设>/DevC.elf`。构建前，LibXR 检查配置、lock、模块头文件和入口源文件中的注册是否与已生成的 `User/xrobot_main.hpp` 一致；不一致时构建失败，并提示对应的 `xrobot gen -c <配置>`。`tools/build.sh -c <配置> -p <预设>` 依次执行格式化、`xrobot gen`、`cube-cmake` 配置与构建，其中格式化（`tools/format_code.sh`）只处理 `Modules/` 下各模块仓库中已修改或未跟踪的 C/C++ 文件。
 
 修改 CubeMX 配置并重新生成代码后，由 CodeGenerator 重新生成 BSP 对象：
 
@@ -117,19 +121,19 @@ $ libxr gen -i .config.yaml -o User/app_main.cpp --xrobot --libxr-config User/li
 
 `User/app_main.cpp`、`User/app_main.h`、`User/flash_map.hpp` 和 `User/libxr_config.yaml` 提交到仓库，`User Code` 区域的内容保留。修改 `User/libxr_config.yaml` 中的值（例如 CDC 路数、数据库）后，同样用这两条命令重新生成。命令的完整说明见 [LibXR CodeGenerator](https://github.com/xrobot-org/LibXR_CppCodeGenerator)。
 
-持续集成见 `.github/workflows/xrobot_stm32.yml`。该文件调用 XRobot 仓库中的共享工作流 `bsp-stm32-ci.yml`，只写出工程名 `DevC` 和要构建的配置：默认配置与 `User/RobotConfig/` 下的 9 份配置。共享工作流在 `ghcr.io/xrobot-org/docker-image-stm32:main` 中安装固定版本的工具，重新生成并检查 BSP 对象已提交，检查仓库内的文本文件使用 LF 换行，运行 `xrobot format --check` 和 `xrobot setup --frozen`，再用 `cmake/starm-clang.cmake` 构建每份配置的 Release 固件。发布 Release 或推送 `v*` 标签时，各配置的 `.elf`、`.hex`、`.bin` 随之上传。分支 `dev` 接收修改，`master` 通过来自 `dev` 的 PR 更新。
+持续集成见 `.github/workflows/xrobot_stm32.yml`。该文件调用 XRobot 仓库中的共享工作流 `bsp-stm32-ci.yml`，只写出工程名 `DevC` 和要构建的配置：默认配置与 `User/RobotConfig/` 下的 9 份配置。共享工作流在 `ghcr.io/xrobot-org/docker-image-stm32:main` 中安装固定版本的工具，重新生成并检查 BSP 对象已提交，检查仓库内的文本文件使用 LF 换行，运行 `xrobot format --check` 和 `xrobot setup --frozen`，再用 `cmake/starm-clang.cmake` 构建每份配置的 Release 固件。推送 `v*` 标签时，共享工作流创建 Release，并上传 `User/RobotConfig/` 下 9 份配置的 `.elf`、`.hex`、`.bin`、配置文件和 `.tar.gz`，以及 `SHA256SUMS` 和 `firmware-manifest.json`。分支 `dev` 接收修改，`master` 通过来自 `dev` 的 PR 更新。
 
 Building needs Python (for `xrobot` and `libxr`), CMake, Ninja and ST's `starm-clang` toolchain (provided by STM32CubeCLT or the VS Code STM32Cube extension) on `PATH`. The presets use `cmake/starm-clang.cmake`; `-DCMAKE_TOOLCHAIN_FILE=cmake/gcc-arm-none-eabi.cmake` selects `arm-none-eabi-gcc` instead. The environment variables `GCC_TOOLCHAIN_ROOT` and `CLANG_GCC_CMSIS_COMPILER` apply when `STARM_TOOLCHAIN_CONFIG` is set to `STARM_HYBRID`.
 
-The versions of `xrobot` and `libxr` are recorded in `xrobot:` of `Modules/modules.yaml` and `generator:` of `User/libxr_config.yaml`. `xrobot setup` fetches the Modules at the commits in the lock, checks every configuration and generates `User/xrobot_main.hpp`; `xrobot gen -c <configuration>` selects the configuration to build and defaults to `User/xrobot.yaml`. A repository that is already cloned first runs `git submodule update --init --recursive`.
+The versions of `xrobot` and `libxr` are recorded in `xrobot:` of `Modules/modules.yaml` and `generator:` of `User/libxr_config.yaml`. `xrobot setup` fetches the Modules at the commits in the lock, checks every configuration and generates `User/xrobot_main.hpp`; `xrobot gen -c <configuration>` selects the configuration to build; without `-c` it uses the selected configuration (the one the generated `User/xrobot_main.hpp` was made from), or `User/xrobot.yaml` before anything is generated. For a clone made without submodules, `git submodule update --init --recursive` fetches them.
 
 The optimization levels of the application code are set by `LIBXR_OPT_DEBUG` (`-Og`) and `LIBXR_OPT_RELEASE` (`-O3`) in the "Project settings" block at the top of `cmake/LibXR.CMake`, the same for both toolchains: in Release builds the application, `xr` and the libraries generated by CubeMX use `LIBXR_OPT_RELEASE`, and in Debug builds the application uses `LIBXR_OPT_DEBUG` while `xr` and these libraries use `-O2`. `cmake/starm-clang.cmake` and `cmake/gcc-arm-none-eabi.cmake` keep what CubeMX wrote.
 
-The CMake presets are `debug`, `relWithDebInfo`, `release` and `minSizeRel`; the output is `build/<preset>/DevC.elf`. Before building, LibXR checks that the configuration, lock, Module headers and the registrations in the entry source match the generated `User/xrobot_main.hpp`; on a mismatch the build fails and names the `xrobot gen -c <configuration>` command to run. `tools/build.sh -c <configuration> -p <preset>` runs formatting, `xrobot gen`, and the `cube-cmake` configure and build steps in turn.
+The CMake presets are `debug`, `relWithDebInfo`, `release` and `minSizeRel`; the output is `build/<preset>/DevC.elf`. Before building, LibXR checks that the configuration, lock, Module headers and the registrations in the entry source match the generated `User/xrobot_main.hpp`; on a mismatch the build fails and names the `xrobot gen -c <configuration>` command to run. `tools/build.sh -c <configuration> -p <preset>` runs formatting, `xrobot gen`, and the `cube-cmake` configure and build steps in turn; the formatting step (`tools/format_code.sh`) formats only the C/C++ files that are modified or untracked in the Module repositories under `Modules/`.
 
 After changing the CubeMX configuration and regenerating its code, the CodeGenerator regenerates the BSP objects with the two `libxr` commands shown above. `User/app_main.cpp`, `User/app_main.h`, `User/flash_map.hpp` and `User/libxr_config.yaml` are committed, and the content of the `User Code` regions is preserved. After a value in `User/libxr_config.yaml` changes, such as the number of CDCs or the database, the same two commands regenerate the files. The commands are documented in the [LibXR CodeGenerator](https://github.com/xrobot-org/LibXR_CppCodeGenerator) repository.
 
-Continuous integration is defined in `.github/workflows/xrobot_stm32.yml`. The file calls the shared workflow `bsp-stm32-ci.yml` of the XRobot repository and names only the project `DevC` and the configurations to build: the default configuration and the nine under `User/RobotConfig/`. The shared workflow installs the pinned tools in `ghcr.io/xrobot-org/docker-image-stm32:main`, regenerates the BSP objects and checks that they are committed, checks that the text files in the repository use LF line endings, runs `xrobot format --check` and `xrobot setup --frozen`, and builds Release firmware of every configuration with `cmake/starm-clang.cmake`. Publishing a Release or pushing a `v*` tag uploads the `.elf`, `.hex` and `.bin` of each configuration. The branch `dev` receives changes, and `master` is updated through PRs from `dev`.
+Continuous integration is defined in `.github/workflows/xrobot_stm32.yml`. The file calls the shared workflow `bsp-stm32-ci.yml` of the XRobot repository and names only the project `DevC` and the configurations to build: the default configuration and the nine under `User/RobotConfig/`. The shared workflow installs the pinned tools in `ghcr.io/xrobot-org/docker-image-stm32:main`, regenerates the BSP objects and checks that they are committed, checks that the text files in the repository use LF line endings, runs `xrobot format --check` and `xrobot setup --frozen`, and builds Release firmware of every configuration with `cmake/starm-clang.cmake`. Pushing a `v*` tag makes the shared workflow create a Release and upload the `.elf`, `.hex`, `.bin`, configuration file and `.tar.gz` of each of the nine configurations under `User/RobotConfig/`, together with `SHA256SUMS` and `firmware-manifest.json`. The branch `dev` receives changes, and `master` is updated through PRs from `dev`.
 
 ## 4. 烧录与运行 / Flash and Run
 

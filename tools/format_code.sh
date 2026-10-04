@@ -12,10 +12,15 @@ Usage:
 
 Description:
   Format C/C++ files under Modules/ using clang-format.
+  In a git checkout under Modules/ (such as Modules/<owner>/<Repo>/ checked out
+  by xrobot setup), only the C/C++ files that are modified, staged or untracked
+  are formatted, so a clean checkout stays clean. C/C++ files under Modules/
+  outside any git checkout are all formatted. When there is nothing to format,
+  the script prints nothing and exits with 0.
   Requires clang-format version 21.1.8 by default.
 
 Options:
-  --check   Run clang-format in dry-run mode with --Werror.
+  --check   Run clang-format in dry-run mode with --Werror on the same files.
   -h, --help
 EOF
 }
@@ -281,6 +286,109 @@ provision_clang_format() {
   install_official_clang_format
 }
 
+is_source_file() {
+  case "$1" in
+    *.c|*.cc|*.cpp|*.cxx|*.h|*.hh|*.hpp|*.hxx)
+      return 0
+      ;;
+  esac
+  return 1
+}
+
+# A directory with .git is a checkout; elsewhere every C/C++ file is a target.
+scan_modules_dir() {
+  local dir="$1"
+  local entry
+
+  if [[ -e "${dir}/.git" ]]; then
+    CHECKOUTS+=("${dir}")
+    return 0
+  fi
+
+  for entry in "${dir}"/* "${dir}"/.[!.]* "${dir}"/..?*; do
+    if [[ -L "${entry}" || ! -e "${entry}" ]]; then
+      continue
+    elif [[ -d "${entry}" ]]; then
+      scan_modules_dir "${entry}"
+    elif [[ -f "${entry}" ]] && is_source_file "${entry}"; then
+      TARGET_FILES+=("${entry}")
+    fi
+  done
+}
+
+# Adds the C/C++ files that are modified, staged or untracked in a checkout. A nested
+# repository that git reports as changed is queued as a checkout of its own.
+collect_checkout_changes() {
+  local checkout="$1"
+  local entry status path
+
+  if [[ -z "${STATUS_FILE}" ]]; then
+    STATUS_FILE="$(mktemp)"
+  fi
+
+  if ! git --no-optional-locks -C "${checkout}" status --porcelain -z --untracked-files=all >"${STATUS_FILE}"; then
+    echo "Failed to read the git status of ${checkout}." >&2
+    exit 1
+  fi
+
+  while IFS= read -r -d '' entry; do
+    status="${entry:0:2}"
+    path="${checkout}/${entry:3}"
+    path="${path%/}"
+
+    case "${status}" in
+      *R*|*C*)
+        # A rename or copy is followed by its original path.
+        IFS= read -r -d '' _ || true
+        ;;
+      "D ")
+        # Removed from the index only; a file still on disk is also reported as untracked.
+        continue
+        ;;
+    esac
+
+    if [[ -L "${path}" ]]; then
+      continue
+    elif [[ -d "${path}" && -e "${path}/.git" ]]; then
+      CHECKOUTS+=("${path}")
+    elif [[ -f "${path}" ]] && is_source_file "${path}"; then
+      TARGET_FILES+=("${path}")
+    fi
+  done <"${STATUS_FILE}"
+}
+
+collect_target_files() {
+  local index=0
+
+  if [[ ! -d "Modules" ]]; then
+    return 0
+  fi
+
+  scan_modules_dir "Modules"
+
+  while (( index < ${#CHECKOUTS[@]} )); do
+    collect_checkout_changes "${CHECKOUTS[index]}"
+    index=$((index + 1))
+  done
+}
+
+cleanup() {
+  if [[ -n "${STATUS_FILE}" ]]; then
+    rm -f "${STATUS_FILE}"
+  fi
+}
+
+CHECKOUTS=()
+TARGET_FILES=()
+STATUS_FILE=""
+trap cleanup EXIT
+
+collect_target_files
+
+if [[ "${#TARGET_FILES[@]}" -eq 0 ]]; then
+  exit 0
+fi
+
 PYTHON_FOR_TOOLS=()
 CLANG_FORMAT_BIN="${CLANG_FORMAT_BIN:-}"
 
@@ -308,28 +416,34 @@ if [[ "${CF_VERSION}" != "${REQUIRED_VERSION}" ]]; then
   exit 1
 fi
 
+# Runs clang-format in batches that keep each command line short; every batch runs and
+# the last failure status is returned.
 run_clang_format() {
-  if [[ ! -d "Modules" ]]; then
-    return 0
-  fi
+  local batch_size=100
+  local start=0
+  local result=0
 
-  if [[ "${MODE}" == "check" ]]; then
-    find "Modules" -type f \( \
-      -name '*.c' -o -name '*.cc' -o -name '*.cpp' -o -name '*.cxx' \
-      -o -name '*.h' -o -name '*.hh' -o -name '*.hpp' -o -name '*.hxx' \
-    \) -exec "${CLANG_FORMAT_BIN}" --dry-run --Werror --style=file {} +
-  else
-    find "Modules" -type f \( \
-      -name '*.c' -o -name '*.cc' -o -name '*.cpp' -o -name '*.cxx' \
-      -o -name '*.h' -o -name '*.hh' -o -name '*.hpp' -o -name '*.hxx' \
-    \) -exec "${CLANG_FORMAT_BIN}" -i --style=file {} +
-  fi
+  while (( start < ${#TARGET_FILES[@]} )); do
+    if [[ "${MODE}" == "check" ]]; then
+      "${CLANG_FORMAT_BIN}" --dry-run --Werror --style=file "${TARGET_FILES[@]:start:batch_size}" || result=$?
+    else
+      "${CLANG_FORMAT_BIN}" -i --style=file "${TARGET_FILES[@]:start:batch_size}" || result=$?
+    fi
+    start=$((start + batch_size))
+  done
+
+  return "${result}"
 }
 
 run_clang_format
 
+FILE_COUNT="${#TARGET_FILES[@]} C/C++ file"
+if [[ "${#TARGET_FILES[@]}" -ne 1 ]]; then
+  FILE_COUNT+="s"
+fi
+
 if [[ "${MODE}" == "check" ]]; then
-  echo "clang-format check passed for Modules/."
+  echo "clang-format check passed for ${FILE_COUNT} under Modules/."
 else
-  echo "Formatted C/C++ files under Modules/."
+  echo "Formatted ${FILE_COUNT} under Modules/."
 fi
