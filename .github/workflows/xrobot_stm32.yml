@@ -6,10 +6,6 @@ on:
     tags: ['v*']
   pull_request:
     branches: [main, master, dev]
-  schedule:
-    - cron: '0 10 * * *'
-  release:
-    types: [published]
   workflow_dispatch:
 
 jobs:
