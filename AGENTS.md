@@ -47,13 +47,17 @@ The presets use `cmake/starm-clang.cmake` (picolibc) and need `starm-clang` on `
 `GCC_TOOLCHAIN_ROOT`/`CLANG_GCC_CMSIS_COMPILER` matter only for `STARM_HYBRID`.
 `tools/build.sh -c <config> -p <preset>` runs formatting, `xrobot gen` and the cube-cmake build in one go.
 
-After changing `DevC.ioc` and regenerating with CubeMX, the BSP objects are regenerated
-with the same two commands CI runs (`libxr stm32 setup` is the one-time command that adds
-LibXR to a CubeMX project):
+After changing `DevC.ioc` and regenerating with CubeMX, or after changing a value in
+`User/libxr_config.yaml`, the BSP objects are regenerated with `libxr stm32 setup`. It keeps
+the LibXR checkout, regenerates `User/app_main.cpp`, `app_main.h`, `flash_map.hpp` and
+`libxr_config.yaml` (User Code regions kept) and updates `cmake/LibXR.CMake`; on an
+unchanged project it changes nothing. CI regenerates the same four files with
+`libxr parse -d . -o .config.yaml` and
+`libxr gen -i .config.yaml -o User/app_main.cpp --xrobot --libxr-config User/libxr_config.yaml`
+and fails when they differ from the commit.
 
 ```bash
-libxr parse -d . -o .config.yaml
-libxr gen -i .config.yaml -o User/app_main.cpp --xrobot --libxr-config User/libxr_config.yaml
+libxr stm32 setup
 ```
 
 ## Execution flow
