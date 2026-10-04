@@ -51,6 +51,16 @@ foreach(library IN LISTS LIBXR_LIBRARIES)
         $<$<CONFIG:Debug>:-O2> $<$<CONFIG:Release>:${LIBXR_OPT_RELEASE}>)
 endforeach()
 
+# ---- Firmware images ---------------------------------------------------------
+# Each link of the application also writes <project>.hex and <project>.bin next to the ELF.
+add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+    WORKING_DIRECTORY $<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>
+    COMMAND ${CMAKE_OBJCOPY} --output-target ihex
+        $<TARGET_FILE_NAME:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.hex
+    COMMAND ${CMAKE_OBJCOPY} --output-target binary --strip-all
+        $<TARGET_FILE_NAME:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.bin
+    VERBATIM)
+
 # ---- Kept from the earlier LibXR.CMake ---------------------------------------
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     target_compile_options(xr PRIVATE -Wno-tautological-compare -Wno-maybe-uninitialized)
