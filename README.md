@@ -60,7 +60,7 @@ database:
 ```text
 DevC.ioc                  CubeMX 工程
 Core/ Drivers/            CubeMX 生成的初始化代码与 ST HAL / CMSIS
-Middlewares/              FreeRTOS、ST USB Device 库、LibXR 子模块
+Middlewares/              FreeRTOS、LibXR 子模块
 Modules/modules.yaml      使用的模块（`xrobot:` 记录 XRobot 版本）
 Modules/sources.yaml      源
 xrobot.lock               每个模块使用的提交（lock）
