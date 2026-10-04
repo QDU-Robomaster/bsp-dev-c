@@ -22,10 +22,12 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdbool.h>
+
 #include "app_main.h"
-extern void libxr_fatal_error(const char *file, uint32_t line, int in_isr);
+extern void libxr_fatal_error(const char *file, uint32_t line, bool in_isr);
 void freertos_assert_fail(const char *file, uint32_t line) {
-  libxr_fatal_error(file, line, 0);
+  libxr_fatal_error(file, line, false);
 }
 /* USER CODE END Includes */
 
@@ -1260,7 +1262,7 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
   (void)xTask;
   (void)pcTaskName;
   taskDISABLE_INTERRUPTS();
-  libxr_fatal_error(__FILE__, __LINE__, 0);
+  libxr_fatal_error(__FILE__, __LINE__, false);
 }
 
 /* USER CODE END 4 */
