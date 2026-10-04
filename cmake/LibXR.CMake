@@ -6,7 +6,8 @@ set(LIBXR_DRIVER st)
 set(XROBOT_MODULES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Modules")
 # User sources of the application; "" when CMakeLists.txt adds them itself.
 set(LIBXR_USER_SOURCES_GLOB "${CMAKE_CURRENT_SOURCE_DIR}/User/*.cpp")
-# Optimization level of the application in Debug builds and of everything in Release builds.
+# Optimization level of the application in Debug builds and of everything in Release builds;
+# "" keeps the level of the toolchain file.
 set(LIBXR_OPT_DEBUG "-Og")
 set(LIBXR_OPT_RELEASE "-O3")
 
