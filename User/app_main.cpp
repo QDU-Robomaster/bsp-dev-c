@@ -58,6 +58,14 @@ alignas(4) static uint8_t usb_otg_fs_ep0_out_buf[8];
 alignas(4) static uint8_t usb_otg_fs_ep1_in_buf[128];
 alignas(4) static uint8_t usb_otg_fs_ep1_out_buf[128];
 alignas(4) static uint8_t usb_otg_fs_ep2_in_buf[16];
+alignas(4) static uint8_t usb_otg_hs_ep0_in_buf[8];
+alignas(4) static uint8_t usb_otg_hs_ep0_out_buf[8];
+alignas(4) static uint8_t usb_otg_hs_ep1_in_buf[128];
+alignas(4) static uint8_t usb_otg_hs_ep1_out_buf[128];
+alignas(4) static uint8_t usb_otg_hs_ep2_in_buf[16];
+alignas(4) static uint8_t usb_otg_hs_ep2_out_buf[128];
+alignas(4) static uint8_t usb_otg_hs_ep3_in_buf[128];
+alignas(4) static uint8_t usb_otg_hs_ep4_in_buf[16];
 
 extern "C" void app_main(void)
 {
@@ -130,6 +138,30 @@ extern "C" void app_main(void)
   usb_otg_fs.Init(false);
   usb_otg_fs.Start(false);
 
+  // USB OTG HS: 2 CDC
+  static constexpr auto usb_otg_hs_strings = USB::DescriptorStrings::MakeLanguagePack(
+      USB::DescriptorStrings::Language::EN_US, "QDU-Future", "MainCtrl",
+      "QDU-Future-MainCtrl-89ABCDEF0123456701234567");
+  static USB::CDCUart usb_otg_hs_cdc(USB::Endpoint::EPNumber::EP1,
+                                     USB::Endpoint::EPNumber::EP1,
+                                     USB::Endpoint::EPNumber::EP2, 128, 128, 3);
+  static USB::CDCUart usb_otg_hs_cdc2(USB::Endpoint::EPNumber::EP3,
+                                      USB::Endpoint::EPNumber::EP2,
+                                      USB::Endpoint::EPNumber::EP4, 128, 128, 3);
+  static STM32USBDeviceOtgHS usb_otg_hs(
+      &hpcd_USB_OTG_HS, 256,
+      {usb_otg_hs_ep0_out_buf, usb_otg_hs_ep1_out_buf, usb_otg_hs_ep2_out_buf},
+      {{usb_otg_hs_ep0_in_buf, 8},
+       {usb_otg_hs_ep1_in_buf, 128},
+       {usb_otg_hs_ep2_in_buf, 16},
+       {usb_otg_hs_ep3_in_buf, 128},
+       {usb_otg_hs_ep4_in_buf, 16}},
+      USB::DeviceDescriptor::PacketSize0::SIZE_8, 0x16D0, 0x1492, 0xF407,
+      {&usb_otg_hs_strings}, {{&usb_otg_hs_cdc, &usb_otg_hs_cdc2}},
+      {reinterpret_cast<void*>(UID_BASE), 12});
+  usb_otg_hs.Init(false);
+  usb_otg_hs.Start(false);
+
   // Terminal on usb_otg_fs_cdc
   STDIO::read_ = usb_otg_fs_cdc.read_port_;
   STDIO::write_ = usb_otg_fs_cdc.write_port_;
@@ -138,6 +170,10 @@ extern "C" void app_main(void)
   static Thread term_thread;
   term_thread.Create(&terminal, terminal.ThreadFun, "terminal", 2048,
                      Thread::Priority::HIGH);
+
+  // Flash and database
+  static STM32Flash flash(FLASH_REGIONS, FLASH_REGION_NUMBER);
+  static DatabaseRaw<1> database(flash);
 
   // Hardware registration
   XR_REGISTER(power_manager, LibXR::PowerManager);
@@ -177,6 +213,8 @@ extern "C" void app_main(void)
   XR_REGISTER(usart3, LibXR::UART);
   XR_REGISTER(usart6, LibXR::UART);
   XR_REGISTER(usb_otg_fs_cdc, LibXR::UART);
+  XR_REGISTER(usb_otg_hs_cdc, LibXR::UART);
+  XR_REGISTER(usb_otg_hs_cdc2, LibXR::UART);
 
   XR_REGISTER(i2c1, LibXR::I2C);
   XR_REGISTER(i2c3, LibXR::I2C);
@@ -188,107 +226,9 @@ extern "C" void app_main(void)
 
   XR_REGISTER(terminal, LibXR::Terminal<32, 32, 5, 5>);
 
-  /* User Code Begin 3 */
-  // USB OTG HS device with two CDC interfaces, registered as the UARTs usb_otg_hs_cdc
-  // and usb_otg_hs_cdc2; the endpoint buffers below are cache-line aligned when a D-cache exists.
-#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
-  static struct alignas(__SCB_DCACHE_LINE_SIZE)
-  {
-    uint8_t data[8];
-  } usb_otg_hs_ep0_in_buf_storage;
-  static constexpr auto& usb_otg_hs_ep0_in_buf = usb_otg_hs_ep0_in_buf_storage.data;
-#else
-  alignas(4) static uint8_t usb_otg_hs_ep0_in_buf[8];
-#endif
-#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
-  static struct alignas(__SCB_DCACHE_LINE_SIZE)
-  {
-    uint8_t data[8];
-  } usb_otg_hs_ep0_out_buf_storage;
-  static constexpr auto& usb_otg_hs_ep0_out_buf = usb_otg_hs_ep0_out_buf_storage.data;
-#else
-  alignas(4) static uint8_t usb_otg_hs_ep0_out_buf[8];
-#endif
-#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
-  static struct alignas(__SCB_DCACHE_LINE_SIZE)
-  {
-    uint8_t data[128];
-  } usb_otg_hs_ep1_in_buf_storage;
-  static constexpr auto& usb_otg_hs_ep1_in_buf = usb_otg_hs_ep1_in_buf_storage.data;
-#else
-  alignas(4) static uint8_t usb_otg_hs_ep1_in_buf[128];
-#endif
-#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
-  static struct alignas(__SCB_DCACHE_LINE_SIZE)
-  {
-    uint8_t data[128];
-  } usb_otg_hs_ep1_out_buf_storage;
-  static constexpr auto& usb_otg_hs_ep1_out_buf = usb_otg_hs_ep1_out_buf_storage.data;
-#else
-  alignas(4) static uint8_t usb_otg_hs_ep1_out_buf[128];
-#endif
-#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
-  static struct alignas(__SCB_DCACHE_LINE_SIZE)
-  {
-    uint8_t data[16];
-  } usb_otg_hs_ep2_in_buf_storage;
-  static constexpr auto& usb_otg_hs_ep2_in_buf = usb_otg_hs_ep2_in_buf_storage.data;
-#else
-  alignas(4) static uint8_t usb_otg_hs_ep2_in_buf[16];
-#endif
-#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
-  static struct alignas(__SCB_DCACHE_LINE_SIZE)
-  {
-    uint8_t data[128];
-  } usb_otg_hs_ep2_out_buf_storage;
-  static constexpr auto& usb_otg_hs_ep2_out_buf = usb_otg_hs_ep2_out_buf_storage.data;
-#else
-  alignas(4) static uint8_t usb_otg_hs_ep2_out_buf[128];
-#endif
-#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
-  static struct alignas(__SCB_DCACHE_LINE_SIZE)
-  {
-    uint8_t data[128];
-  } usb_otg_hs_ep3_in_buf_storage;
-  static constexpr auto& usb_otg_hs_ep3_in_buf = usb_otg_hs_ep3_in_buf_storage.data;
-#else
-  alignas(4) static uint8_t usb_otg_hs_ep3_in_buf[128];
-#endif
-#if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
-  static struct alignas(__SCB_DCACHE_LINE_SIZE)
-  {
-    uint8_t data[16];
-  } usb_otg_hs_ep4_in_buf_storage;
-  static constexpr auto& usb_otg_hs_ep4_in_buf = usb_otg_hs_ep4_in_buf_storage.data;
-#else
-  alignas(4) static uint8_t usb_otg_hs_ep4_in_buf[16];
-#endif
-  static constexpr auto USB_OTG_HS_LANG_PACK = LibXR::USB::DescriptorStrings::MakeLanguagePack(LibXR::USB::DescriptorStrings::Language::EN_US, "QDU-Future", "MainCtrl", "QDU-Future-MainCtrl-89ABCDEF0123456701234567");
-  static LibXR::USB::CDCUart usb_otg_hs_cdc(LibXR::USB::Endpoint::EPNumber::EP1, LibXR::USB::Endpoint::EPNumber::EP1, LibXR::USB::Endpoint::EPNumber::EP2, 128, 128, 3);
-  static LibXR::USB::CDCUart usb_otg_hs_cdc2(LibXR::USB::Endpoint::EPNumber::EP3, LibXR::USB::Endpoint::EPNumber::EP2, LibXR::USB::Endpoint::EPNumber::EP4, 128, 128, 3);
-
-  static STM32USBDeviceOtgHS usb_hs(
-      &hpcd_USB_OTG_HS,
-      256,
-      {usb_otg_hs_ep0_out_buf, usb_otg_hs_ep1_out_buf, usb_otg_hs_ep2_out_buf},
-      {{usb_otg_hs_ep0_in_buf, 8}, {usb_otg_hs_ep1_in_buf, 128}, {usb_otg_hs_ep2_in_buf, 16}, {usb_otg_hs_ep3_in_buf, 128}, {usb_otg_hs_ep4_in_buf, 16}},
-      USB::DeviceDescriptor::PacketSize0::SIZE_8,
-      0x16D0, 0x1492, 0xF407,
-      {&USB_OTG_HS_LANG_PACK},
-      {{&usb_otg_hs_cdc, &usb_otg_hs_cdc2}},
-      {reinterpret_cast<void *>(UID_BASE), 12}
-  );
-  usb_hs.Init(false);
-  usb_hs.Start(false);
-
-  XR_REGISTER(usb_otg_hs_cdc, LibXR::UART);
-  XR_REGISTER(usb_otg_hs_cdc2, LibXR::UART);
-
-
-  static STM32Flash flash(FLASH_REGIONS, FLASH_REGION_NUMBER);
-  static LibXR::DatabaseRaw<1> database(flash);
-
   XR_REGISTER(database, LibXR::Database);
+
+  /* User Code Begin 3 */
   /* User Code End 3 */
   XROBOT_MAIN();
 }

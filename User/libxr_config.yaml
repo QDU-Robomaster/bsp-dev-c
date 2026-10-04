@@ -66,7 +66,22 @@ USB:
     product: MainCtrl
     serial: QDU-Future-MainCtrl-89ABCDEF0123456701234567
   usb_otg_hs:
-    enable: false
+    enable: true
+    ep0_packet_size: 8
+    tx_buffer_size: 128
+    rx_buffer_size: 128
+    rx_fifo_size: 256
+    tx_fifo_size: 128
+    dma_section: ''
+    cdc:
+    - {tx_fifo_size: 128, rx_fifo_size: 128, queue_size: 3}
+    - {tx_fifo_size: 128, rx_fifo_size: 128, queue_size: 3}
+    vid: 5840
+    pid: 5266
+    bcd: 62471
+    manufacturer: QDU-Future
+    product: MainCtrl
+    serial: QDU-Future-MainCtrl-89ABCDEF0123456701234567
 Terminal:
   read_buff_size: 32
   max_line_size: 32
@@ -76,6 +91,6 @@ Terminal:
   thread_stack_depth: 2048
   thread_priority: 3
 database:
-  enable: false
+  enable: true
   block_size: 1
 SYSTEM: FreeRTOS
