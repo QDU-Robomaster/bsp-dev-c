@@ -136,7 +136,7 @@ CMake 预设有 `debug`、`relWithDebInfo`、`release` 和 `minSizeRel`，输出
 
 在 CubeMX 中修改并重新生成代码后，运行 `libxr stm32 setup` 更新 `User/app_main.cpp`、`User/app_main.h`、`User/flash_map.hpp`、`User/libxr_config.yaml` 和 `cmake/LibXR.CMake`，`User Code` 区域保留；修改 `User/libxr_config.yaml` 中的值（例如 CDC 路数、数据库）后同样运行这条命令。命令说明见 [LibXR_CppCodeGenerator](https://github.com/xrobot-org/LibXR_CppCodeGenerator)。
 
-`.github/workflows/xrobot_stm32.yml` 调用 XRobot 仓库中的共享工作流 `bsp-stm32-ci.yml`，写出工程名 `DevC` 和要构建的配置：默认配置与 `User/RobotConfig/` 下的 9 份配置，均构建 Release 固件；推送 `v*` 标签时发布这 9 份配置的固件。共享工作流的检查项与发布的文件见 [BSP CI](https://xrobot.work/docs/proj_man/proj-man-ci#bsp-ci)。
+`.github/workflows/xrobot_stm32.yml` 调用 XRobot 仓库中的共享工作流 `bsp-stm32-ci.yml`，写出工程名 `DevC` 和要构建的配置：默认配置与 `User/RobotConfig/` 下的 9 份配置，均构建 Release 固件；推送到 master（打下一个补丁号标签）或推送 `v*` 标签时发布这 9 份配置的固件。共享工作流的检查项与发布的文件见 [BSP CI](https://xrobot.work/docs/proj_man/proj-man-ci#bsp-ci)。
 
 Building needs Python (for `xrobot` and `libxr`), CMake, Ninja and ST's `starm-clang` toolchain (provided by STM32CubeCLT or the VS Code STM32Cube extension) on `PATH`. The presets use `cmake/starm-clang.cmake`; `-DCMAKE_TOOLCHAIN_FILE=cmake/gcc-arm-none-eabi.cmake` selects `arm-none-eabi-gcc` instead. The environment variables `GCC_TOOLCHAIN_ROOT` and `CLANG_GCC_CMSIS_COMPILER` apply when `STARM_TOOLCHAIN_CONFIG` is set to `STARM_HYBRID`.
 
@@ -146,7 +146,7 @@ The CMake presets are `debug`, `relWithDebInfo`, `release` and `minSizeRel`; the
 
 After changing and regenerating the code in CubeMX, `libxr stm32 setup` updates `User/app_main.cpp`, `User/app_main.h`, `User/flash_map.hpp`, `User/libxr_config.yaml` and `cmake/LibXR.CMake`, and keeps the `User Code` regions; after a value in `User/libxr_config.yaml` changes, such as the number of CDCs or the database, the same command is run. The commands are described in [LibXR_CppCodeGenerator](https://github.com/xrobot-org/LibXR_CppCodeGenerator).
 
-`.github/workflows/xrobot_stm32.yml` calls the shared workflow `bsp-stm32-ci.yml` of the XRobot repository and names the project `DevC` and the configurations to build: the default configuration and the nine under `User/RobotConfig/`, all built as Release firmware. Pushing a `v*` tag publishes the firmware of these nine configurations. The checks of the shared workflow and the published files are described in [BSP CI](https://xrobot.work/en/docs/proj_man/proj-man-ci#bsp-ci).
+`.github/workflows/xrobot_stm32.yml` calls the shared workflow `bsp-stm32-ci.yml` of the XRobot repository and names the project `DevC` and the configurations to build: the default configuration and the nine under `User/RobotConfig/`, all built as Release firmware. A push to master, which tags the next patch version, or a `v*` tag push publishes the firmware of these nine configurations. The checks of the shared workflow and the published files are described in [BSP CI](https://xrobot.work/en/docs/proj_man/proj-man-ci#bsp-ci).
 
 ## 4. 烧录与运行 / Flash and Run
 
