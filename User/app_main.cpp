@@ -144,10 +144,10 @@ extern "C" void app_main(void)
       "QDU-Future-MainCtrl-");
   static USB::CDCUart usb_otg_hs_cdc(USB::Endpoint::EPNumber::EP1,
                                      USB::Endpoint::EPNumber::EP1,
-                                     USB::Endpoint::EPNumber::EP2, 128, 128, 3);
+                                     USB::Endpoint::EPNumber::EP2, 128, 256, 3);
   static USB::CDCUart usb_otg_hs_cdc2(USB::Endpoint::EPNumber::EP3,
                                       USB::Endpoint::EPNumber::EP2,
-                                      USB::Endpoint::EPNumber::EP4, 128, 128, 3);
+                                      USB::Endpoint::EPNumber::EP4, 128, 256, 3);
   static STM32USBDeviceOtgHS usb_otg_hs(
       &hpcd_USB_OTG_HS, 256,
       {usb_otg_hs_ep0_out_buf, usb_otg_hs_ep1_out_buf, usb_otg_hs_ep2_out_buf},

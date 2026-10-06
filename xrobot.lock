@@ -161,9 +161,9 @@ modules:
     repo: https://github.com/QDU-Robomaster/Referee.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: feat/host-referee-pack
     ref_kind: branch
-    commit: 96b2468ea414b5837a0c452cece792247a76b210
+    commit: f3f44bd0fd33eedf82777face478a2de511b79cc
   QDU-Robomaster/SentryProtocol:
     repo: https://github.com/QDU-Robomaster/SentryProtocol.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml

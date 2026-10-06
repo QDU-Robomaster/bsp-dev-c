@@ -74,8 +74,8 @@ USB:
     tx_fifo_size: 128
     dma_section: ''
     cdc:
-    - {tx_fifo_size: 128, rx_fifo_size: 128, queue_size: 3}
-    - {tx_fifo_size: 128, rx_fifo_size: 128, queue_size: 3}
+    - {tx_fifo_size: 256, rx_fifo_size: 128, queue_size: 3}
+    - {tx_fifo_size: 256, rx_fifo_size: 128, queue_size: 3}
     vid: 7504
     pid: 24985
     bcd: 62471
