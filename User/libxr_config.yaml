@@ -58,7 +58,10 @@ USB:
     tx_fifo_size: 128
     dma_section: ''
     cdc:
-    - {tx_fifo_size: 128, rx_fifo_size: 128, queue_size: 3}
+    - tx_fifo_size: 128
+      rx_fifo_size: 128
+      queue_size: 3
+      interface: XRobot Terminal
     vid: 7504
     pid: 24985
     bcd: 62471
@@ -74,8 +77,14 @@ USB:
     tx_fifo_size: 128
     dma_section: ''
     cdc:
-    - {tx_fifo_size: 256, rx_fifo_size: 128, queue_size: 3}
-    - {tx_fifo_size: 256, rx_fifo_size: 128, queue_size: 3}
+    - tx_fifo_size: 256
+      rx_fifo_size: 128
+      queue_size: 3
+      interface: XRobot AutoAim
+    - tx_fifo_size: 256
+      rx_fifo_size: 128
+      queue_size: 3
+      interface: XRobot Aux
     vid: 7504
     pid: 24985
     bcd: 62471

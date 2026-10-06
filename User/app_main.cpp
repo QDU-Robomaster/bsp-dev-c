@@ -124,9 +124,9 @@ extern "C" void app_main(void)
   static constexpr auto usb_otg_fs_strings = USB::DescriptorStrings::MakeLanguagePack(
       USB::DescriptorStrings::Language::EN_US, "QDU-Future", "MainCtrl",
       "QDU-Future-MainCtrl-");
-  static USB::CDCUart usb_otg_fs_cdc(USB::Endpoint::EPNumber::EP1,
-                                     USB::Endpoint::EPNumber::EP1,
-                                     USB::Endpoint::EPNumber::EP2, 128, 128, 3);
+  static USB::CDCUart usb_otg_fs_cdc(
+      USB::Endpoint::EPNumber::EP1, USB::Endpoint::EPNumber::EP1,
+      USB::Endpoint::EPNumber::EP2, 128, 128, 3, "XRobot Terminal", "XRobot Terminal");
   static STM32USBDeviceOtgFS usb_otg_fs(
       &hpcd_USB_OTG_FS, 256, {usb_otg_fs_ep0_out_buf, usb_otg_fs_ep1_out_buf},
       {{usb_otg_fs_ep0_in_buf, 8},
@@ -142,12 +142,12 @@ extern "C" void app_main(void)
   static constexpr auto usb_otg_hs_strings = USB::DescriptorStrings::MakeLanguagePack(
       USB::DescriptorStrings::Language::EN_US, "QDU-Future", "MainCtrl",
       "QDU-Future-MainCtrl-");
-  static USB::CDCUart usb_otg_hs_cdc(USB::Endpoint::EPNumber::EP1,
-                                     USB::Endpoint::EPNumber::EP1,
-                                     USB::Endpoint::EPNumber::EP2, 128, 256, 3);
-  static USB::CDCUart usb_otg_hs_cdc2(USB::Endpoint::EPNumber::EP3,
-                                      USB::Endpoint::EPNumber::EP2,
-                                      USB::Endpoint::EPNumber::EP4, 128, 256, 3);
+  static USB::CDCUart usb_otg_hs_cdc(
+      USB::Endpoint::EPNumber::EP1, USB::Endpoint::EPNumber::EP1,
+      USB::Endpoint::EPNumber::EP2, 128, 256, 3, "XRobot AutoAim", "XRobot AutoAim");
+  static USB::CDCUart usb_otg_hs_cdc2(
+      USB::Endpoint::EPNumber::EP3, USB::Endpoint::EPNumber::EP2,
+      USB::Endpoint::EPNumber::EP4, 128, 256, 3, "XRobot Aux", "XRobot Aux");
   static STM32USBDeviceOtgHS usb_otg_hs(
       &hpcd_USB_OTG_HS, 256,
       {usb_otg_hs_ep0_out_buf, usb_otg_hs_ep1_out_buf, usb_otg_hs_ep2_out_buf},
