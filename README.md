@@ -93,10 +93,10 @@ The 0.x configurations gave the hardware aliases named after its use on the boar
 | `User/xrobot.yaml` | 默认配置，仅含 BlinkLED，使状态灯闪烁 |
 | `User/RobotConfig/aerial.yaml` | 空中机器人：云台、发射机构、DR16 遥控器、裁判系统 |
 | `User/RobotConfig/dart.yaml` | 飞镖：Dart 模块、DR16 遥控器、裁判系统 |
-| `User/RobotConfig/hero.yaml` | 英雄：麦轮底盘、云台、HeroLauncher、MiniGimbal、DR16 与 VT13 遥控器、功率控制 |
+| `User/RobotConfig/hero.yaml` | 英雄：麦轮底盘、云台、HeroLauncher、MiniGimbal、DR16 与 VT13 遥控器、功率控制、相机同步 |
 | `User/RobotConfig/omni_infantry_3.yaml` | 全向轮步兵：底盘、云台、发射机构、DR16 与 VT13 遥控器、相机同步 |
 | `User/RobotConfig/omni_infantry_4.yaml` | 全向轮步兵，参数与 `omni_infantry_3` 不同 |
-| `User/RobotConfig/sentry.yaml` | 哨兵：舵轮底盘、云台、发射机构、SentryProtocol |
+| `User/RobotConfig/sentry.yaml` | 哨兵：舵轮底盘、云台、发射机构、SentryProtocol、相机同步 |
 | `User/RobotConfig/helm_infantry.yaml` | 占位配置，仅含 BlinkLED |
 | `User/RobotConfig/radar.yaml` | 占位配置，仅含 BlinkLED |
 | `User/RobotConfig/wheel_leg.yaml` | 占位配置，仅含 BlinkLED |
@@ -108,10 +108,10 @@ Each robot is built from the same firmware project with a different configuratio
 | `User/xrobot.yaml` | Default configuration with BlinkLED only, blinking the status LED |
 | `User/RobotConfig/aerial.yaml` | Aerial robot: gimbal, launcher, DR16 remote control, referee system |
 | `User/RobotConfig/dart.yaml` | Dart: Dart Module, DR16 remote control, referee system |
-| `User/RobotConfig/hero.yaml` | Hero: mecanum chassis, gimbal, HeroLauncher, MiniGimbal, DR16 and VT13 remote controls, power control |
+| `User/RobotConfig/hero.yaml` | Hero: mecanum chassis, gimbal, HeroLauncher, MiniGimbal, DR16 and VT13 remote controls, power control, camera synchronization |
 | `User/RobotConfig/omni_infantry_3.yaml` | Omni-wheel infantry: chassis, gimbal, launcher, DR16 and VT13 remote controls, camera synchronization |
 | `User/RobotConfig/omni_infantry_4.yaml` | Omni-wheel infantry with parameters that differ from `omni_infantry_3` |
-| `User/RobotConfig/sentry.yaml` | Sentry: helm (steering-wheel) chassis, gimbal, launcher, SentryProtocol |
+| `User/RobotConfig/sentry.yaml` | Sentry: helm (steering-wheel) chassis, gimbal, launcher, SentryProtocol, camera synchronization |
 | `User/RobotConfig/helm_infantry.yaml` | Placeholder with BlinkLED only |
 | `User/RobotConfig/radar.yaml` | Placeholder with BlinkLED only |
 | `User/RobotConfig/wheel_leg.yaml` | Placeholder with BlinkLED only |
