@@ -51,7 +51,7 @@ modules:
       - param:
           camera_sync_topic_name: "camera_sync_result"
           imu_topic_name: "gimbal_gyro"
-          trigger_period_us: 10000
+          trigger_period_us: 5000
           camera_sync_command_topic_name: "camera_sync_command"
   - module: QDU-Robomaster/CMD
     id: cmd
