@@ -67,6 +67,15 @@ modules:
       - remote_buy_hp_times_topic_name: "sentry_remote_buy_hp_times"
       - buy_resurrection_topic_name: "sentry_buy_resurrection"
       - state_topic_name: "sentry_state"
+  - module: QDU-Robomaster/CameraSync
+    id: camera_sync
+    args:
+      - camera_pin: CAMERA
+      - param:
+          camera_sync_topic_name: "camera_sync_result"
+          imu_topic_name: "gimbal_gyro"
+          trigger_period_us: 5000
+          camera_sync_command_topic_name: "camera_sync_command"
   - module: QDU-Robomaster/CMD
     id: cmd
     args:
@@ -336,13 +345,13 @@ modules:
       - uart: usb_otg_hs_cdc
       - ramfs: ramfs
       - uart_name: "usb_otg_hs_cdc"
-      - buffer_size: 256
-      - topic_configs: '{"target_euler", "fire_notify"}'
+      - buffer_size: 512
+      - topic_configs: '{"target_euler", "fire_notify", "camera_sync_command"}'
   - module: xrobot-org/SharedTopicClient
     id: client_topic_autoaim
     args:
       - uart: usb_otg_hs_cdc
       - slot_count: 16
-      - topic_configs: '{"ahrs_quaternion"}'
+      - topic_configs: '{"gimbal_gyro", "gimbal_accl", "ahrs_quaternion", "camera_sync_result", "robot_game_ref"}'
 settings:
   monitor_sleep_ms: 1000
