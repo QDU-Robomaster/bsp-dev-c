@@ -1,4 +1,4 @@
-xrobot: 1.0.0
+xrobot: 1.0.1
 modules:
 - QDU-Robomaster/CMD@same-or-dev
 - QDU-Robomaster/CameraSync@same-or-dev
