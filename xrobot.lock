@@ -56,174 +56,174 @@ modules:
     repo: https://github.com/QDU-Robomaster/CMD.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: e960a30e80aec80a80495a39c2ad05ddc366a97b
+    commit: 37b7700e9cce3ee74601d9fdcb67961792a21359
   QDU-Robomaster/CameraSync:
     repo: https://github.com/QDU-Robomaster/CameraSync.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: b5f59ad93869a22d44f1614eafb9342de69727e6
+    commit: 6cb451df977f85d05156fa2b22df9cd5301924ca
   QDU-Robomaster/Chassis:
     repo: https://github.com/QDU-Robomaster/Chassis.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: 35af4892ab630bc0ef13123bbacc5fe17e82ccbf
+    commit: 32761d015294031f3d5ac8326b1a394c796302a9
   QDU-Robomaster/DMMotor:
     repo: https://github.com/QDU-Robomaster/DMMotor.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: 828d73e2c04de307c6d11cc63ab2afb2e9d2d8b3
+    commit: 7f1dc12abc8b05993671befcb8f1bba694755f5b
   QDU-Robomaster/DR16:
     repo: https://github.com/QDU-Robomaster/DR16.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: 3f15a4039e7c137c6748b0262ed9d48181f25631
+    commit: 79c22deb4187f5af4225077fe19434bd81835171
   QDU-Robomaster/Dart:
     repo: https://github.com/QDU-Robomaster/Dart.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: 18c594be548347d60eea28bc891d279b27d7ea2b
+    commit: 249326bfbc7aa42e6460302dafa0e871770eb596
   QDU-Robomaster/EventBinder:
     repo: https://github.com/QDU-Robomaster/EventBinder.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: 96b845ab40361aab7ed334ba13e78a6981ddbcc6
+    commit: 3d4adde3a7c10152a6a0b6c67738b88c972bd675
   QDU-Robomaster/Gimbal:
     repo: https://github.com/QDU-Robomaster/Gimbal.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: 1081c838e08f129657563989bd3bd143a1f45700
+    commit: 502a9dba7737cd37cd2f48da901a76e9583d5ed2
   QDU-Robomaster/HeroLauncher:
     repo: https://github.com/QDU-Robomaster/HeroLauncher.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: 0f5469e56102804a9f0f70a027927bd8e2f2cdca
+    commit: 254179db8c85de49adb51b4ded76023e1646a903
   QDU-Robomaster/HostData:
     repo: https://github.com/QDU-Robomaster/HostData.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: e5207f1fd2d30eef7ca1c80a7357445174425280
+    commit: 7fb5d7836383e48e97993216fff158977fe85a58
   QDU-Robomaster/InfantryLauncher:
     repo: https://github.com/QDU-Robomaster/InfantryLauncher.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: 30b26fced5f15779d5956a2b2344be19c5df0ca1
+    commit: 857d18828877165286a19099181e34184db591e6
   QDU-Robomaster/MiniGimbal:
     repo: https://github.com/QDU-Robomaster/MiniGimbal.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: 6577f572efcb6bcd273acad54d21849c5a54d0b3
+    commit: 608447c55f9e33b2bc2f75030907e4f0a227fe51
   QDU-Robomaster/Motor:
     repo: https://github.com/QDU-Robomaster/Motor.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: 2ad83a055035ffc5013dccc50e8fc567dba4cfbc
+    commit: b78274996f93eec611efab2ba7ecc51fbd5672b9
   QDU-Robomaster/PowerControl:
     repo: https://github.com/QDU-Robomaster/PowerControl.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: b4165de255f42e800207c714f77be91027d5180d
+    commit: 4097e1f6a3fad89126e82b920217961286966d84
   QDU-Robomaster/RMMotor:
     repo: https://github.com/QDU-Robomaster/RMMotor.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: ddcf5d316298e1d5883e60cf2108f00dcfe1fabb
+    commit: e9d5fa3748cd984777a9fabdce40062d610660b2
   QDU-Robomaster/Referee:
     repo: https://github.com/QDU-Robomaster/Referee.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: 96b2468ea414b5837a0c452cece792247a76b210
+    commit: 79f8e5ca0afb56eaf2554d760eef67d067bca504
   QDU-Robomaster/SentryProtocol:
     repo: https://github.com/QDU-Robomaster/SentryProtocol.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: e40c16aeb4ee3e7ba1642427a33a9060ef44a57a
+    commit: 81b3a8c55a89f6d3fd1787c8468570765f0b9bcb
   QDU-Robomaster/SuperPower:
     repo: https://github.com/QDU-Robomaster/SuperPower.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: e687995a117360d99e169f2ff3a289d9dfdf4e98
+    commit: aaa8db0d379874d1f90dfcfde1d4b0bbb9d9a05a
   QDU-Robomaster/VT13:
     repo: https://github.com/QDU-Robomaster/VT13.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: 259b94071fbd9430830e537cd2019b14dae0488b
+    commit: 7927154b47f5da7bab47e86da098705a8d4e26ae
   xrobot-org/BMI088:
     repo: https://github.com/xrobot-org/BMI088.git
     source: https://xrobot.work/xrobot-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: 74340862db0aa0be0c3340987c7ea9229ceefeda
+    commit: e4e64d705f5b61685e629a91e123ad2febe75fc7
   xrobot-org/BlinkLED:
     repo: https://github.com/xrobot-org/BlinkLED.git
     source: https://xrobot.work/xrobot-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: 2fc91fb42b01ce61db3e398cc80ee1bdc0e70638
+    commit: 0ca1620261fea84a3a391ff219199b7bef4d9a1e
   xrobot-org/BuzzerAlarm:
     repo: https://github.com/xrobot-org/BuzzerAlarm.git
     source: https://xrobot.work/xrobot-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: 8bd6b55d821200d2f97c40c1a49f41bb126b22e1
+    commit: a7c17cf7b1d10409848c32bd420cb393515e7f27
   xrobot-org/MadgwickAHRS:
     repo: https://github.com/xrobot-org/MadgwickAHRS
     source: https://xrobot.work/xrobot-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: 43cf556cb2fe93879fb79361c4393f9bfe65b998
+    commit: e98a223b84e44ca8718fe8e68b4b63577ec70499
   xrobot-org/SharedTopic:
     repo: https://github.com/xrobot-org/SharedTopic.git
     source: https://xrobot.work/xrobot-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: 8bca11776da64172a9a138ba91f4a47da61812d3
+    commit: 6005712610dc754e842482f52fd2c5a335f67d99
   xrobot-org/SharedTopicClient:
     repo: https://github.com/xrobot-org/SharedTopicClient.git
     source: https://xrobot.work/xrobot-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: dev
+    resolved_ref: master
     ref_kind: branch
-    commit: 54840a9c241a2af9d4222921bd8aef1cc329cd23
+    commit: 157d8bc1e5d45cb35526b8892046f23ae33947ab
