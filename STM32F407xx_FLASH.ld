@@ -148,6 +148,15 @@ SECTIONS
     . = ALIGN(4);
   } >FLASH
 
+  /* GOT entries are link-time constants in this static image. ld.lld puts the init/fini
+     arrays and the GOT in one RELRO range, so .got must directly follow .fini_array. */
+  .got :
+  {
+    . = ALIGN(4);
+    *(.got .got.*)
+    . = ALIGN(4);
+  } >FLASH
+
   _siccmram = LOADADDR(.ccmram);
 
   /* CCM-RAM section
@@ -176,14 +185,6 @@ SECTIONS
     *(.ccm_heap.*)
     . = ALIGN(4);
   } >CCMRAM
-
-  /* GOT entries are link-time constants in this static image */
-  .got :
-  {
-    . = ALIGN(4);
-    *(.got .got.*)
-    . = ALIGN(4);
-  } >FLASH
 
   /* used by the startup to initialize data */
   _sidata = LOADADDR(.data);
