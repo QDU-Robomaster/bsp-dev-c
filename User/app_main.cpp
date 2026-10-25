@@ -144,7 +144,7 @@ extern "C" void app_main(void)
       "QDU-Future-MainCtrl-");
   static USB::CDCUart usb_otg_hs_cdc(
       USB::Endpoint::EPNumber::EP1, USB::Endpoint::EPNumber::EP1,
-      USB::Endpoint::EPNumber::EP2, 128, 256, 3, "XRobot AutoAim", "XRobot AutoAim");
+      USB::Endpoint::EPNumber::EP2, 128, 2048, 16, "XRobot AutoAim", "XRobot AutoAim");
   static USB::CDCUart usb_otg_hs_cdc2(
       USB::Endpoint::EPNumber::EP3, USB::Endpoint::EPNumber::EP2,
       USB::Endpoint::EPNumber::EP4, 128, 256, 3, "XRobot Aux", "XRobot Aux");

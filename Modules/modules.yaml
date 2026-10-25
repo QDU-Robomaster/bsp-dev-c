@@ -1,7 +1,8 @@
 xrobot: 1.0.1
 modules:
+- QDU-Robomaster/AtomImuCan@same-or-dev
 - QDU-Robomaster/CMD@same-or-dev
-- QDU-Robomaster/CameraSync@same-or-dev
+- QDU-Robomaster/CameraSync@dev
 - QDU-Robomaster/Chassis@same-or-dev
 - QDU-Robomaster/DMMotor@same-or-dev
 - QDU-Robomaster/DR16@same-or-dev
@@ -11,6 +12,7 @@ modules:
 - QDU-Robomaster/HeroLauncher@same-or-dev
 - QDU-Robomaster/HostData@same-or-dev
 - QDU-Robomaster/InfantryLauncher@same-or-dev
+- QDU-Robomaster/LegVmc@same-or-dev
 - QDU-Robomaster/MiniGimbal@same-or-dev
 - QDU-Robomaster/Motor@same-or-dev
 - QDU-Robomaster/PowerControl@same-or-dev
@@ -19,9 +21,10 @@ modules:
 - QDU-Robomaster/SentryProtocol@same-or-dev
 - QDU-Robomaster/SuperPower@same-or-dev
 - QDU-Robomaster/VT13@same-or-dev
+- QDU-Robomaster/Wheelleg@same-or-dev
 - xrobot-org/BMI088@same-or-dev
 - xrobot-org/BlinkLED@same-or-dev
 - xrobot-org/BuzzerAlarm@same-or-dev
 - xrobot-org/MadgwickAHRS@same-or-dev
 - xrobot-org/SharedTopic@same-or-dev
-- xrobot-org/SharedTopicClient@same-or-dev
+- xrobot-org/SharedTopicClient@fix/queue-usage-20261011

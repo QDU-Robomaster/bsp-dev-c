@@ -77,9 +77,9 @@ USB:
     tx_fifo_size: 128
     dma_section: ''
     cdc:
-    - tx_fifo_size: 256
+    - tx_fifo_size: 2048
       rx_fifo_size: 128
-      queue_size: 3
+      queue_size: 16
       interface: XRobot AutoAim
     - tx_fifo_size: 256
       rx_fifo_size: 128
