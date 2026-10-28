@@ -149,6 +149,32 @@ modules:
           euler_topic_name: "gimbal_euler"
           gyro_topic_name: "gimbal_gyro"
           gimbal_cmd_topic_name: "gimbal_cmd"
+      - ramfs: nullptr
+      - mbc:
+          enable_pit: false
+          enable_yaw: false
+          j_pit: 0.0f
+          j_yaw0: 0.0f
+          j_yaw_c2: 0.0f
+          j_yaw_s2: 0.0f
+          pit_kp: 0.0f
+          pit_kd: 0.0f
+          pit_wo: 0.0f
+          pit_wmax: 0.0f
+          yaw_kp: 0.0f
+          yaw_kd: 0.0f
+          yaw_wo: 0.0f
+          yaw_wmax: 0.0f
+          pit_b: 0.0f
+          pit_tc: 0.0f
+          yaw_b: 0.0f
+          yaw_tc: 0.0f
+          fric_eps: 0.0f
+          pit_torque_max: 0.0f
+          yaw_torque_max: 0.0f
+          pit_yaw_acc: 0.0f
+          base_tau: 0.0f
+          coupling: false
   - module: QDU-Robomaster/RMMotor
     id: motor_wheel_0
     args:

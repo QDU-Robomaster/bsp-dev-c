@@ -69,9 +69,9 @@ modules:
     repo: https://github.com/QDU-Robomaster/CMD.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: master
+    resolved_ref: test/wheel-leg-20261027
     ref_kind: branch
-    commit: 37b7700e9cce3ee74601d9fdcb67961792a21359
+    commit: e3f4ded43c1fd2096023116aadec03516e2290b2
   QDU-Robomaster/CameraSync:
     repo: https://github.com/QDU-Robomaster/CameraSync.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
@@ -90,9 +90,9 @@ modules:
     repo: https://github.com/QDU-Robomaster/DMMotor.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: master
+    resolved_ref: test/wheel-leg-20261027
     ref_kind: branch
-    commit: 7f1dc12abc8b05993671befcb8f1bba694755f5b
+    commit: 72364fbd01510a00ebd98513648443efc425c7b1
   QDU-Robomaster/DR16:
     repo: https://github.com/QDU-Robomaster/DR16.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
@@ -118,9 +118,9 @@ modules:
     repo: https://github.com/QDU-Robomaster/Gimbal.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: master
+    resolved_ref: test/wheel-leg-20261027
     ref_kind: branch
-    commit: 502a9dba7737cd37cd2f48da901a76e9583d5ed2
+    commit: 23942285909e72c342ebb4f4e4b4ed23d9d00078
   QDU-Robomaster/HeroLauncher:
     repo: https://github.com/QDU-Robomaster/HeroLauncher.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
@@ -139,9 +139,9 @@ modules:
     repo: https://github.com/QDU-Robomaster/InfantryLauncher.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: master
+    resolved_ref: test/wheel-leg-20261027
     ref_kind: branch
-    commit: 857d18828877165286a19099181e34184db591e6
+    commit: bb06efdfa75d72da6edeb90ed9c065c4d3dcb01c
   QDU-Robomaster/LegVmc:
     repo: https://github.com/QDU-Robomaster/LegVmc.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
@@ -209,9 +209,9 @@ modules:
     repo: https://github.com/QDU-Robomaster/Wheelleg.git
     source: https://qdu-robomaster.github.io/qdu-future-modules/index.yaml
     requested: same-or-dev
-    resolved_ref: master
+    resolved_ref: test/wheel-leg-20261027
     ref_kind: branch
-    commit: dd72d0f06a07248da69e88014a25adc537849bb0
+    commit: eddc895556267d175a86189869605759088e70b8
   xrobot-org/BMI088:
     repo: https://github.com/xrobot-org/BMI088.git
     source: https://xrobot.work/xrobot-modules/index.yaml

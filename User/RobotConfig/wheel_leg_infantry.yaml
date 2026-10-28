@@ -242,15 +242,20 @@ modules:
       - motor_yaw: motor_yaw
       - referee: '&ref'
       - param:
-          task_stack_depth: 1536
-          pid_yaw_angle: '{.k = 1.0, .p = 60.0, .d = 0.0005, .i_limit = 50.0, .cycle = true}'
+          # 栈深以字节计；gimbal_log 打开时发布调用链在本线程内运行，由 1536 加到 2560
+          # Stack depth is in bytes; with gimbal_log on, the publish call chain runs in this thread, raised from 1536 to 2560
+          task_stack_depth: 2560
+          pid_yaw_angle: '{.k = 1.0, .p = 30.0, .d = 0.0005, .i_limit = 50.0, .cycle = true}'
           pid_yaw_omega: '{.k = 1.0, .p = 2.5, .out_limit = 8.0}'
-          pid_pit_angle: '{.k = 1.0, .p = 100.0, .i = 5.0}'
-          pid_pit_omega: '{.k = 1.0, .p = 0.27}'
+          pid_pit_angle: '{.k = 1.0, .p = 50.0, .i = 5.0}'
+          pid_pit_omega: '{.k = 1.0, .p = 0.27, .i = 2.0, .i_limit = 0.2}'
           pit_max_angle: 4.7
           pit_min_angle: 3.7
-          pit_lc: 1.4
-          pit_theta: -0.08
+          # 2026-10-27 辨识（上位机装在 pitch 上之后）：-0.45..+0.43 rad 内保持力矩的正弦拟合
+          # Identified 2026-10-27 with the host computer mounted on the pitch: sine fit of the
+          # holding torque over -0.45..+0.43 rad
+          pit_lc: 1.0204
+          pit_theta: 0.0255
           yaw_k: 0.0
           j_pit: 0.015
           j_yaw: 0.025
@@ -263,6 +268,40 @@ modules:
           euler_topic_name: "gimbal_euler"
           gyro_topic_name: "gimbal_gyro"
           gimbal_cmd_topic_name: "gimbal_cmd"
+      # 终端命令 gimbal_ident：辨识模式与 gimbal_log 开关；gimbal_ctrl：切换控制器与在线调参
+      # Terminal commands gimbal_ident: identification mode and the gimbal_log switch;
+      # gimbal_ctrl: switch the controller and tune online
+      - ramfs: '&ramfs'
+      # 模型补偿控制器（GimbalMbc）。模型为 2026-10-27 辨识结果（上位机装在 pitch 上之后），增益为
+      # 实车 A/B 后的取值；上电时 yaw 用它、pitch 用 PID，用 gimbal_ctrl pit|yaw pid|mbc 切换
+      # Model-based controller (GimbalMbc). Model identified 2026-10-27 with the host computer
+      # on the pitch, gains from the robot A/B; at power-up the yaw uses it and the pitch the
+      # PID, switch with gimbal_ctrl pit|yaw pid|mbc
+      - mbc:
+          enable_pit: false
+          enable_yaw: true
+          j_pit: 0.01055
+          j_yaw0: 0.02813
+          j_yaw_c2: -0.0090
+          j_yaw_s2: -0.00082
+          pit_kp: 1400.0
+          pit_kd: 100.0
+          pit_wo: 25.0
+          pit_wmax: 6.0
+          yaw_kp: 400.0
+          yaw_kd: 32.0
+          yaw_wo: 50.0
+          yaw_wmax: 8.0
+          pit_b: 0.2
+          pit_tc: 0.075
+          yaw_b: 0.108
+          yaw_tc: 0.318
+          fric_eps: 0.3
+          pit_torque_max: 2.223
+          yaw_torque_max: 7.0
+          pit_yaw_acc: -0.0046
+          base_tau: 0.03
+          coupling: true
   - module: QDU-Robomaster/HostData
     id: hostdata
     args:
@@ -291,8 +330,10 @@ modules:
     id: sharedtopicclient
     args:
       - uart: usb_otg_hs_cdc
-      - slot_count: 40
-      - topic_configs: '{"gimbal_gyro", "gimbal_accl", "gimbal_quat", "camera_sync_result", "robot_game_ref"}'
+      # gimbal_log 每个控制拍（2-3 ms）一包 113 B，槽位由 40 加到 64 以吸收主机侧短暂停顿
+      # gimbal_log is one 113 B packet per control tick (2-3 ms); slots raised from 40 to 64 to absorb short host stalls
+      - slot_count: 64
+      - topic_configs: '{"gimbal_gyro", "gimbal_accl", "gimbal_quat", "camera_sync_result", "robot_game_ref", "gimbal_log"}'
   - module: QDU-Robomaster/EventBinder
     id: event_binder
     args:
@@ -300,7 +341,9 @@ modules:
       # 原 LaunchEvent 词表 (FricEvent) 在 1.0 模块里改名为 LauncherEvent，语义不变。
       # The old FricEvent vocabulary is LauncherEvent in the 1.0 Module; same meaning.
       # 第一组：DR16 右拨杆中位 -> 上位机控制，上位与下位 -> 手动。
+      # 测试（2026-10-26）：左拨杆改绑摩擦轮（上 RELAX / 中 SAFE / 下 READY），底盘不绑定，保持 RELAX。
+      # Test (2026-10-26): left switch drives the friction wheels (TOP RELAX / MID SAFE / BOT READY); the chassis has no binding and stays RELAX.
       # First group: DR16 right switch MID -> host control, TOP and BOT -> manual.
-      - event_binding_groups: '{{{{"dr16", DR16::SwitchPos::DR16_SW_R_POS_TOP, "cmd", CMD::Mode::CMD_OP_CTRL}, {"dr16", DR16::SwitchPos::DR16_SW_R_POS_MID, "cmd", CMD::Mode::CMD_AUTO_CTRL}, {"dr16", DR16::SwitchPos::DR16_SW_R_POS_BOT, "cmd", CMD::Mode::CMD_OP_CTRL}}}, {{{"vt13", VT13::SwitchPos::VT13_KEY_CUSTOM_R_TOGGLE_OFF, "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_SAFE}, {"vt13", VT13::SwitchPos::VT13_KEY_CUSTOM_R_TOGGLE_ON, "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_READY}}}, {{{"dr16", DR16::SwitchPos::DR16_SW_L_POS_TOP, "wheelleg", Wheelleg::WheellegEvent::SET_MODE_RELAX}, {"dr16", DR16::SwitchPos::DR16_SW_L_POS_MID, "wheelleg", Wheelleg::WheellegEvent::SET_MODE_RESET}, {"dr16", DR16::SwitchPos::DR16_SW_L_POS_BOT, "wheelleg", Wheelleg::WheellegEvent::SET_MODE_ROTOR}, {"dr16", DR16::Key::KEY_R, "wheelleg", Wheelleg::WheellegEvent::SET_MODE_RESET}, {"dr16", DR16::Key::KEY_E, "wheelleg", Wheelleg::WheellegEvent::SET_MODE_STAND}, {"dr16", DR16::Key::KEY_Q, "wheelleg", Wheelleg::WheellegEvent::SET_MODE_ROTOR}}}}'
+      - event_binding_groups: '{{{{"dr16", DR16::SwitchPos::DR16_SW_R_POS_TOP, "cmd", CMD::Mode::CMD_OP_CTRL}, {"dr16", DR16::SwitchPos::DR16_SW_R_POS_MID, "cmd", CMD::Mode::CMD_AUTO_CTRL}, {"dr16", DR16::SwitchPos::DR16_SW_R_POS_BOT, "cmd", CMD::Mode::CMD_AUTO_CTRL}}}, {{{"vt13", VT13::SwitchPos::VT13_KEY_CUSTOM_R_TOGGLE_OFF, "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_SAFE}, {"vt13", VT13::SwitchPos::VT13_KEY_CUSTOM_R_TOGGLE_ON, "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_READY}}}, {{{"dr16", DR16::SwitchPos::DR16_SW_L_POS_TOP, "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_RELAX}, {"dr16", DR16::SwitchPos::DR16_SW_L_POS_MID, "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_SAFE}, {"dr16", DR16::SwitchPos::DR16_SW_L_POS_BOT, "launcher", InfantryLauncher::LauncherEvent::SET_FRICMODE_READY}}}}'
 settings:
   monitor_sleep_ms: 1000

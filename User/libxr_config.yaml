@@ -93,8 +93,8 @@ USB:
     serial: QDU-Future-MainCtrl-
 Terminal:
   read_buff_size: 32
-  max_line_size: 32
-  max_arg_number: 5
+  max_line_size: 64
+  max_arg_number: 6
   max_history_number: 5
   run_as_thread: true
   thread_stack_depth: 2048

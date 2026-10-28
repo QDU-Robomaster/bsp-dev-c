@@ -166,7 +166,7 @@ extern "C" void app_main(void)
   STDIO::read_ = usb_otg_fs_cdc.read_port_;
   STDIO::write_ = usb_otg_fs_cdc.write_port_;
   static RamFS ramfs("XRobot");
-  static Terminal<32, 32, 5, 5> terminal(ramfs);
+  static Terminal<32, 64, 6, 5> terminal(ramfs);
   static Thread term_thread;
   term_thread.Create(&terminal, terminal.ThreadFun, "terminal", 2048,
                      Thread::Priority::HIGH);
@@ -224,7 +224,7 @@ extern "C" void app_main(void)
 
   XR_REGISTER(ramfs, LibXR::RamFS);
 
-  XR_REGISTER(terminal, LibXR::Terminal<32, 32, 5, 5>);
+  XR_REGISTER(terminal, LibXR::Terminal<32, 64, 6, 5>);
 
   XR_REGISTER(database, LibXR::Database);
 
